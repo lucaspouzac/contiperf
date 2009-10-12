@@ -1,0 +1,190 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.databene</groupId>
+    <artifactId>contiperf</artifactId>
+    <version>0.1-alpha</version>
+<!--
+    <parent>
+        <groupId>databene</groupId>
+        <artifactId>databene.org</artifactId>
+        <version>1.0</version>
+    </parent>
+-->
+    <packaging>jar</packaging>
+    <name>databene ContiPerf</name>
+    <url>http://databene.org/databene-contiperf</url>
+    <description>
+    	ContiPerf is an open source testing utility that enables the user to easily
+    	convert JUnit 4 test cases into performance tests.
+    </description>
+
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License</name>
+            <url>http://www.fsf.org/licensing/licenses/gpl.txt</url>
+            <distribution>manual</distribution>
+            <comments>
+                Redistribution and use in source and binary forms, with or without
+                modification, is permitted under the terms of the GNU General Public License.
+            </comments>
+        </license>
+        <license>
+            <name>BSD License</name>
+            <url>TODO</url>
+            <distribution>manual</distribution>
+            <comments>
+            	TODO
+            </comments>
+        </license>
+    </licenses>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.7</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+	    <extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>1.0-alpha-6</version>
+			</extension>
+	    </extensions>
+	    
+        <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>${basedir}/src/main/resources</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.properties</include>
+                    <include>**/*.dtd</include>
+                    <include>**/*.csv</include>
+                    <include>**/*.txt</include>
+                </includes>
+                <excludes>
+                    <exclude>**/log4j.xml</exclude>
+                    <exclude>dataset.dtd</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <filtering>false</filtering>
+                <directory>${basedir}/src/test/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/source-assembly.xml</descriptor>
+                        <descriptor>src/main/assembly/dist-assembly.xml</descriptor>
+                        <descriptor>src/main/assembly/backup-assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jdepend-maven-plugin</artifactId>
+                <version>2.0-beta-1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+
+                            <report>dependencies</report>
+                            <report>project-team</report>
+                            <report>license</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <linkXref>true</linkXref>
+                    <sourceEncoding>UTF-8</sourceEncoding>
+                    <minimumTokens>100</minimumTokens>
+                    <targetJdk>1.5</targetJdk>
+                </configuration>
+            </plugin>
+<!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+  
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jxr-maven-plugin</artifactId>
+            </plugin>
+-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+    </reporting>
+
+	<distributionManagement>
+		<repository>
+			<id>databene.repo</id>
+			<name>databene Internal Repository</name>
+			<url>ftp://databene.org/databene/m2</url>
+		</repository>
+	</distributionManagement>
+	
+	<scm>
+		<url>https://contiperf.svn.sourceforge.net/svnroot/contiperf</url>
+	</scm>
+
+</project>
