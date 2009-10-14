@@ -3,7 +3,8 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL).
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * WITHOUT A WARRANTY OF ANY KIND. ALL EXPRESS OR IMPLIED CONDITIONS,
@@ -31,30 +32,92 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.databene.contiperf.ExecutionLogger;
+import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.Util;
 import org.databene.contiperf.log.FileExecutionLogger;
+import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 /**
- * TODO Document class.<br/><br/>
+ * Implements the JUnit {@link MethodRule} interface 
+ * for adding performance test features to test calls.
+ * 
+ * <p>for activating it, add an attribute of this class 
+ * to your test class, e.g.:
+ * <pre>
+ * public class SimpleTest {
+ *     @Rule
+ *     public ContiPerfRule i = new ContiPerfRule();
+ * 
+ *     @Test
+ *     public void sleepAWhile() throws Exception {
+ *         Thread.sleep(100);
+ *     }
+ * }
+ * </pre> 
+ * ContiPerf will then intercept each test method call
+ * and optionally cause multiple invocations and check 
+ * total execution time against a time limit.</p>
+ * 
+ * <p>invocation counts and time limits can be configured 
+ * by Java annotations, e.g.
+ * <pre>
+ * @Test(timeout = 300)
+ * @PerfTest(invocations = 5, timeLimit = 500)
+ * public void sleepALittleLonger() throws Exception {
+ *     System.out.print('x');
+ *     Thread.sleep(200);
+ * }
+ * </pre>
+ * </p>
+ * 
+ * <p>For enabling different test settings, the invocation count
+ * values can be configured in a properties file <code>contiperf.properties</code>
+ * which assigns the invocation count to the fully qualified method name, e.g.
+ * <pre>
+ * org.databene.contiperf.junit.SimpleTest.sleepAWhile=3
+ * org.databene.contiperf.junit.SimpleTest.sleepALittleLonger=2
+ * </pre>
+ * If the properties file exists, it overrides the annotation values.</p>
+ * 
+ * <p>By default, the execution times are written to the CSV file  
+ * <code>target/contiperf/contiperf.log</code>. They have four columns,
+ * listing the
+ * <ol>
+ *     <li>fully qualified method name</li>
+ *     <li>total execution time</li>
+ *     <li>invocation count</li>
+ *     <li>start time in milliseconds since 1970-01-01</li>
+ * </ol></p>
+ * 
+ * <p>For reusing integration tests as performance tests, you can globally 
+ * turn ContiPerf off by setting the System property 
+ * <code>contiperf.active=false</code>. 
+ * </p>
+ * <br/><br/>
  * Created: 12.10.2009 07:36:02
  * @since 0.1
  * @author Volker Bergmann
  */
-public class ContiPerfRule implements org.junit.rules.MethodRule {
+public class ContiPerfRule implements MethodRule {
 	
-	private static final String SYSPROP_CONFIG_FILENAME = "contiperf.config";
+	public static final String SYSPROP_ACTIVE = "contiperf.active";
+	public static final String SYSPROP_CONFIG_FILENAME = "contiperf.config";
+	
 	private static final String DEFAULT_CONFIG_FILENAME = "contiperf.properties";
+	
+	private static Map<String, Integer> methodInvocationCounts;
+	private static Map<String, Integer> methodTimeouts;
+	private static int defaultInvocationCount;
+	
+	private ExecutionLogger logger;
+	
+	// initialization --------------------------------------------------------------------------------------------------
 	
 	static {
 		readConfig();
 	}
-	
-	private static Map<String, Integer> methodInvocationCounts;
-	private static long defaultInvocationCount;
-	
-	private ExecutionLogger logger;
 	
     public ContiPerfRule() {
     	this(new FileExecutionLogger());
@@ -63,11 +126,23 @@ public class ContiPerfRule implements org.junit.rules.MethodRule {
 	public ContiPerfRule(ExecutionLogger logger) {
 	    this.logger = logger;
     }
+	
+	// MethodRule interface implementation -----------------------------------------------------------------------------
 
 	public Statement apply(final Statement base, FrameworkMethod method, Object target) {
+		if (!active())
+			return base;
 	    String methodName = methodName(method, target);
-		long invocationCount = invocationCount(methodName);
-		return new MultiCallStatement(base, invocationCount, methodName, logger);
+		int invocationCount = invocationCount(method, methodName);
+		Integer timeLimit = timeout(method, methodName);
+		return new MultiCallStatement(base, invocationCount, timeLimit, methodName, logger);
+    }
+
+	// helpers ---------------------------------------------------------------------------------------------------------
+
+	private boolean active() {
+		String sysprop = System.getProperty(SYSPROP_ACTIVE);
+		return (sysprop == null || !"false".equals(sysprop.toLowerCase()));
     }
 
 	private static void readConfig() {
@@ -93,6 +168,8 @@ public class ContiPerfRule implements org.junit.rules.MethodRule {
 	        else
 	        	methodInvocationCounts.put(methodName, invocationCount);
         }
+		methodTimeouts = new HashMap<String, Integer>();
+		// TODO populate methodTimeouts
     }
 	
 	private static InputStream inputStream(String filename) {
@@ -119,9 +196,24 @@ public class ContiPerfRule implements org.junit.rules.MethodRule {
 		// no need to check signature: JUnit test methods have no parameters
 	}
 	
-	private long invocationCount(String methodName) {
+	private int invocationCount(FrameworkMethod method, String methodName) {
 		Integer count = methodInvocationCounts.get(methodName);
-		return (count != null ? count : defaultInvocationCount);
+		if (count != null)
+			return count;
+		PerfTest annotation = method.getAnnotation(PerfTest.class);
+		if (annotation != null && annotation.invocations() > 0)
+			return annotation.invocations();
+		return defaultInvocationCount;
 	}
 	
+	private Integer timeout(FrameworkMethod method, String methodName) {
+	    Integer timeout = methodTimeouts.get(methodName);
+		if (timeout == null) {
+			PerfTest annotation = method.getAnnotation(PerfTest.class);
+			if (annotation != null && annotation.timeLimit() > 0)
+				timeout = annotation.timeLimit();
+		}
+	    return timeout;
+    }
+
 }
