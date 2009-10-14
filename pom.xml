@@ -4,7 +4,7 @@
 
     <groupId>org.databene</groupId>
     <artifactId>contiperf</artifactId>
-    <version>0.1-alpha</version>
+    <version>0.1</version>
 <!--
     <parent>
         <groupId>databene</groupId>
@@ -23,19 +23,25 @@
     <licenses>
         <license>
             <name>GNU Lesser General Public License</name>
-            <url>http://www.fsf.org/licensing/licenses/gpl.txt</url>
+            <url>http://www.fsf.org/licensing/licenses/lgpl.txt</url>
             <distribution>manual</distribution>
             <comments>
-                Redistribution and use in source and binary forms, with or without
-                modification, is permitted under the terms of the GNU General Public License.
             </comments>
         </license>
+        
         <license>
             <name>BSD License</name>
-            <url>TODO</url>
+            <url>http://databene.org/contiperf/BSD%20License.html</url>
             <distribution>manual</distribution>
             <comments>
-            	TODO
+            </comments>
+        </license>
+        
+        <license>
+            <name>Eclipse Public License</name>
+            <url>http://www.eclipse.org/legal/epl-v10.html</url>
+            <distribution>manual</distribution>
+            <comments>
             </comments>
         </license>
     </licenses>
