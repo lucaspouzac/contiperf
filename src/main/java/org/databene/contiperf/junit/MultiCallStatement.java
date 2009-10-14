@@ -3,7 +3,8 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU General Public License (GPL).
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * WITHOUT A WARRANTY OF ANY KIND. ALL EXPRESS OR IMPLIED CONDITIONS,
@@ -22,24 +23,28 @@
 package org.databene.contiperf.junit;
 
 import org.databene.contiperf.ExecutionLogger;
+import org.junit.Assert;
 import org.junit.runners.model.Statement;
 
 /**
- * TODO Document class .<br/><br/>
+ * {@link Statement} implementation that wraps another Statement and adds
+ * multiple invocation, execution timing and duration check.<br/><br/>
  * Created: 12.10.2009 07:37:47
- * @since TODO
+ * @since 0.1
  * @author Volker Bergmann
  */
 final class MultiCallStatement extends Statement {
 	
     private final Statement base;
-    private long invocationCount;
+    private int invocationCount;
+    private Integer timeLimit;
     private String id;
     private ExecutionLogger logger;
 
-    MultiCallStatement(Statement base, long invocationCount, String id, ExecutionLogger logger) {
+    MultiCallStatement(Statement base, int invocationCount, Integer timeLimit, String id, ExecutionLogger logger) {
 	    this.base = base;
 	    this.invocationCount = invocationCount;
+	    this.timeLimit = timeLimit;
 	    this.id = id;
 	    this.logger = logger;
     }
@@ -51,6 +56,12 @@ final class MultiCallStatement extends Statement {
     		base.evaluate();
     	long elapsedTime = System.nanoTime() - startTime;
     	logger.logSummary(id, elapsedTime, invocationCount, startTime);
+    	if (timeLimit != null) {
+    		int elapsedMillis = (int) (elapsedTime / 1000000);
+    		if (elapsedMillis > timeLimit)
+    		Assert.fail("Method " + id + " exceeded time limit of " + 
+    				timeLimit + "ms running " + elapsedMillis + " ms");
+    	}
     }
     
 }
