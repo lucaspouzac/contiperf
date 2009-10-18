@@ -22,20 +22,14 @@
 
 package org.databene.contiperf.junit;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
+import org.databene.contiperf.Config;
+import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.ExecutionLogger;
-import org.databene.contiperf.Require;
-import org.databene.contiperf.RunWith;
-import org.databene.contiperf.Util;
+import org.databene.contiperf.PerformanceRequirement;
+import org.databene.contiperf.PerfTest;
+import org.databene.contiperf.Required;
 import org.databene.contiperf.log.FileExecutionLogger;
+import org.databene.contiperf.util.AnnotationUtil;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -103,24 +97,11 @@ import org.junit.runners.model.Statement;
  */
 public class ContiPerfRule implements MethodRule {
 	
-	public static final String SYSPROP_ACTIVE = "contiperf.active";
-	public static final String SYSPROP_CONFIG_FILENAME = "contiperf.config";
-	
-	private static final String DEFAULT_CONFIG_FILENAME = "contiperf.properties";
-	
-	private static Map<String, Integer> methodInvocationCounts;
-	private static Map<String, Integer> methodTimeouts;
-	private static int defaultInvocationCount;
-	
 	private ExecutionLogger logger;
 	
 	// initialization --------------------------------------------------------------------------------------------------
 	
-	static {
-		readConfig();
-	}
-	
-    public ContiPerfRule() {
+   public ContiPerfRule() {
     	this(new FileExecutionLogger());
     }
 
@@ -131,90 +112,32 @@ public class ContiPerfRule implements MethodRule {
 	// MethodRule interface implementation -----------------------------------------------------------------------------
 
 	public Statement apply(final Statement base, FrameworkMethod method, Object target) {
-		if (!active())
+		Config config = Config.instance();
+		if (!config.active())
 			return base;
-	    String methodName = methodName(method, target);
-		int invocationCount = invocationCount(method, methodName);
-		Integer maxLatency = maxLatency(method, methodName);
-		return new MultiCallStatement(base, invocationCount, maxLatency, methodName, logger);
+	    String testId = methodName(method, target);
+		return new MultiCallStatement(base, testId, executionConfig(method, testId), 
+				requirements(method, testId), logger);
     }
-
-	// helpers ---------------------------------------------------------------------------------------------------------
-
-	private boolean active() {
-		String sysprop = System.getProperty(SYSPROP_ACTIVE);
-		return (sysprop == null || !"false".equals(sysprop.toLowerCase()));
-    }
-
-	private static void readConfig() {
-	    String filename = configFileName();
-    	Properties props = new Properties();
-	    InputStream in = inputStream(filename);
-	    if (in != null) {
-	    	try {
-	    		props.load(in);
-	    	} catch (IOException e) {
-	    		e.printStackTrace();
-	    	} finally {
-	    		Util.close(in);
-	    	}
-	    }
-	    defaultInvocationCount = 1;
-		methodInvocationCounts = new HashMap<String, Integer>();
-		for (Map.Entry<?, ?> entry : props.entrySet()) {
-	        String methodName = entry.getKey().toString();
-	        int invocationCount = Integer.parseInt(entry.getValue().toString());
-	        if ("default".equals(methodName))
-	        	defaultInvocationCount = invocationCount;
-	        else
-	        	methodInvocationCounts.put(methodName, invocationCount);
-        }
-		methodTimeouts = new HashMap<String, Integer>();
-		// TODO populate methodTimeouts
-    }
-	
-	private static InputStream inputStream(String filename) {
-		File file = new File(filename);
-		if (file.exists()) {
-			try {
-	            return new FileInputStream(file);
-            } catch (FileNotFoundException e) {
-	            // This is not supposed to happen. But if it does, we fall back to the context ClassLoader!
-            }
-		}
-		return Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
-    }
-
-	private static String configFileName() {
-		String filename = System.getProperty(SYSPROP_CONFIG_FILENAME);
-		if (filename == null || filename.trim().length() == 0)
-			filename = DEFAULT_CONFIG_FILENAME;
-		return filename;
-	}
 
 	private String methodName(FrameworkMethod method, Object target) {
 		return target.getClass().getName() + '.' + method.getName(); 
 		// no need to check signature: JUnit test methods have no parameters
 	}
 	
-	private int invocationCount(FrameworkMethod method, String methodName) {
-		Integer count = methodInvocationCounts.get(methodName);
-		if (count != null)
-			return count;
-		RunWith annotation = method.getAnnotation(RunWith.class);
-		if (annotation != null && annotation.invocations() > 0)
-			return annotation.invocations();
-		return defaultInvocationCount;
+	private ExecutionConfig executionConfig(FrameworkMethod method, String methodName) {
+		ExecutionConfig config = AnnotationUtil.mapPerfTestAnnotation(method.getAnnotation(PerfTest.class));
+		if (config == null)
+			config = new ExecutionConfig(1);
+		int count = Config.instance().getInvocationCount(methodName);
+		if (count > 0)
+			config.setInvocations(count);
+		return config;
 	}
 	
-	private Integer maxLatency(FrameworkMethod method, String methodName) {
-	    Integer timeout = methodTimeouts.get(methodName);
-		if (timeout == null) {
-			Require reqAnnotation = method.getAnnotation(Require.class);
-			if (reqAnnotation != null && reqAnnotation.max() > 0)
-				timeout = reqAnnotation.max();
-		}
-	    return timeout;
+	private PerformanceRequirement requirements(FrameworkMethod method, String testId) {
+		// TODO make use of file
+		return AnnotationUtil.mapRequired(method.getAnnotation(Required.class));
     }
 
 }
