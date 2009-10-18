@@ -32,7 +32,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.databene.contiperf.ExecutionLogger;
-import org.databene.contiperf.PerfTest;
+import org.databene.contiperf.Require;
+import org.databene.contiperf.RunWith;
 import org.databene.contiperf.Util;
 import org.databene.contiperf.log.FileExecutionLogger;
 import org.junit.rules.MethodRule;
@@ -134,8 +135,8 @@ public class ContiPerfRule implements MethodRule {
 			return base;
 	    String methodName = methodName(method, target);
 		int invocationCount = invocationCount(method, methodName);
-		Integer timeLimit = timeout(method, methodName);
-		return new MultiCallStatement(base, invocationCount, timeLimit, methodName, logger);
+		Integer maxLatency = maxLatency(method, methodName);
+		return new MultiCallStatement(base, invocationCount, maxLatency, methodName, logger);
     }
 
 	// helpers ---------------------------------------------------------------------------------------------------------
@@ -200,18 +201,18 @@ public class ContiPerfRule implements MethodRule {
 		Integer count = methodInvocationCounts.get(methodName);
 		if (count != null)
 			return count;
-		PerfTest annotation = method.getAnnotation(PerfTest.class);
+		RunWith annotation = method.getAnnotation(RunWith.class);
 		if (annotation != null && annotation.invocations() > 0)
 			return annotation.invocations();
 		return defaultInvocationCount;
 	}
 	
-	private Integer timeout(FrameworkMethod method, String methodName) {
+	private Integer maxLatency(FrameworkMethod method, String methodName) {
 	    Integer timeout = methodTimeouts.get(methodName);
 		if (timeout == null) {
-			PerfTest annotation = method.getAnnotation(PerfTest.class);
-			if (annotation != null && annotation.timeLimit() > 0)
-				timeout = annotation.timeLimit();
+			Require reqAnnotation = method.getAnnotation(Require.class);
+			if (reqAnnotation != null && reqAnnotation.max() > 0)
+				timeout = reqAnnotation.max();
 		}
 	    return timeout;
     }
