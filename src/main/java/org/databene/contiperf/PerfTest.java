@@ -30,27 +30,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Used to specify performance requirements for a test.<br/><br/>
- * Created: 15.10.2009 14:42:57
+ * Defines execution details and performance requirements for a test method.<br/><br/>
+ * Created: 14.10.2009 14:41:18
  * @since 1.0
  * @author Volker Bergmann
  */
 @Documented
 @Target({ METHOD })
 @Retention(RUNTIME)
-public @interface Require {
-	int throughput()   default -1;
+public @interface PerfTest {
+	int invocations()   default  1;
+	int duration()      default -1;
+	int timeout()       default -1;
 
-	int average()      default -1;
-	int median()       default -1;
-	int max()          default -1;
-	int totalTime()    default -1;
-	
-	int percentile90() default -1;
-	int percentile95() default -1;
-	int percentile99() default -1;
-	
-	Percentile[] percentiles()  default {};
-	
 	boolean cancelOnViolation() default false;
 }
