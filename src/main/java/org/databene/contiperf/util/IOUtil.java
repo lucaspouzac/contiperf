@@ -20,11 +20,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.databene.contiperf;
+package org.databene.contiperf.util;
 
 import java.io.Closeable;
 
-public class Util {
+public class IOUtil {
 
 	public static void close(Closeable resource) {
 	    if (resource != null) {

@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.databene.contiperf.ExecutionLogger;
-import org.databene.contiperf.Util;
+import org.databene.contiperf.util.IOUtil;
 
 public class FileExecutionLogger implements ExecutionLogger {
 	
@@ -65,7 +65,7 @@ public class FileExecutionLogger implements ExecutionLogger {
         } catch (IOException e) {
 	        e.printStackTrace();
         } finally {
-	        Util.close(out);
+	        IOUtil.close(out);
         }
     }
 

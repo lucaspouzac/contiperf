@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.databene.contiperf.util.IOUtil;
+
 /**
  * Parses and provides file based test configuration.<br/><br/>
  * Created: 18.10.2009 06:46:31
@@ -70,7 +72,7 @@ public class Config {
 	    	} catch (IOException e) {
 	    		e.printStackTrace();
 	    	} finally {
-	    		Util.close(in);
+	    		IOUtil.close(in);
 	    	}
 	    }
 	    defaultInvocationCount = 1;
