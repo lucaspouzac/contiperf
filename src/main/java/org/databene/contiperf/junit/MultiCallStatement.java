@@ -23,6 +23,7 @@
 package org.databene.contiperf.junit;
 
 import org.databene.contiperf.ExecutionLogger;
+import org.databene.stat.LatencyCounter;
 import org.junit.Assert;
 import org.junit.runners.model.Statement;
 
@@ -30,38 +31,53 @@ import org.junit.runners.model.Statement;
  * {@link Statement} implementation that wraps another Statement and adds
  * multiple invocation, execution timing and duration check.<br/><br/>
  * Created: 12.10.2009 07:37:47
- * @since 0.1
+ * @since 1.0
  * @author Volker Bergmann
  */
 final class MultiCallStatement extends Statement {
 	
     private final Statement base;
     private int invocationCount;
-    private Integer timeLimit;
     private String id;
     private ExecutionLogger logger;
 
-    MultiCallStatement(Statement base, int invocationCount, Integer timeLimit, String id, ExecutionLogger logger) {
+    private Integer max;
+    private Integer totalTime;
+
+    MultiCallStatement(Statement base, int invocationCount, Integer max, String id, ExecutionLogger logger) {
 	    this.base = base;
 	    this.invocationCount = invocationCount;
-	    this.timeLimit = timeLimit;
+	    this.max = max;
 	    this.id = id;
 	    this.logger = logger;
     }
 
     @Override
     public void evaluate() throws Throwable {
+    	int maxCounter = (max != null ? max : 1000);
+    	LatencyCounter counter = new LatencyCounter(maxCounter);
     	long startTime = System.nanoTime();
-    	for (int i = 0; i < invocationCount; i++)
-    		base.evaluate();
+    	for (int i = 0; i < invocationCount; i++) {
+        	int latency = measureSingleExecution();
+        	if (max != null && latency > max)
+        		Assert.fail("Method " + id + " exceeded time limit of " + 
+        				max + "ms running " + latency + " ms");
+        	counter.addSample(latency);
+    	}
     	long elapsedTime = System.nanoTime() - startTime;
     	logger.logSummary(id, elapsedTime, invocationCount, startTime);
-    	if (timeLimit != null) {
+    	if (totalTime != null) {
     		int elapsedMillis = (int) (elapsedTime / 1000000);
-    		if (elapsedMillis > timeLimit)
+    		if (elapsedMillis > totalTime)
     		Assert.fail("Method " + id + " exceeded time limit of " + 
-    				timeLimit + "ms running " + elapsedMillis + " ms");
+    				totalTime + " ms running " + elapsedMillis + " ms");
     	}
+    }
+
+	private int measureSingleExecution() throws Throwable {
+	    long callStart = System.nanoTime();
+	    base.evaluate();
+	    return (int) ((System.nanoTime() - callStart) / 1000000);
     }
     
 }
