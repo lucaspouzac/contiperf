@@ -22,9 +22,7 @@
 
 package org.databene.contiperf;
 
-import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -33,15 +31,15 @@ import java.lang.annotation.Target;
 
 /**
  * Defines execution details and performance requirements for a test method.<br/><br/>
- * 
  * Created: 14.10.2009 14:41:18
  * @since 1.0
  * @author Volker Bergmann
  */
 @Documented
-@Target({ METHOD, FIELD, TYPE })
+@Target({ METHOD })
 @Retention(RUNTIME)
-public @interface PerfTest {
-	int invocations() default  1;
-	int timeLimit()   default -1;
+public @interface RunWith {
+	int invocations()   default  1;
+	int duration()      default -1;
+	int timeout()       default -1;
 }
