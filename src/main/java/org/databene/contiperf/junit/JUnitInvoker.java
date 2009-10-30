@@ -20,9 +20,42 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.databene.contiperf;
+package org.databene.contiperf.junit;
 
-public interface ExecutionLogger {
-	void logInvocation(String id, int latency, long startTime);
-	void logSummary(String id, long elapsedTime, long invocationCount, long startTime);
+import org.databene.contiperf.Invoker;
+import org.junit.runners.model.Statement;
+
+/**
+ * TODO Document class.<br/><br/>
+ * Created: 22.10.2009 16:55:12
+ * @since 1.0
+ * @author Volker Bergmann
+ */
+public class JUnitInvoker implements Invoker {
+	
+	private String id;
+	private Statement base;
+
+	public JUnitInvoker(String id, Statement base) {
+	    this.id = id;
+	    this.base = base;
+    }
+
+	public String getId() {
+		return id;
+	}
+
+	public void invoke(Object[] args) throws Exception {
+		try {
+	        base.evaluate();
+        } catch (Throwable e) {
+        	if (e instanceof RuntimeException)
+        		throw (RuntimeException) e;
+        	else if (e instanceof Exception)
+        		throw (Exception) e;
+        	else
+        		throw new RuntimeException(e);
+        }
+	}
+
 }

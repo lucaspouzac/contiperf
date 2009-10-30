@@ -29,9 +29,14 @@ package org.databene.contiperf;
  * @author Volker Bergmann
  */
 public class PercentileRequirement {
-	int base;
-	int limit;
 	
+	private int base;
+	private int limit;
+	
+	public PercentileRequirement() {
+	    this(-1, -1);
+    }
+
 	public PercentileRequirement(int base, int limit) {
 	    this.base = base;
 	    this.limit = limit;
@@ -41,8 +46,16 @@ public class PercentileRequirement {
     	return base;
     }
 
+	public void setBase(int base) {
+    	this.base = base;
+    }
+
 	public int getLimit() {
     	return limit;
     }
 	
+	public void setLimit(int limit) {
+    	this.limit = limit;
+    }
+
 }

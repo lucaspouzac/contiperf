@@ -22,8 +22,6 @@
 
 package org.databene.contiperf;
 
-import java.util.List;
-
 /**
  * Defines performance requirements on a test.<br/><br/>
  * Created: 18.10.2009 06:21:57
@@ -36,11 +34,15 @@ public class PerformanceRequirement {
 	int max;
 	int totalTime;
 	
-	List<PercentileRequirement> percentiles;
+	PercentileRequirement[] percentiles;
 
 	int throughput;
 
-	public PerformanceRequirement(int average, int max, int totalTime, List<PercentileRequirement> percentiles,
+	public PerformanceRequirement() {
+	    this(-1, -1, -1, null, -1);
+    }
+
+	public PerformanceRequirement(int average, int max, int totalTime, PercentileRequirement[] percentiles,
             int throughput) {
 	    this.average = average;
 	    this.max = max;
@@ -57,16 +59,24 @@ public class PerformanceRequirement {
     	return max;
     }
 
+	public void setMax(int max) {
+	    this.max = max;
+    }
+	
     public int getTotalTime() {
     	return totalTime;
     }
 
-    public List<PercentileRequirement> getPercentiles() {
+    public PercentileRequirement[] getPercentiles() {
     	return percentiles;
+    }
+
+	public void setPercentiles(PercentileRequirement[] percentiles) { // TODO make this a String property and define a convenient literal
+	    this.percentiles = percentiles;
     }
 
     public int getThroughput() {
     	return throughput;
     }
-	
+
 }

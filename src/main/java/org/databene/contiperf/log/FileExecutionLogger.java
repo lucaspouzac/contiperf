@@ -39,26 +39,19 @@ public class FileExecutionLogger implements ExecutionLogger {
 
 	public FileExecutionLogger() {
 		if (firstCall) {
-			File file = new File(FILENAME);
-			ensureDirectoryExists(file.getParentFile());	
-			if (file.exists())
-				file.delete();
+			createSummaryFile();
 			firstCall = false;
 		}
     }
 
-	private void ensureDirectoryExists(File dir) {
-	    File parent = dir.getParentFile();
-	    if (!dir.exists()) {
-	    	ensureDirectoryExists(parent);
-	    	dir.mkdir();
-	    }
+	public void logInvocation(String id, int latency, long startTime) {
+	    System.out.println(id + ',' + latency + ',' + startTime);
     }
 
 	public void logSummary(String id, long elapsedTime, long invocationCount, long startTime) {
 		OutputStream out = null;
-        String message = id + "," + (elapsedTime / 1000000) + ',' 
-        	+ invocationCount + ',' + (startTime / 1000000) + LINE_SEPARATOR;
+        String message = id + "," + elapsedTime + ',' 
+        	+ invocationCount + ',' + startTime + LINE_SEPARATOR; // TODO make formatter a strategy
 		try {
 	        out = new FileOutputStream(FILENAME, true);
 	        out.write(message.getBytes());
@@ -67,6 +60,21 @@ public class FileExecutionLogger implements ExecutionLogger {
         } finally {
 	        IOUtil.close(out);
         }
+    }
+
+	private void createSummaryFile() {
+	    File file = new File(FILENAME);
+	    ensureDirectoryExists(file.getParentFile());	
+	    if (file.exists())
+	    	file.delete();
+    }
+
+	private void ensureDirectoryExists(File dir) {
+	    File parent = dir.getParentFile();
+	    if (!dir.exists()) {
+	    	ensureDirectoryExists(parent);
+	    	dir.mkdir();
+	    }
     }
 
 }

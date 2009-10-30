@@ -22,7 +22,29 @@
 
 package org.databene.contiperf;
 
-public interface ExecutionLogger {
-	void logInvocation(String id, int latency, long startTime);
-	void logSummary(String id, long elapsedTime, long invocationCount, long startTime);
+/**
+ * TODO Document class.<br/><br/>
+ * Created: 22.10.2009 06:30:28
+ * @since 1.0
+ * @author Volker Bergmann
+ */
+public class PerfTestRunner {
+
+    private ExecutionConfig config;
+    private ArgumentsProvider argsProvider;
+    
+    private PerfTestController controller;
+
+    public PerfTestRunner(ExecutionConfig config, 
+    		PerfTestController controller, ArgumentsProvider argsProvider) {
+	    this.config = config;
+	    this.controller = controller;
+	    this.argsProvider = argsProvider;
+    }
+
+    public void run() throws Exception {
+    	for (int i = 0; i < config.getInvocations(); i++)
+    	    controller.invoke(argsProvider.next());
+    }
+
 }

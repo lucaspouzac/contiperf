@@ -22,11 +22,13 @@
 
 package org.databene.contiperf.junit;
 
+import org.databene.contiperf.EmptyArgumentsProvider;
 import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.ExecutionLogger;
+import org.databene.contiperf.Invoker;
+import org.databene.contiperf.PerfTestController;
 import org.databene.contiperf.PerformanceRequirement;
-import org.databene.stat.LatencyCounter;
-import org.junit.Assert;
+import org.databene.contiperf.PerfTestRunner;
 import org.junit.runners.model.Statement;
 
 /**
@@ -36,15 +38,15 @@ import org.junit.runners.model.Statement;
  * @since 1.0
  * @author Volker Bergmann
  */
-final class MultiCallStatement extends Statement {
+final class PerfTestStatement extends Statement {
 	
-    private final Statement base;
     private String id;
+    private final Statement base;
     private ExecutionLogger logger;
     private ExecutionConfig config;
     private PerformanceRequirement requirement;
 
-    MultiCallStatement(Statement base, String id, ExecutionConfig config, 
+    PerfTestStatement(Statement base, String id, ExecutionConfig config, 
     		PerformanceRequirement requirement, ExecutionLogger logger) {
 	    this.base = base;
 	    this.id = id;
@@ -55,32 +57,10 @@ final class MultiCallStatement extends Statement {
 
     @Override
     public void evaluate() throws Throwable {
-    	int max = (requirement != null ? requirement.getMax() : -1);
-    	int maxCounter = (max >= 0 ? max : 1000);
-    	LatencyCounter counter = new LatencyCounter(maxCounter);
-    	long startTime = System.nanoTime();
-    	for (int i = 0; i < config.getInvocations(); i++) {
-        	int latency = measureSingleExecution();
-			if (max >= 0 && latency > max)
-        		Assert.fail("Method " + id + " exceeded time limit of " + 
-        				max + "ms running " + latency + " ms");
-        	counter.addSample(latency);
-    	}
-    	long elapsedTime = System.nanoTime() - startTime;
-    	logger.logSummary(id, elapsedTime, config.getInvocations(), startTime);
-    	long totalTime = config.getTimeout();
-    	if (totalTime >= 0) {
-    		int elapsedMillis = (int) (elapsedTime / 1000000);
-    		if (elapsedMillis > totalTime)
-    		Assert.fail("Test run " + id + " exceeded timeout of " + 
-    				totalTime + " ms running " + elapsedMillis + " ms");
-    	}
-    }
-
-	private int measureSingleExecution() throws Throwable {
-	    long callStart = System.nanoTime();
-	    base.evaluate();
-	    return (int) ((System.nanoTime() - callStart) / 1000000);
+    	Invoker invoker = new JUnitInvoker(id, base);
+    	PerfTestController controller = new PerfTestController(invoker, requirement, logger);
+		PerfTestRunner runner = new PerfTestRunner(config, controller, new EmptyArgumentsProvider());
+		runner.run();
     }
     
 }

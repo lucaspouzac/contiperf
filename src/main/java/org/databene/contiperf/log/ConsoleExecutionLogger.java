@@ -27,7 +27,11 @@ import org.databene.contiperf.ExecutionLogger;
 public class ConsoleExecutionLogger implements ExecutionLogger {
 
     public void logSummary(String id, long elapsedTime, long invocationCount, long startTime) {
-	    System.out.println(id + ',' + (elapsedTime / 1000000) + ',' + invocationCount + ',' + (startTime / 1000000));
+	    System.out.println(id + ',' + elapsedTime + ',' + invocationCount + ',' + 1000000);
+    }
+
+	public void logInvocation(String id, int latency, long startTime) {
+	    System.out.println(id + ',' + latency + ',' + 1000000);
     }
 
 }

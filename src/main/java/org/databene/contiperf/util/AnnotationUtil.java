@@ -55,21 +55,23 @@ public class AnnotationUtil {
 		int max = annotation.max();
 		int totalTime = annotation.totalTime();
 		
-		List<PercentileRequirement> percReqs = new ArrayList<PercentileRequirement>();
+		List<PercentileRequirement> percTmp = new ArrayList<PercentileRequirement>();
 		int median = annotation.median();
 		if (median > 0)
-			percReqs.add(new PercentileRequirement(50, median));
+			percTmp.add(new PercentileRequirement(50, median));
 		int percentile90 = annotation.percentile90();
 		if (percentile90 > 0)
-			percReqs.add(new PercentileRequirement(90, percentile90));
+			percTmp.add(new PercentileRequirement(90, percentile90));
 		int percentile95 = annotation.percentile95();
 		if (percentile95 > 0)
-			percReqs.add(new PercentileRequirement(95, percentile95));
+			percTmp.add(new PercentileRequirement(95, percentile95));
 		int percentile99 = annotation.percentile99();
 		if (percentile99 > 0)
-			percReqs.add(new PercentileRequirement(99, percentile99));
+			percTmp.add(new PercentileRequirement(99, percentile99));
 
-		return new PerformanceRequirement(average, max, totalTime, percReqs, throughput);
+		PercentileRequirement[] percs = new PercentileRequirement[percTmp.size()];
+		percTmp.toArray(percs);
+		return new PerformanceRequirement(average, max, totalTime, percs, throughput);
     }
 
 }

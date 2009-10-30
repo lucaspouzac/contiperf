@@ -116,7 +116,7 @@ public class ContiPerfRule implements MethodRule {
 		if (!config.active())
 			return base;
 	    String testId = methodName(method, target);
-		return new MultiCallStatement(base, testId, executionConfig(method, testId), 
+		return new PerfTestStatement(base, testId, executionConfig(method, testId), 
 				requirements(method, testId), logger);
     }
 

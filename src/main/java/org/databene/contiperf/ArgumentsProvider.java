@@ -22,7 +22,12 @@
 
 package org.databene.contiperf;
 
-public interface ExecutionLogger {
-	void logInvocation(String id, int latency, long startTime);
-	void logSummary(String id, long elapsedTime, long invocationCount, long startTime);
+/**
+ * TODO Document class.<br/><br/>
+ * Created: 22.10.2009 06:40:33
+ * @since 1.0
+ * @author Volker Bergmann
+ */
+public interface ArgumentsProvider {
+	Object[] next();
 }
