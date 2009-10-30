@@ -34,6 +34,8 @@ public final class LatencyCounter {
     private int maxLatency;
     private long latencyCounts[];
 
+    private long startTime;
+    private long endTime;
     private long sampleCount;
     private long totalLatency;
 
@@ -47,10 +49,16 @@ public final class LatencyCounter {
         this.totalLatency = 0;
         this.minLatency = -1;
         this.maxLatency = -1;
+        this.startTime = -1;
+        this.endTime = -1;
     }
     
     // interface -------------------------------------------------------------------------------------------------------
 
+    public void start() {
+    	this.startTime = System.currentTimeMillis();
+    }
+    
     public void addSample(int latency) {
         if (latency >= latencyCounts.length)
             resize(latency);
@@ -61,6 +69,14 @@ public final class LatencyCounter {
             minLatency = latency;
         if (latency > maxLatency)
             maxLatency = latency;
+    }
+
+    public void stop() {
+    	this.endTime = System.currentTimeMillis();
+    }
+    
+	public long getStartTime() {
+	    return startTime;
     }
 
     public long getLatencyCount(int latency) {
@@ -95,6 +111,16 @@ public final class LatencyCounter {
                 return value;
         }
         return maxLatency;
+    }
+    
+    public double throughput() {
+    	if (startTime == -1 || endTime == -1)
+    		throw new RuntimeException("Invalid setup: Use start() and stop() to indicate test start and end!");
+    	return 1000. * sampleCount / duration();
+    }
+
+	public long duration() {
+	    return endTime - startTime;
     }
     
     // private helpers -------------------------------------------------------------------------------------------------
