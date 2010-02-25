@@ -22,6 +22,8 @@
 
 package org.databene.contiperf;
 
+import java.io.PrintWriter;
+
 import org.databene.stat.LatencyCounter;
 
 /**
@@ -70,11 +72,7 @@ public class PerfTestController {
     	long elapsedTime = counter.duration();
     	logger.logSummary(invoker.getId(), elapsedTime, counter.sampleCount(), counter.getStartTime());
     	long maxTotalTime = requirement.getTotalTime();
-    	System.out.println("max:     " + counter.maxLatency());
-    	System.out.println("average: " + counter.averageLatency());
-    	System.out.println("median:  " + counter.percentileLatency(50));
-    	System.out.println("90%:     " + counter.percentileLatency(90));
-    	System.out.println("95%:     " + counter.percentileLatency(95));
+    	counter.printSummary(new PrintWriter(System.out));
     	if (maxTotalTime >= 0) {
     		int elapsedMillis = (int) (elapsedTime / 1000000);
     		if (elapsedMillis > maxTotalTime)

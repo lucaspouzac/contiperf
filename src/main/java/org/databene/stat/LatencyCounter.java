@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2006-2009 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2006-2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -21,6 +21,8 @@
  */
 
 package org.databene.stat;
+
+import java.io.PrintWriter;
 
 /**
  * Counts latencies and calculates performance-related statistics.<br/><br/>
@@ -59,7 +61,7 @@ public final class LatencyCounter {
     	this.startTime = System.currentTimeMillis();
     }
     
-    public void addSample(int latency) {
+    public synchronized void addSample(int latency) {
         if (latency >= latencyCounts.length)
             resize(latency);
         latencyCounts[latency]++;
@@ -79,23 +81,23 @@ public final class LatencyCounter {
 	    return startTime;
     }
 
-    public long getLatencyCount(int latency) {
+    public long getLatencyCount(long latency) {
         if (latency < latencyCounts.length)
-            return latencyCounts[latency];
+            return latencyCounts[(int) latency];
         else
             return 0;
     }
 
     public double averageLatency() {
-        return (double)totalLatency / sampleCount;
+        return (double) totalLatency / sampleCount;
     }
 
     public long minLatency() {
-        return minLatency;
+        return Math.max(minLatency, 0);
     }
 
     public long maxLatency() {
-        return maxLatency;
+        return Math.max(maxLatency, 0);
     }
 
     public long sampleCount() {
@@ -105,7 +107,7 @@ public final class LatencyCounter {
     public long percentileLatency(int percentile) {
         long targetCount = percentile * sampleCount / 100;
         long count = 0;
-        for (int value = minLatency; value <= maxLatency; value++) {
+        for (long value = minLatency(); value <= maxLatency; value++) {
             count += getLatencyCount(value);
             if (count >= targetCount)
                 return value;
@@ -131,6 +133,16 @@ public final class LatencyCounter {
         long[] newLatencyCounts = new long[newLength];
         System.arraycopy(latencyCounts, 0, newLatencyCounts, 0, latencyCounts.length);
         latencyCounts = newLatencyCounts;
+    }
+
+	public void printSummary(PrintWriter out, int... percentiles) {
+    	out.println("samples: " + sampleCount);
+    	out.println("max:     " + maxLatency());
+    	out.println("average: " + averageLatency());
+    	out.println("median:  " + percentileLatency(50));
+    	for (int percentile : percentiles)
+    		out.println(percentile + "%:     " + percentileLatency(percentile));
+    	out.flush();
     }
 
 }
