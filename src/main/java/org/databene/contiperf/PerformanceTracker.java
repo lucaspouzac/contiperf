@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -32,7 +32,7 @@ import org.databene.stat.LatencyCounter;
  * @since 1.0
  * @author Volker Bergmann
  */
-public class PerfTestController {
+public class PerformanceTracker {
 	
 	private Invoker invoker;
     private PerformanceRequirement requirement;
@@ -40,7 +40,7 @@ public class PerfTestController {
     private LatencyCounter counter;
     private boolean started;
 
-	public PerfTestController(Invoker invoker, PerformanceRequirement requirement, ExecutionLogger logger) {
+	public PerformanceTracker(Invoker invoker, PerformanceRequirement requirement, ExecutionLogger logger) {
 	    this.invoker = invoker;
 	    this.requirement = requirement;
 	    this.logger = logger;
@@ -54,17 +54,18 @@ public class PerfTestController {
     	started = true;
 	}
 	
-	public void invoke(Object[] args) throws Exception {
+	public Object invoke(Object[] args) throws Exception {
 		if (!started)
 			start();
 	    long callStart = System.currentTimeMillis();
-		invoker.invoke(args);
+		Object result = invoker.invoke(args);
 	    int latency = (int) (System.currentTimeMillis() - callStart);
 	    counter.addSample(latency);
 	    logger.logInvocation(invoker.getId(), latency, callStart);
 	    if (requirement != null && requirement.getMax() >= 0 && latency > requirement.getMax())
 	    	throw new AssertionError("Method " + invoker.getId() + " exceeded time limit of " + 
 	    			requirement.getMax() + " ms running " + latency + " ms");
+	    return result;
 	}
 	
 	public void stop() {
@@ -81,4 +82,8 @@ public class PerfTestController {
     	}
 	}
 	
+    public LatencyCounter getCounter() {
+	    return counter;
+    }
+
 }

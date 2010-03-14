@@ -26,7 +26,7 @@ import org.databene.contiperf.EmptyArgumentsProvider;
 import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.ExecutionLogger;
 import org.databene.contiperf.Invoker;
-import org.databene.contiperf.PerfTestController;
+import org.databene.contiperf.PerformanceTracker;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.PerfTestRunner;
 import org.junit.runners.model.Statement;
@@ -58,7 +58,7 @@ final class PerfTestStatement extends Statement {
     @Override
     public void evaluate() throws Throwable {
     	Invoker invoker = new JUnitInvoker(id, base);
-    	PerfTestController controller = new PerfTestController(invoker, requirement, logger);
+    	PerformanceTracker controller = new PerformanceTracker(invoker, requirement, logger);
 		PerfTestRunner runner = new PerfTestRunner(config, controller, new EmptyArgumentsProvider());
 		runner.run();
     }

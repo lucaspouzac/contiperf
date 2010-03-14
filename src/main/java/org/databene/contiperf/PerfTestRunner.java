@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -33,18 +33,18 @@ public class PerfTestRunner {
     private ExecutionConfig config;
     private ArgumentsProvider argsProvider;
     
-    private PerfTestController controller;
+    private PerformanceTracker tracker;
 
     public PerfTestRunner(ExecutionConfig config, 
-    		PerfTestController controller, ArgumentsProvider argsProvider) {
+    		PerformanceTracker controller, ArgumentsProvider argsProvider) {
 	    this.config = config;
-	    this.controller = controller;
+	    this.tracker = controller;
 	    this.argsProvider = argsProvider;
     }
 
     public void run() throws Exception {
     	for (int i = 0; i < config.getInvocations(); i++)
-    	    controller.invoke(argsProvider.next());
+    	    tracker.invoke(argsProvider.next());
     }
 
 }
