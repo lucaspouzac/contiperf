@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -30,5 +30,5 @@ package org.databene.contiperf;
  */
 public interface Invoker {
 	String getId();
-	void invoke(Object[] args) throws Exception;
+	Object invoke(Object[] args) throws Exception;
 }

@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -45,9 +45,10 @@ public class JUnitInvoker implements Invoker {
 		return id;
 	}
 
-	public void invoke(Object[] args) throws Exception {
+	public Object invoke(Object[] args) throws Exception {
 		try {
 	        base.evaluate();
+	        return null;
         } catch (Throwable e) {
         	if (e instanceof RuntimeException)
         		throw (RuntimeException) e;
