@@ -23,7 +23,9 @@
 package org.databene.contiperf;
 
 /**
- * TODO Document class.<br/><br/>
+ * Abstraction of anything that can be invoked.
+ * This is used in order to target specific details of the code to be invoked 
+ * (e.g. JUnit) from the ContiPerf framework.<br/><br/>
  * Created: 22.10.2009 16:25:29
  * @since 1.0
  * @author Volker Bergmann

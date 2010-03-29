@@ -23,7 +23,8 @@
 package org.databene.contiperf;
 
 /**
- * TODO Document class.<br/><br/>
+ * Executes the actual performance tests using an {@link ArgumentsProvider} 
+ * to create arguments and an {@link Invoker} to call the target code.<br/><br/>
  * Created: 22.10.2009 06:30:28
  * @since 1.0
  * @author Volker Bergmann

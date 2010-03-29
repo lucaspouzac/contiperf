@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -23,7 +23,7 @@
 package org.databene.contiperf;
 
 /**
- * TODO Document class.<br/><br/>
+ * {@link ArgumentsProvider} implementation for no-arg invocations.<br/><br/>
  * Created: 22.10.2009 06:44:19
  * @since 1.0
  * @author Volker Bergmann
