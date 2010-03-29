@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -67,16 +67,33 @@ public class PerformanceRequirement {
     	return totalTime;
     }
 
-    public PercentileRequirement[] getPercentiles() {
-    	return percentiles;
-    }
-
-	public void setPercentiles(PercentileRequirement[] percentiles) { // TODO make this a String property and define a convenient literal
+	public void setPercentileArray(PercentileRequirement[] percentiles) {
 	    this.percentiles = percentiles;
     }
 
     public int getThroughput() {
     	return throughput;
+    }
+
+	public void setPercentiles(String percentilesSpec) {
+	    setPercentileArray(parsePercentiles(percentilesSpec));
+    }
+
+	private PercentileRequirement[] parsePercentiles(String percentilesSpec) {
+		String[] assignments = percentilesSpec.split(",");
+		PercentileRequirement[] reqs = new PercentileRequirement[assignments.length];
+		for (int i = 0; i < assignments.length; i++)
+			reqs[i] = parsePercentile(assignments[i]);
+	    return reqs;
+    }
+
+	private PercentileRequirement parsePercentile(String assignment) {
+	    String[] parts = assignment.split(":");
+	    if (parts.length != 2)
+	    	throw new RuntimeException("Ilegal percentile syntax: " + assignment);
+	    int base  = Integer.parseInt(parts[0]);
+	    int limit = Integer.parseInt(parts[1]);
+		return new PercentileRequirement(base, limit);
     }
 
 }
