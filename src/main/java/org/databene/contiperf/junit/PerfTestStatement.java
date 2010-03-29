@@ -58,9 +58,10 @@ final class PerfTestStatement extends Statement {
     @Override
     public void evaluate() throws Throwable {
     	Invoker invoker = new JUnitInvoker(id, base);
-    	PerformanceTracker controller = new PerformanceTracker(invoker, requirement, logger);
-		PerfTestRunner runner = new PerfTestRunner(config, controller, new EmptyArgumentsProvider());
+    	PerformanceTracker tracker = new PerformanceTracker(invoker, requirement, logger);
+		PerfTestRunner runner = new PerfTestRunner(config, tracker, new EmptyArgumentsProvider());
 		runner.run();
+		tracker.stop();
     }
     
 }
