@@ -24,24 +24,24 @@ package org.databene.contiperf;
 
 import java.io.PrintWriter;
 
+import org.databene.contiperf.util.InvokerProxy;
 import org.databene.stat.LatencyCounter;
 
 /**
- * TODO Document class.<br/><br/>
+ * {@link InvokerProxy} that provides performance tracking features.<br/><br/>
  * Created: 22.10.2009 16:36:43
  * @since 1.0
  * @author Volker Bergmann
  */
-public class PerformanceTracker {
+public class PerformanceTracker extends InvokerProxy {
 	
-	private Invoker invoker;
     private PerformanceRequirement requirement;
     private ExecutionLogger logger;
     private LatencyCounter counter;
     private boolean started;
 
-	public PerformanceTracker(Invoker invoker, PerformanceRequirement requirement, ExecutionLogger logger) {
-	    this.invoker = invoker;
+	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, ExecutionLogger logger) {
+	    super(target);
 	    this.requirement = requirement;
 	    this.logger = logger;
 	    this.started = false;
@@ -54,16 +54,17 @@ public class PerformanceTracker {
     	started = true;
 	}
 	
-	public Object invoke(Object[] args) throws Exception {
+	@Override
+    public Object invoke(Object[] args) throws Exception {
 		if (!started)
 			start();
 	    long callStart = System.currentTimeMillis();
-		Object result = invoker.invoke(args);
+		Object result = super.invoke(args);
 	    int latency = (int) (System.currentTimeMillis() - callStart);
 	    counter.addSample(latency);
-	    logger.logInvocation(invoker.getId(), latency, callStart);
+	    logger.logInvocation(getId(), latency, callStart);
 	    if (requirement != null && requirement.getMax() >= 0 && latency > requirement.getMax())
-	    	throw new AssertionError("Method " + invoker.getId() + " exceeded time limit of " + 
+	    	throw new AssertionError("Method " + getId() + " exceeded time limit of " + 
 	    			requirement.getMax() + " ms running " + latency + " ms");
 	    return result;
 	}
@@ -71,13 +72,13 @@ public class PerformanceTracker {
 	public void stop() {
     	counter.stop();
     	long elapsedTime = counter.duration();
-    	logger.logSummary(invoker.getId(), elapsedTime, counter.sampleCount(), counter.getStartTime());
+    	logger.logSummary(getId(), elapsedTime, counter.sampleCount(), counter.getStartTime());
     	long maxTotalTime = requirement.getTotalTime();
     	counter.printSummary(new PrintWriter(System.out));
     	if (maxTotalTime >= 0) {
     		int elapsedMillis = (int) (elapsedTime / 1000000);
     		if (elapsedMillis > maxTotalTime)
-    			throw new AssertionError("Test run " + invoker.getId() + " exceeded timeout of " + 
+    			throw new AssertionError("Test run " + getId() + " exceeded timeout of " + 
     				maxTotalTime + " ms running " + elapsedMillis + " ms");
     	}
 	}
