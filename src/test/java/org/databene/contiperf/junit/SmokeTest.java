@@ -7,7 +7,7 @@ import org.databene.contiperf.Unrepeatable;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class SimpleTest {
+public class SmokeTest {
 	
 	@Rule
 	public ContiPerfRule i = new ContiPerfRule();
@@ -44,8 +44,8 @@ public class SimpleTest {
 	@PerfTest(invocations = 5)
 	@Required(max = 250, 
 		percentiles = {
-			@Percentile(base = 90, limit=210),
-			@Percentile(base = 95, limit=220)
+			@Percentile(percentage = 90, millis=210),
+			@Percentile(percentage = 95, millis=220)
 		})
 	public void complexTest() throws Exception {
 		Thread.sleep(200);
