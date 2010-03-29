@@ -1,6 +1,5 @@
 package org.databene.contiperf.junit;
 
-import org.databene.contiperf.Percentile;
 import org.databene.contiperf.Required;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.Unrepeatable;
@@ -42,11 +41,7 @@ public class SmokeTest {
 
 	@Test(timeout = 300)
 	@PerfTest(invocations = 5)
-	@Required(max = 250, 
-		percentiles = {
-			@Percentile(percentage = 90, millis=210),
-			@Percentile(percentage = 95, millis=220)
-		})
+	@Required(max = 250, percentiles = "90:210,95:220")
 	public void complexTest() throws Exception {
 		Thread.sleep(200);
 	}

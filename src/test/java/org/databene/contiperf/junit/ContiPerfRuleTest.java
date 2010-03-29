@@ -27,7 +27,6 @@ import static org.junit.Assert.*;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.databene.contiperf.Percentile;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.Required;
 import org.databene.contiperf.log.ListExecutionLogger;
@@ -215,13 +214,13 @@ public class ContiPerfRuleTest {
 		}
 		
 		@PerfTest(invocations = 10)
-		@Required(percentiles = { @Percentile(percentage = 90, millis = 50) })
+		@Required(percentiles = "90:50")
 		public void percentileSuccessful() throws InterruptedException {
 			Thread.sleep(10);
 		}
 		
 		@PerfTest(invocations = 10)
-		@Required(percentiles = { @Percentile(percentage = 90, millis = 5) })
+		@Required(percentiles = "90:5")
 		public void percentileFailed() throws InterruptedException {
 			Thread.sleep(10);
 		}
