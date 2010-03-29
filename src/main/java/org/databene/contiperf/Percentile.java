@@ -39,6 +39,6 @@ import java.lang.annotation.Target;
 @Target({})
 @Retention(RUNTIME)
 public @interface Percentile {
-	int base();
-	int limit();
+	int percentage();
+	int millis();
 }

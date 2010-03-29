@@ -30,32 +30,32 @@ package org.databene.contiperf;
  */
 public class PercentileRequirement {
 	
-	private int base;
-	private int limit;
+	private int percentage;
+	private int millis;
 	
 	public PercentileRequirement() {
 	    this(-1, -1);
     }
 
-	public PercentileRequirement(int base, int limit) {
-	    this.base = base;
-	    this.limit = limit;
+	public PercentileRequirement(int percentage, int millis) {
+	    this.percentage = percentage;
+	    this.millis = millis;
     }
 
-	public int getBase() {
-    	return base;
+	public int getPercentage() {
+    	return percentage;
     }
 
-	public void setBase(int base) {
-    	this.base = base;
+	public void setPercentage(int percentage) {
+    	this.percentage = percentage;
     }
 
-	public int getLimit() {
-    	return limit;
+	public int getMillis() {
+    	return millis;
     }
 	
-	public void setLimit(int limit) {
-    	this.limit = limit;
+	public void setMillis(int millis) {
+    	this.millis = millis;
     }
 
 }
