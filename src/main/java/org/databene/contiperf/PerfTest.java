@@ -41,7 +41,6 @@ import java.lang.annotation.Target;
 public @interface PerfTest {
 	int invocations()   default  1;
 	int duration()      default -1;
-	int timeout()       default -1;
-
-	boolean cancelOnViolation() default false;
+	// TODO v1.1 int timeout()       default -1;
+	// TODO v1.1 boolean cancelOnViolation() default false;
 }
