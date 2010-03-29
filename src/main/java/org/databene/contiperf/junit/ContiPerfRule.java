@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -86,13 +86,12 @@ import org.junit.runners.model.Statement;
  *     <li>start time in milliseconds since 1970-01-01</li>
  * </ol></p>
  * 
- * <p>For reusing integration tests as performance tests, you can globally 
- * turn ContiPerf off by setting the System property 
- * <code>contiperf.active=false</code>. 
+ * <p>For reusing integration tests as performance tests, you can suppress
+ * ContiPerf execution by setting the System property <code>contiperf.active=false</code>. 
  * </p>
  * <br/><br/>
  * Created: 12.10.2009 07:36:02
- * @since 0.1
+ * @since 1.0
  * @author Volker Bergmann
  */
 public class ContiPerfRule implements MethodRule {
@@ -135,8 +134,8 @@ public class ContiPerfRule implements MethodRule {
 		return config;
 	}
 	
-	private PerformanceRequirement requirements(FrameworkMethod method, String testId) {
-		// TODO make use of file
+	private PerformanceRequirement requirements(FrameworkMethod method, @SuppressWarnings("unused") String testId) {
+		// TODO v1.1 make use of config file
 		return AnnotationUtil.mapRequired(method.getAnnotation(Required.class));
     }
 

@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -20,43 +20,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.databene.contiperf.junit;
+package org.databene.contiperf.util;
 
 import org.databene.contiperf.Invoker;
-import org.junit.runners.model.Statement;
 
 /**
- * {@link Invoker} implementation for JUnit 4.7+.<br/><br/>
- * Created: 22.10.2009 16:55:12
+ * {@link Invoker} implementation which acts as a proxy to another Invoker.<br/><br/>
+ * Created: 29.03.2010 11:41:54
  * @since 1.0
  * @author Volker Bergmann
  */
-public class JUnitInvoker implements Invoker {
-	
-	private String id;
-	private Statement base;
+public class InvokerProxy implements Invoker {
 
-	public JUnitInvoker(String id, Statement base) {
-	    this.id = id;
-	    this.base = base;
+	protected Invoker target;
+
+	public InvokerProxy(Invoker target) {
+	    this.target = target;
     }
 
 	public String getId() {
-		return id;
-	}
+	    return target.getId();
+    }
 
 	public Object invoke(Object[] args) throws Exception {
-		try {
-	        base.evaluate();
-	        return null;
-        } catch (Throwable e) {
-        	if (e instanceof RuntimeException)
-        		throw (RuntimeException) e;
-        	else if (e instanceof Exception)
-        		throw (Exception) e;
-        	else
-        		throw new RuntimeException(e);
-        }
-	}
-
+	    return target.invoke(args);
+    }
+	
 }

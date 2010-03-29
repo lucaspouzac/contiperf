@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -24,6 +24,12 @@ package org.databene.contiperf.util;
 
 import java.io.Closeable;
 
+/**
+ * Provides I/O utility methods.<br/><br/>
+ * Created: 18.10.09 07:43:54
+ * @since 1.0
+ * @author Volker Bergmann
+ */
 public class IOUtil {
 
 	public static void close(Closeable resource) {

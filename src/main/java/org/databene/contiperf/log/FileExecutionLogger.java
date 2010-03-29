@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -30,6 +30,12 @@ import java.io.OutputStream;
 import org.databene.contiperf.ExecutionLogger;
 import org.databene.contiperf.util.IOUtil;
 
+/**
+ * {@link ExecutionLogger} implementation which writes the execution log to a file.<br/><br/>
+ * Created: 12.10.09 10:12:39
+ * @since 1.0
+ * @author Volker Bergmann
+ */
 public class FileExecutionLogger implements ExecutionLogger {
 	
 	private static final String FILENAME = "target/contiperf/contiperf.log";
@@ -51,7 +57,7 @@ public class FileExecutionLogger implements ExecutionLogger {
 	public void logSummary(String id, long elapsedTime, long invocationCount, long startTime) {
 		OutputStream out = null;
         String message = id + "," + elapsedTime + ',' 
-        	+ invocationCount + ',' + startTime + LINE_SEPARATOR; // TODO make formatter a strategy
+        	+ invocationCount + ',' + startTime + LINE_SEPARATOR; // TODO v1.1 make formatter a strategy
 		try {
 	        out = new FileOutputStream(FILENAME, true);
 	        out.write(message.getBytes());

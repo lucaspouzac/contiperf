@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -32,8 +32,8 @@ import org.databene.contiperf.PerfTestRunner;
 import org.junit.runners.model.Statement;
 
 /**
- * {@link Statement} implementation that wraps another Statement and adds
- * multiple invocation, execution timing and duration check.<br/><br/>
+ * Implementation of {@link org.junit.runners.model.Statement} which wraps another Statement 
+ * and adds multiple invocation, execution timing and duration check.<br/><br/>
  * Created: 12.10.2009 07:37:47
  * @since 1.0
  * @author Volker Bergmann
