@@ -47,6 +47,10 @@ public class PerformanceTracker extends InvokerProxy {
 	    this.started = false;
     }
 
+    public LatencyCounter getCounter() {
+	    return counter;
+    }
+
 	public void start() {
     	int max = (requirement != null ? requirement.getMax() : -1);
     	counter = new LatencyCounter(max >= 0 ? max : 1000);
@@ -71,20 +75,37 @@ public class PerformanceTracker extends InvokerProxy {
 	
 	public void stop() {
     	counter.stop();
+    	counter.printSummary(new PrintWriter(System.out));
     	long elapsedTime = counter.duration();
     	logger.logSummary(getId(), elapsedTime, counter.sampleCount(), counter.getStartTime());
-    	long maxTotalTime = requirement.getTotalTime();
-    	counter.printSummary(new PrintWriter(System.out));
-    	if (maxTotalTime >= 0) {
-    		int elapsedMillis = (int) (elapsedTime / 1000000);
-    		if (elapsedMillis > maxTotalTime)
-    			throw new AssertionError("Test run " + getId() + " exceeded timeout of " + 
-    				maxTotalTime + " ms running " + elapsedMillis + " ms");
-    	}
+    	if (requirement != null)
+    		checkRequirements(elapsedTime);
 	}
-	
-    public LatencyCounter getCounter() {
-	    return counter;
-    }
 
+	private void checkRequirements(long elapsedMillis) throws AssertionError {
+	    long requiredTotalTime = requirement.getTotalTime();
+    	if (requiredTotalTime >= 0) {
+    		if (elapsedMillis > requiredTotalTime)
+    			throw new AssertionError("Test run " + getId() + " exceeded timeout of " + 
+    				requiredTotalTime + " ms running " + elapsedMillis + " ms");
+    	}
+    	int requiredThroughput = requirement.getThroughput();
+    	if (requiredThroughput > 0) {
+    		long actualThroughput = counter.sampleCount() * 1000 / elapsedMillis;
+    		if (actualThroughput < requiredThroughput)
+    			throw new AssertionError("Test " + getId() + " had a throughput of only " + 
+        				actualThroughput + " calls per second, required: " + requiredThroughput + " calls per second");
+    	}
+    	int requiredAverage = requirement.average;
+		if (requiredAverage >= 0 && counter.averageLatency() > requiredAverage)
+			throw new AssertionError("Average execution time of " + getId() + " exceeded the requirement of " + 
+					requiredAverage + " ms, measured " + counter.averageLatency() + " ms");
+    	for (PercentileRequirement percentile : requirement.getPercentileRequirements()) {
+    		long measuredLatency = counter.percentileLatency(percentile.getPercentage());
+			if (measuredLatency > percentile.getMillis())
+    			throw new AssertionError(percentile.getPercentage() + "-percentile of " + getId() + " exceeded the requirement of " + 
+    					percentile.getMillis() + " ms, measured " + measuredLatency + " ms");
+    	}
+    }
+	
 }
