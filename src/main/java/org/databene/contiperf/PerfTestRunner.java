@@ -37,14 +37,29 @@ public class PerfTestRunner {
     private PerformanceTracker tracker;
 
     public PerfTestRunner(ExecutionConfig config, 
-    		PerformanceTracker controller, ArgumentsProvider argsProvider) {
+    		PerformanceTracker tracker, ArgumentsProvider argsProvider) {
 	    this.config = config;
-	    this.tracker = controller;
+	    this.tracker = tracker;
 	    this.argsProvider = argsProvider;
     }
 
     public void run() throws Exception {
-    	for (int i = 0; i < config.getInvocations(); i++)
+    	int duration = config.getDuration();
+    	if (duration >= 0)
+    		runWithDuration(duration);
+    	else
+    		runWithCount(config.getInvocations());
+    }
+
+	private void runWithDuration(int duration) throws Exception {
+	    long start = System.currentTimeMillis();
+	    do {
+    	    tracker.invoke(argsProvider.next());
+	    } while ((int) (System.currentTimeMillis() - start) < duration);
+    }
+
+	private void runWithCount(int invocations) throws Exception {
+		for (int i = 0; i < invocations; i++)
     	    tracker.invoke(argsProvider.next());
     }
 
