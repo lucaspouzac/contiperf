@@ -67,7 +67,11 @@ public class PerformanceRequirement {
     	return totalTime;
     }
 
-	public void setPercentileArray(PercentileRequirement[] percentiles) {
+    public PercentileRequirement[] getPercentileRequirements() {
+    	return percentiles;
+    }
+    
+	public void setPercentileValues(PercentileRequirement[] percentiles) {
 	    this.percentiles = percentiles;
     }
 
@@ -76,7 +80,7 @@ public class PerformanceRequirement {
     }
 
 	public void setPercentiles(String percentilesSpec) {
-	    setPercentileArray(parsePercentiles(percentilesSpec));
+	    setPercentileValues(parsePercentiles(percentilesSpec));
     }
 
 	private PercentileRequirement[] parsePercentiles(String percentilesSpec) {
