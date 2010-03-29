@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.databene.contiperf.ExecutionConfig;
-import org.databene.contiperf.Percentile;
 import org.databene.contiperf.PercentileRequirement;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.PerformanceRequirement;
@@ -43,8 +42,8 @@ public class AnnotationUtil {
 	public static ExecutionConfig mapPerfTestAnnotation(PerfTest annotation) {
 		if (annotation == null)
 			return null;
-		return new ExecutionConfig(annotation.invocations(), annotation.duration(), 
-				annotation.timeout(), annotation.cancelOnViolation());
+		return new ExecutionConfig(annotation.invocations(), annotation.duration()/*, 
+				annotation.timeout(), annotation.cancelOnViolation()*/);
     }
 
 	public static PerformanceRequirement mapRequired(Required annotation) {
@@ -70,12 +69,31 @@ public class AnnotationUtil {
 		if (percentile99 > 0)
 			percTmp.add(new PercentileRequirement(99, percentile99));
 
-		Percentile[] customPercs = annotation.percentiles();
-		for (Percentile percentile : customPercs)
-			percTmp.add(new PercentileRequirement(percentile.percentage(), percentile.millis()));
+		PercentileRequirement[] customPercs = parsePercentiles(annotation.percentiles());
+		for (PercentileRequirement percentile : customPercs)
+			percTmp.add(percentile);
 		PercentileRequirement[] percs = new PercentileRequirement[percTmp.size()];
 		percTmp.toArray(percs);
 		return new PerformanceRequirement(average, max, totalTime, percs, throughput);
+    }
+
+	public static PercentileRequirement[] parsePercentiles(String percentilesSpec) {
+		if (percentilesSpec == null || percentilesSpec.length() == 0)
+			return new PercentileRequirement[0];
+		String[] assignments = percentilesSpec.split(",");
+		PercentileRequirement[] reqs = new PercentileRequirement[assignments.length];
+		for (int i = 0; i < assignments.length; i++)
+			reqs[i] = parsePercentile(assignments[i]);
+	    return reqs;
+    }
+
+	private static PercentileRequirement parsePercentile(String assignment) {
+	    String[] parts = assignment.split(":");
+	    if (parts.length != 2)
+	    	throw new RuntimeException("Ilegal percentile syntax: " + assignment);
+	    int base  = Integer.parseInt(parts[0]);
+	    int limit = Integer.parseInt(parts[1]);
+		return new PercentileRequirement(base, limit);
     }
 
 }

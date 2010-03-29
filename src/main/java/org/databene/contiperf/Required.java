@@ -50,6 +50,6 @@ public @interface Required {
 	int percentile95() default -1;
 	int percentile99() default -1;
 	
-	Percentile[] percentiles()  default {};
+	String percentiles() default "";
 	
 }

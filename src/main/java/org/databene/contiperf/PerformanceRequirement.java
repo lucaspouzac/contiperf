@@ -22,6 +22,8 @@
 
 package org.databene.contiperf;
 
+import org.databene.contiperf.util.AnnotationUtil;
+
 /**
  * Defines performance requirements on a test.<br/><br/>
  * Created: 18.10.2009 06:21:57
@@ -80,24 +82,7 @@ public class PerformanceRequirement {
     }
 
 	public void setPercentiles(String percentilesSpec) {
-	    setPercentileValues(parsePercentiles(percentilesSpec));
-    }
-
-	private PercentileRequirement[] parsePercentiles(String percentilesSpec) {
-		String[] assignments = percentilesSpec.split(",");
-		PercentileRequirement[] reqs = new PercentileRequirement[assignments.length];
-		for (int i = 0; i < assignments.length; i++)
-			reqs[i] = parsePercentile(assignments[i]);
-	    return reqs;
-    }
-
-	private PercentileRequirement parsePercentile(String assignment) {
-	    String[] parts = assignment.split(":");
-	    if (parts.length != 2)
-	    	throw new RuntimeException("Ilegal percentile syntax: " + assignment);
-	    int base  = Integer.parseInt(parts[0]);
-	    int limit = Integer.parseInt(parts[1]);
-		return new PercentileRequirement(base, limit);
+	    setPercentileValues(AnnotationUtil.parsePercentiles(percentilesSpec));
     }
 
 }
