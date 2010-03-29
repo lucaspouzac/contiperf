@@ -32,18 +32,18 @@ public class ExecutionConfig {
 	
 	private int invocations;
 	private int duration;
-	private int timeout;
-	private boolean cancelOnViolation;
+	// TODO v1.1 private int timeout;
+	// TODO v1.1 private boolean cancelOnViolation;
 	
 	public ExecutionConfig(int invocations) {
-	    this(invocations, -1, -1, false);
+	    this(invocations, -1 /*, -1, false*/);
     }
 
-	public ExecutionConfig(int invocations, int duration, int timeout, boolean cancelOnViolation) {
+	public ExecutionConfig(int invocations, int duration /*, int timeout, boolean cancelOnViolation*/) {
 	    this.invocations = invocations;
 	    this.duration = duration;
-	    this.timeout = timeout;
-	    this.cancelOnViolation = cancelOnViolation;
+	    // this.timeout = timeout;
+	    //this.cancelOnViolation = cancelOnViolation;
     }
 
 	public int getInvocations() {
@@ -57,13 +57,13 @@ public class ExecutionConfig {
 	public int getDuration() {
 		return duration;
 	}
-	
+/* 
 	public int getTimeout() {
 		return timeout;
 	}
-	
+
 	public boolean isCancelOnViolation() {
 		return cancelOnViolation;
 	}
-	
+*/	
 }
