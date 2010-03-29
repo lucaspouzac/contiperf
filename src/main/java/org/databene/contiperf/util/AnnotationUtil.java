@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.databene.contiperf.ExecutionConfig;
+import org.databene.contiperf.Percentile;
 import org.databene.contiperf.PercentileRequirement;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.PerformanceRequirement;
@@ -69,6 +70,9 @@ public class AnnotationUtil {
 		if (percentile99 > 0)
 			percTmp.add(new PercentileRequirement(99, percentile99));
 
+		Percentile[] customPercs = annotation.percentiles();
+		for (Percentile percentile : customPercs)
+			percTmp.add(new PercentileRequirement(percentile.percentage(), percentile.millis()));
 		PercentileRequirement[] percs = new PercentileRequirement[percTmp.size()];
 		percTmp.toArray(percs);
 		return new PerformanceRequirement(average, max, totalTime, percs, throughput);
