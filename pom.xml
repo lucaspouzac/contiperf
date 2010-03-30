@@ -14,7 +14,7 @@
 -->
     <packaging>jar</packaging>
     <name>databene ContiPerf</name>
-    <url>http://databene.org/databene-contiperf</url>
+    <url>http://databene.org/contiperf</url>
     <description>
     	ContiPerf is an open source testing utility that enables the user to easily
     	convert JUnit 4 test cases into performance tests.
@@ -91,6 +91,15 @@
                     <exclude>**/log4j.xml</exclude>
                     <exclude>dataset.dtd</exclude>
                 </excludes>
+            </resource>
+            <resource>
+                <filtering>false</filtering>
+                <directory>${basedir}</directory>
+                <includes>
+                    <include>Apache_License-2.0.txt</include>
+                    <include>epl-v10.html</include>
+                    <include>lgpl-version3.txt</include>
+                </includes>
             </resource>
         </resources>
 
