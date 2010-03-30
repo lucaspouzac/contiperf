@@ -96,7 +96,7 @@ public class PerformanceTracker extends InvokerProxy {
     			throw new AssertionError("Test " + getId() + " had a throughput of only " + 
         				actualThroughput + " calls per second, required: " + requiredThroughput + " calls per second");
     	}
-    	int requiredAverage = requirement.average;
+    	int requiredAverage = requirement.getAverage();
 		if (requiredAverage >= 0 && counter.averageLatency() > requiredAverage)
 			throw new AssertionError("Average execution time of " + getId() + " exceeded the requirement of " + 
 					requiredAverage + " ms, measured " + counter.averageLatency() + " ms");
