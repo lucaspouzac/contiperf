@@ -32,16 +32,15 @@ import org.databene.contiperf.util.AnnotationUtil;
  */
 public class PerformanceRequirement {
 
-	int average;
-	int max;
-	int totalTime;
-	
-	PercentileRequirement[] percentiles;
+	private int average;
+	private int max;
+	private int totalTime;
+	private int throughput;
 
-	int throughput;
+	private PercentileRequirement[] percentiles;
 
 	public PerformanceRequirement() {
-	    this(-1, -1, -1, null, -1);
+	    this(-1, -1, -1, new PercentileRequirement[0], -1);
     }
 
 	public PerformanceRequirement(int average, int max, int totalTime, PercentileRequirement[] percentiles,
@@ -80,7 +79,7 @@ public class PerformanceRequirement {
     public int getThroughput() {
     	return throughput;
     }
-
+    
 	public void setPercentiles(String percentilesSpec) {
 	    setPercentileValues(AnnotationUtil.parsePercentiles(percentilesSpec));
     }
