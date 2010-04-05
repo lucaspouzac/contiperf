@@ -43,10 +43,14 @@ public class PerformanceTracker extends InvokerProxy {
 	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, ExecutionLogger logger) {
 	    super(target);
 	    this.requirement = requirement;
-	    this.logger = logger;
+	    setExecutionLogger(logger);
 	    this.started = false;
     }
 
+	public void setExecutionLogger(ExecutionLogger logger) {
+		this.logger = logger;
+	}
+	
     public LatencyCounter getCounter() {
 	    return counter;
     }
@@ -107,5 +111,5 @@ public class PerformanceTracker extends InvokerProxy {
     					percentile.getMillis() + " ms, measured " + measuredLatency + " ms");
     	}
     }
-	
+
 }
