@@ -91,8 +91,8 @@ public class AnnotationUtil {
 	    String[] parts = assignment.split(":");
 	    if (parts.length != 2)
 	    	throw new RuntimeException("Ilegal percentile syntax: " + assignment);
-	    int base  = Integer.parseInt(parts[0]);
-	    int limit = Integer.parseInt(parts[1]);
+	    int base  = Integer.parseInt(parts[0].trim());
+	    int limit = Integer.parseInt(parts[1].trim());
 		return new PercentileRequirement(base, limit);
     }
 
