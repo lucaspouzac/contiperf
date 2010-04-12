@@ -1,0 +1,3 @@
+ContiPerf 1.02 Release Notes
+----------------------------
+Bug fix: Former releases expected a Maven-like project structure, other structures were causing NullPointerExceptions.
