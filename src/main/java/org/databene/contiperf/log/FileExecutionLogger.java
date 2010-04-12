@@ -23,6 +23,7 @@
 package org.databene.contiperf.log;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -69,15 +70,21 @@ public class FileExecutionLogger implements ExecutionLogger {
     }
 
 	private void createSummaryFile() {
-	    File file = new File(FILENAME);
-	    ensureDirectoryExists(file.getParentFile());	
-	    if (file.exists())
-	    	file.delete();
+	    File file = new File(".", FILENAME);
+	    try {
+		    ensureDirectoryExists(file.getParentFile());	
+		    if (file.exists())
+		    	file.delete();
+	    } catch (FileNotFoundException e) {
+	    	System.out.println("Unable to create directory: " + file.getAbsolutePath());
+	    }
     }
 
-	private void ensureDirectoryExists(File dir) {
+	private void ensureDirectoryExists(File dir) throws FileNotFoundException {
 	    File parent = dir.getParentFile();
 	    if (!dir.exists()) {
+	    	if (parent == null)
+	    		throw new FileNotFoundException();
 	    	ensureDirectoryExists(parent);
 	    	dir.mkdir();
 	    }
