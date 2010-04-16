@@ -29,6 +29,7 @@ import java.text.ParseException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.databene.contiperf.PerfTest;
+import org.databene.contiperf.PerfTestException;
 import org.databene.contiperf.Required;
 import org.databene.contiperf.log.ListExecutionLogger;
 import org.junit.Test;
@@ -87,11 +88,6 @@ public class ContiPerfRuleTest {
 		check("max100Successful");
 	}
 
-	@Test(expected = AssertionError.class)
-	public void testMaxFailed() throws Throwable {
-		check("max1Failed");
-	}
-	
 	@Test
 	public void testThroughputSuccessful() throws Throwable {
 		check("throughputSuccessful");
@@ -134,6 +130,20 @@ public class ContiPerfRuleTest {
 		check("threads3Failed");
 	}
 	
+	@Test
+	public void testCancelOnViolationDefault() throws Throwable {
+		check("cancelOnViolationDefault");
+	}
+	
+	@Test(expected = PerfTestException.class)
+	public void testCancelOnViolation() throws Throwable {
+		check("cancelOnViolation");
+	}
+	
+	@Test
+	public void testDontCancelOnViolation() throws Throwable {
+		check("dontCancelOnViolation");
+	}
 	
 
 	private TestBean check(String methodName) throws NoSuchMethodException, Throwable {
@@ -197,11 +207,6 @@ public class ContiPerfRuleTest {
 		public void max100Successful() {
 		}
 
-		@Required(max = 1)
-		public void max1Failed() throws InterruptedException {
-			Thread.sleep(10);
-		}
-		
 		@PerfTest(invocations = 10)
 		@Required(throughput = 10)
 		public void throughputSuccessful() throws InterruptedException {
@@ -250,6 +255,23 @@ public class ContiPerfRuleTest {
 		@PerfTest(invocations = 10, threads = 3)
 		public void threads3Failed() throws ParseException {
 			throw new ParseException("", 0);
+		}
+		
+		@Required(max = 1)
+		public void cancelOnViolationDefault() throws InterruptedException {
+			Thread.sleep(10);
+		}
+		
+		@Required(max = 1)
+		@PerfTest(cancelOnViolation = true)
+		public void cancelOnViolation() throws InterruptedException {
+			Thread.sleep(10);
+		}
+		
+		@Required(max = 1)
+		@PerfTest(cancelOnViolation = false)
+		public void dontCancelOnViolation() throws InterruptedException {
+			Thread.sleep(10);
 		}
 		
 	}

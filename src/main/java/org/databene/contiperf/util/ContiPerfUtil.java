@@ -65,8 +65,8 @@ public class ContiPerfUtil {
 	public static ExecutionConfig mapPerfTestAnnotation(PerfTest annotation) {
 		if (annotation == null)
 			return null;
-		return new ExecutionConfig(annotation.invocations(), annotation.threads(), annotation.duration()/*, 
-				annotation.timeout(), annotation.cancelOnViolation()*/);
+		return new ExecutionConfig(annotation.invocations(), annotation.threads(), annotation.duration(), 
+				annotation.cancelOnViolation() /*, annotation.timeout()*/);
     }
 
 	public static PerformanceRequirement mapRequired(Required annotation) {

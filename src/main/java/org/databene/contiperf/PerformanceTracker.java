@@ -36,15 +36,17 @@ import org.databene.stat.LatencyCounter;
 public class PerformanceTracker extends InvokerProxy {
 	
     private PerformanceRequirement requirement;
+    private boolean cancelOnViolation;
     private ExecutionLogger logger;
     private LatencyCounter counter;
     private boolean started;
 
-	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, ExecutionLogger logger) {
+	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, boolean cancelOnViolation, ExecutionLogger logger) {
 	    super(target);
 	    this.requirement = requirement;
 	    setExecutionLogger(logger);
 	    this.started = false;
+	    this.cancelOnViolation = cancelOnViolation;
     }
 
 	public void setExecutionLogger(ExecutionLogger logger) {
@@ -71,8 +73,8 @@ public class PerformanceTracker extends InvokerProxy {
 	    int latency = (int) (System.currentTimeMillis() - callStart);
 	    counter.addSample(latency);
 	    logger.logInvocation(getId(), latency, callStart);
-	    if (requirement != null && requirement.getMax() >= 0 && latency > requirement.getMax())
-	    	throw new AssertionError("Method " + getId() + " exceeded time limit of " + 
+	    if (requirement != null && requirement.getMax() >= 0 && latency > requirement.getMax() && cancelOnViolation)
+	    	throw new PerfTestException("Method " + getId() + " exceeded time limit of " + 
 	    			requirement.getMax() + " ms running " + latency + " ms");
 	    return result;
 	}

@@ -62,7 +62,8 @@ final class PerfTestStatement extends Statement {
     @Override
     public void evaluate() throws Throwable {
     	Invoker invoker = new JUnitInvoker(id, base);
-    	PerformanceTracker tracker = new PerformanceTracker(invoker, requirement, logger);
+    	PerformanceTracker tracker = new PerformanceTracker(
+    			invoker, requirement, config.isCancelOnViolation(), logger);
     	Runnable runner = createRunner(tracker);
 		runner.run();
 		tracker.stop();
