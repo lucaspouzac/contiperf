@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.databene.contiperf.ExecutionLogger;
-import org.databene.contiperf.util.IOUtil;
+import org.databene.contiperf.util.ContiPerfUtil;
 
 /**
  * {@link ExecutionLogger} implementation which writes the execution log to a file.<br/><br/>
@@ -58,14 +58,14 @@ public class FileExecutionLogger implements ExecutionLogger {
 	public void logSummary(String id, long elapsedTime, long invocationCount, long startTime) {
 		OutputStream out = null;
         String message = id + "," + elapsedTime + ',' 
-        	+ invocationCount + ',' + startTime + LINE_SEPARATOR; // TODO v1.1 make formatter a strategy
+        	+ invocationCount + ',' + startTime + LINE_SEPARATOR; // TODO v1.x make formatter a strategy
 		try {
 	        out = new FileOutputStream(FILENAME, true);
 	        out.write(message.getBytes());
         } catch (IOException e) {
 	        e.printStackTrace();
         } finally {
-	        IOUtil.close(out);
+	        ContiPerfUtil.close(out);
         }
     }
 

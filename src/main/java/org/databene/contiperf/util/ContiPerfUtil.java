@@ -22,27 +22,50 @@
 
 package org.databene.contiperf.util;
 
+import java.io.Closeable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.PercentileRequirement;
 import org.databene.contiperf.PerfTest;
+import org.databene.contiperf.PerfTestException;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.Required;
 
 /**
- * Utility method for Annotation processing.<br/><br/>
- * Created: 18.10.2009 06:42:32
+ * Provides I/O utility methods.<br/><br/>
+ * Created: 18.10.09 07:43:54
  * @since 1.0
  * @author Volker Bergmann
  */
-public class AnnotationUtil {
+public class ContiPerfUtil {
+
+	public static void close(Closeable resource) {
+	    if (resource != null) {
+	    	try {
+	    		resource.close();
+	    	} catch (Exception e) {
+	    		e.printStackTrace();
+	    	}
+	    }
+    }
+
+	public static RuntimeException runtimeCause(Throwable e) {
+		Throwable result = e;
+		if (result instanceof InvocationTargetException)
+			result = result.getCause();
+		if (result instanceof RuntimeException)
+			throw (RuntimeException) result;
+		else
+			throw new PerfTestException(result);
+    }
 
 	public static ExecutionConfig mapPerfTestAnnotation(PerfTest annotation) {
 		if (annotation == null)
 			return null;
-		return new ExecutionConfig(annotation.invocations(), annotation.duration()/*, 
+		return new ExecutionConfig(annotation.invocations(), annotation.threads(), annotation.duration()/*, 
 				annotation.timeout(), annotation.cancelOnViolation()*/);
     }
 
@@ -90,10 +113,10 @@ public class AnnotationUtil {
 	private static PercentileRequirement parsePercentile(String assignment) {
 	    String[] parts = assignment.split(":");
 	    if (parts.length != 2)
-	    	throw new RuntimeException("Ilegal percentile syntax: " + assignment);
+	    	throw new PerfTestException("Ilegal percentile syntax: " + assignment);
 	    int base  = Integer.parseInt(parts[0].trim());
 	    int limit = Integer.parseInt(parts[1].trim());
 		return new PercentileRequirement(base, limit);
     }
-
+	
 }

@@ -29,7 +29,7 @@ import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.Required;
 import org.databene.contiperf.log.FileExecutionLogger;
-import org.databene.contiperf.util.AnnotationUtil;
+import org.databene.contiperf.util.ContiPerfUtil;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -125,7 +125,7 @@ public class ContiPerfRule implements MethodRule {
 	}
 	
 	private ExecutionConfig executionConfig(FrameworkMethod method, String methodName) {
-		ExecutionConfig config = AnnotationUtil.mapPerfTestAnnotation(method.getAnnotation(PerfTest.class));
+		ExecutionConfig config = ContiPerfUtil.mapPerfTestAnnotation(method.getAnnotation(PerfTest.class));
 		if (config == null)
 			config = new ExecutionConfig(1);
 		int count = Config.instance().getInvocationCount(methodName);
@@ -135,8 +135,8 @@ public class ContiPerfRule implements MethodRule {
 	}
 	
 	private PerformanceRequirement requirements(FrameworkMethod method, @SuppressWarnings("unused") String testId) {
-		// TODO v1.1 make use of config file
-		return AnnotationUtil.mapRequired(method.getAnnotation(Required.class));
+		// TODO v1.x make use of config file
+		return ContiPerfUtil.mapRequired(method.getAnnotation(Required.class));
     }
 
 }
