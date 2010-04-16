@@ -4,14 +4,8 @@
 
     <groupId>org.databene</groupId>
     <artifactId>contiperf</artifactId>
-    <version>1.02</version>
-<!--
-    <parent>
-        <groupId>databene</groupId>
-        <artifactId>databene.org</artifactId>
-        <version>1.0</version>
-    </parent>
--->
+    <version>1.03</version>
+
     <packaging>jar</packaging>
     <name>databene ContiPerf</name>
     <url>http://databene.org/contiperf</url>
