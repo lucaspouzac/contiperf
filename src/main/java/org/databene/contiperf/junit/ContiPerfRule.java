@@ -129,7 +129,7 @@ public class ContiPerfRule implements MethodRule {
 		if (config == null)
 			config = new ExecutionConfig(1);
 		int count = Config.instance().getInvocationCount(methodName);
-		if (count > 0)
+		if (count >= 0)
 			config.setInvocations(count);
 		return config;
 	}
