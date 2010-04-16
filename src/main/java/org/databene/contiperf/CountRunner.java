@@ -22,45 +22,33 @@
 
 package org.databene.contiperf;
 
+import org.databene.contiperf.util.ContiPerfUtil;
+
 /**
- * Executes the actual performance tests using an {@link ArgumentsProvider} 
- * to create arguments and an {@link Invoker} to call the target code.<br/><br/>
+ * Calls the invoker a fixed number of times.<br/><br/>
  * Created: 22.10.2009 06:30:28
  * @since 1.0
  * @author Volker Bergmann
  */
-public class PerfTestRunner {
+public class CountRunner implements Runnable {
 
-    private ExecutionConfig config;
     private ArgumentsProvider argsProvider;
-    
-    private PerformanceTracker tracker;
+    private Invoker invoker;
+    private long invocations;
 
-    public PerfTestRunner(ExecutionConfig config, 
-    		PerformanceTracker tracker, ArgumentsProvider argsProvider) {
-	    this.config = config;
-	    this.tracker = tracker;
+    public CountRunner(Invoker invoker, ArgumentsProvider argsProvider, long invocations) {
+	    this.invoker = invoker;
 	    this.argsProvider = argsProvider;
+	    this.invocations = invocations;
     }
 
-    public void run() throws Exception {
-    	int duration = config.getDuration();
-    	if (duration >= 0)
-    		runWithDuration(duration);
-    	else
-    		runWithCount(config.getInvocations());
-    }
-
-	private void runWithDuration(int duration) throws Exception {
-	    long start = System.currentTimeMillis();
-	    do {
-    	    tracker.invoke(argsProvider.next());
-	    } while ((int) (System.currentTimeMillis() - start) < duration);
-    }
-
-	private void runWithCount(int invocations) throws Exception {
-		for (int i = 0; i < invocations; i++)
-    	    tracker.invoke(argsProvider.next());
+    public void run() {
+    	try {
+			for (int i = 0; i < invocations; i++)
+	    	    invoker.invoke(argsProvider.next());
+    	} catch (Exception e) {
+    		throw ContiPerfUtil.runtimeCause(e);
+    	}
     }
 
 }

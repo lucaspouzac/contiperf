@@ -25,6 +25,7 @@ package org.databene.contiperf.junit;
 import static org.junit.Assert.*;
 
 import java.lang.reflect.Method;
+import java.text.ParseException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.databene.contiperf.PerfTest;
@@ -119,6 +120,18 @@ public class ContiPerfRuleTest {
 	@Test(expected = AssertionError.class)
 	public void testPercentileFailed() throws Throwable {
 		check("percentileFailed");
+	}
+	
+	@Test
+	public void testThreads3() throws Throwable {
+		TestBean target = check("threads3");
+		assertEquals(10, target.threads3IC.get());
+		assertEquals(3, target.threads3TC.getThreadCount());
+	}
+	
+	@Test(expected = RuntimeException.class)
+	public void testThreads3Failed() throws Throwable {
+		check("threads3Failed");
 	}
 	
 	
@@ -223,6 +236,20 @@ public class ContiPerfRuleTest {
 		@Required(percentiles = "90:5")
 		public void percentileFailed() throws InterruptedException {
 			Thread.sleep(10);
+		}
+		
+		ThreadCounter threads3TC = new ThreadCounter();
+		public AtomicInteger threads3IC = new AtomicInteger();
+		@PerfTest(invocations = 10, threads = 3)
+		public void threads3() throws InterruptedException {
+			threads3TC.get();
+			threads3IC.incrementAndGet();
+			Thread.sleep(100);
+		}
+
+		@PerfTest(invocations = 10, threads = 3)
+		public void threads3Failed() throws ParseException {
+			throw new ParseException("", 0);
 		}
 		
 	}

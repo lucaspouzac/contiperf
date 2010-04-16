@@ -22,13 +22,17 @@
 
 package org.databene.contiperf.junit;
 
+import org.databene.contiperf.ArgumentsProvider;
 import org.databene.contiperf.EmptyArgumentsProvider;
 import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.ExecutionLogger;
 import org.databene.contiperf.Invoker;
+import org.databene.contiperf.ConcurrentRunner;
+import org.databene.contiperf.PerfTestException;
 import org.databene.contiperf.PerformanceTracker;
 import org.databene.contiperf.PerformanceRequirement;
-import org.databene.contiperf.PerfTestRunner;
+import org.databene.contiperf.CountRunner;
+import org.databene.contiperf.TimedRunner;
 import org.junit.runners.model.Statement;
 
 /**
@@ -59,9 +63,46 @@ final class PerfTestStatement extends Statement {
     public void evaluate() throws Throwable {
     	Invoker invoker = new JUnitInvoker(id, base);
     	PerformanceTracker tracker = new PerformanceTracker(invoker, requirement, logger);
-		PerfTestRunner runner = new PerfTestRunner(config, tracker, new EmptyArgumentsProvider());
+    	Runnable runner = createRunner(tracker);
 		runner.run();
 		tracker.stop();
+    }
+
+    private Runnable createRunner(PerformanceTracker tracker) {
+	    ArgumentsProvider provider = new EmptyArgumentsProvider();
+	    Runnable runner;
+        int threads = config.getThreads();
+		int duration = config.getDuration();
+		int invocations = config.getInvocations();
+		if (duration > 0) {
+			if (threads == 1) {
+				// multi-threaded timed test
+				runner = new TimedRunner(tracker, provider, duration);
+			} else {
+				// single-threaded timed test
+				Runnable[] runners = new Runnable[threads];
+				for (int i = 0; i < threads; i++)
+					runners[i] = new TimedRunner(tracker, provider, duration);
+				runner = new ConcurrentRunner(id, runners);
+			}
+    	} else if (invocations >= 0) {
+    		if (threads == 1) {
+    			// single-threaded count-based test
+    			runner = new CountRunner(tracker, provider, invocations);
+    		} else {
+    			// multi-threaded count-based test
+    			Runnable[] runners = new Runnable[threads];
+	        	int invocationsPerLoop = invocations / threads;
+	        	int longerLoops = invocations - invocationsPerLoop * threads;
+	        	for (int i = 0; i < threads; i++) {
+	        		int loopSize = (i < longerLoops ? invocationsPerLoop + 1 : invocationsPerLoop);
+	        		runners[i] = new CountRunner(tracker, provider, loopSize);
+	        	}
+				runner = new ConcurrentRunner(id, runners);
+    		}
+        } else 
+        	throw new PerfTestException("No useful invocation count or duration defined");
+	    return runner;
     }
     
 }

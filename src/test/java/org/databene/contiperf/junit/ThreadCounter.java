@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -20,28 +20,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.databene.contiperf;
+package org.databene.contiperf.junit;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Defines execution details and performance requirements for a test method.<br/><br/>
- * Created: 14.10.2009 14:41:18
- * @since 1.0
+ * Helper class for measuring concurrency.<br/><br/>
+ * Created: 16.04.2010 00:01:25
+ * @since 1.03
  * @author Volker Bergmann
  */
-@Documented
-@Target({ METHOD })
-@Retention(RUNTIME)
-public @interface PerfTest {
-	int invocations()   default  1;
-	int threads()       default  1;
-	int duration()      default -1;
-	// TODO v1.03 boolean cancelOnViolation() default false;
-	// TODO v1.x int timeout()       default -1;
+public class ThreadCounter extends ThreadLocal<ThreadCounter> {
+	
+	private AtomicInteger count = new AtomicInteger();
+	
+	@Override
+	protected ThreadCounter initialValue() {
+		count.incrementAndGet();
+	    return this;
+	}
+
+	public int getThreadCount() {
+		return count.get();
+	}
+	
 }
