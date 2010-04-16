@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2010 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -20,44 +20,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.databene.contiperf.junit;
-
-import org.databene.contiperf.Invoker;
-import org.databene.contiperf.PerfTestException;
-import org.junit.runners.model.Statement;
+package org.databene.contiperf;
 
 /**
- * {@link Invoker} implementation for JUnit 4.7+.<br/><br/>
- * Created: 22.10.2009 16:55:12
- * @since 1.0
+ * ContiPerf exception.<br/><br/>
+ * Created: 16.04.2010 08:29:11
+ * @since 1.03
  * @author Volker Bergmann
  */
-public class JUnitInvoker implements Invoker {
-	
-	private String id;
-	private Statement base;
+public class PerfTestException extends RuntimeException {
 
-	public JUnitInvoker(String id, Statement base) {
-	    this.id = id;
-	    this.base = base;
+	private static final long serialVersionUID = 2103936040709491811L;
+
+	public PerfTestException() {
+	    super();
     }
 
-	public String getId() {
-		return id;
-	}
+	public PerfTestException(String message, Throwable cause) {
+	    super(message, cause);
+    }
 
-	public Object invoke(Object[] args) throws Exception {
-		try {
-	        base.evaluate();
-	        return null;
-        } catch (Throwable e) {
-        	if (e instanceof RuntimeException)
-        		throw (RuntimeException) e;
-        	else if (e instanceof Exception)
-        		throw (Exception) e;
-        	else
-        		throw new PerfTestException(e);
-        }
-	}
+	public PerfTestException(String message) {
+	    super(message);
+    }
+
+	public PerfTestException(Throwable cause) {
+	    super(cause);
+    }
 
 }
