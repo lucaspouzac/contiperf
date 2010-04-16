@@ -1,0 +1,7 @@
+ContiPerf 1.03 Release Notes
+----------------------------
+- Allowing for concurrency tests, using @PerfTest(treads = 3)
+- Introduced cancelOnViolation() in @PerfTest, which makes it configurable whether a test run shall be canceled 
+  if the 'max' requirement is violated. The default is 'true'. 
+- Redesigned test runners
+- Introduced PerfTestException
