@@ -117,7 +117,7 @@ public final class LatencyCounter {
     
     public double throughput() {
     	if (startTime == -1 || endTime == -1)
-    		throw new RuntimeException("Invalid setup: Use start() and stop() to indicate test start and end!");
+    		throw new IllegalArgumentException("Invalid setup: Use start() and stop() to indicate test start and end!");
     	return 1000. * sampleCount / duration();
     }
 
