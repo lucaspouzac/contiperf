@@ -22,7 +22,7 @@
 
 package org.databene.contiperf;
 
-import org.databene.contiperf.util.AnnotationUtil;
+import org.databene.contiperf.util.ContiPerfUtil;
 
 /**
  * Defines performance requirements on a test.<br/><br/>
@@ -81,7 +81,7 @@ public class PerformanceRequirement {
     }
     
 	public void setPercentiles(String percentilesSpec) {
-	    setPercentileValues(AnnotationUtil.parsePercentiles(percentilesSpec));
+	    setPercentileValues(ContiPerfUtil.parsePercentiles(percentilesSpec));
     }
 
 }
