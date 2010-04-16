@@ -54,11 +54,11 @@ public class ConcurrentRunner implements Runnable {
         } catch (InterruptedException e) {
         	// if the thread group has an exception, that one is more interesting
         	if (threadGroup.throwable == null)
-        		throw new PerfTestException(e); // interruption without throwable cause
+        		throw new PerfTestExecutionError(e); // interruption without throwable cause
         }
         // The thread group encountered a Throwable, report it to the caller
     	if (threadGroup.throwable != null)
-    		throw ContiPerfUtil.runtimeCause(threadGroup.throwable);
+    		throw ContiPerfUtil.executionError(threadGroup.throwable);
     }
 
     /** 

@@ -28,7 +28,7 @@ import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.ExecutionLogger;
 import org.databene.contiperf.Invoker;
 import org.databene.contiperf.ConcurrentRunner;
-import org.databene.contiperf.PerfTestException;
+import org.databene.contiperf.PerfTestConfigurationError;
 import org.databene.contiperf.PerformanceTracker;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.CountRunner;
@@ -102,7 +102,7 @@ final class PerfTestStatement extends Statement {
 				runner = new ConcurrentRunner(id, runners);
     		}
         } else 
-        	throw new PerfTestException("No useful invocation count or duration defined");
+        	throw new PerfTestConfigurationError("No useful invocation count or duration defined");
 	    return runner;
     }
     

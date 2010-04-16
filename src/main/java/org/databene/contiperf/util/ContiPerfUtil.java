@@ -30,7 +30,9 @@ import java.util.List;
 import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.PercentileRequirement;
 import org.databene.contiperf.PerfTest;
+import org.databene.contiperf.PerfTestConfigurationError;
 import org.databene.contiperf.PerfTestException;
+import org.databene.contiperf.PerfTestExecutionError;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.Required;
 
@@ -52,14 +54,14 @@ public class ContiPerfUtil {
 	    }
     }
 
-	public static RuntimeException runtimeCause(Throwable e) {
+	public static PerfTestException executionError(Throwable e) {
 		Throwable result = e;
 		if (result instanceof InvocationTargetException)
 			result = result.getCause();
-		if (result instanceof RuntimeException)
-			throw (RuntimeException) result;
+		if (result instanceof PerfTestException)
+			return (PerfTestException) result;
 		else
-			throw new PerfTestException(result);
+			return new PerfTestExecutionError(result);
     }
 
 	public static ExecutionConfig mapPerfTestAnnotation(PerfTest annotation) {
@@ -113,7 +115,7 @@ public class ContiPerfUtil {
 	private static PercentileRequirement parsePercentile(String assignment) {
 	    String[] parts = assignment.split(":");
 	    if (parts.length != 2)
-	    	throw new PerfTestException("Ilegal percentile syntax: " + assignment);
+	    	throw new PerfTestConfigurationError("Ilegal percentile syntax: " + assignment);
 	    int base  = Integer.parseInt(parts[0].trim());
 	    int limit = Integer.parseInt(parts[1].trim());
 		return new PercentileRequirement(base, limit);

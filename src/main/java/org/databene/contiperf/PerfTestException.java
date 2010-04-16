@@ -23,14 +23,14 @@
 package org.databene.contiperf;
 
 /**
- * ContiPerf exception.<br/><br/>
+ * Parent class for all exceptions defined in ContiPerf.<br/><br/>
  * Created: 16.04.2010 08:29:11
  * @since 1.03
  * @author Volker Bergmann
  */
-public class PerfTestException extends RuntimeException {
+public abstract class PerfTestException extends RuntimeException {
 
-	private static final long serialVersionUID = 2103936040709491811L;
+	private static final long serialVersionUID = 5743020236626353041L;
 
 	public PerfTestException() {
 	    super();

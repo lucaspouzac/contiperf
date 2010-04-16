@@ -47,7 +47,7 @@ public class CountRunner implements Runnable {
 			for (int i = 0; i < invocations; i++)
 	    	    invoker.invoke(argsProvider.next());
     	} catch (Exception e) {
-    		throw ContiPerfUtil.runtimeCause(e);
+    		throw ContiPerfUtil.executionError(e);
     	}
     }
 

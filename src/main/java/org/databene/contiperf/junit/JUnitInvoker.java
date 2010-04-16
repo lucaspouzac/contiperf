@@ -23,7 +23,7 @@
 package org.databene.contiperf.junit;
 
 import org.databene.contiperf.Invoker;
-import org.databene.contiperf.PerfTestException;
+import org.databene.contiperf.util.ContiPerfUtil;
 import org.junit.runners.model.Statement;
 
 /**
@@ -51,12 +51,7 @@ public class JUnitInvoker implements Invoker {
 	        base.evaluate();
 	        return null;
         } catch (Throwable e) {
-        	if (e instanceof RuntimeException)
-        		throw (RuntimeException) e;
-        	else if (e instanceof Exception)
-        		throw (Exception) e;
-        	else
-        		throw new PerfTestException(e);
+        	throw ContiPerfUtil.executionError(e);
         }
 	}
 

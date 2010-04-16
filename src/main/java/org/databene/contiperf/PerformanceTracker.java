@@ -74,7 +74,7 @@ public class PerformanceTracker extends InvokerProxy {
 	    counter.addSample(latency);
 	    logger.logInvocation(getId(), latency, callStart);
 	    if (requirement != null && requirement.getMax() >= 0 && latency > requirement.getMax() && cancelOnViolation)
-	    	throw new PerfTestException("Method " + getId() + " exceeded time limit of " + 
+	    	throw new PerfTestFailure("Method " + getId() + " exceeded time limit of " + 
 	    			requirement.getMax() + " ms running " + latency + " ms");
 	    return result;
 	}

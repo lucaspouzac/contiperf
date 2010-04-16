@@ -22,36 +22,30 @@
 
 package org.databene.contiperf;
 
-import org.databene.contiperf.util.ContiPerfUtil;
-
 /**
- * Calls the invoker for a certain amount of time.<br/><br/>
- * Created: 15.04.2010 23:13:52
+ * Indicates invalid configuration settings in a performance test.<br/><br/>
+ * Created: 16.04.2010 11:51:02
  * @since 1.03
  * @author Volker Bergmann
  */
-public class TimedRunner implements Runnable {
+public class PerfTestConfigurationError extends PerfTestException {
 
-    private long duration;
-    private ArgumentsProvider argsProvider;
-    private Invoker invoker;
+	private static final long serialVersionUID = 45383049032535979L;
 
-    public TimedRunner(Invoker invoker, ArgumentsProvider argsProvider, long duration) {
-	    this.invoker = invoker;
-	    this.argsProvider = argsProvider;
-	    this.duration = duration;
+	public PerfTestConfigurationError() {
+	    super();
     }
 
-	public void run() {
-		try {
-		    long start = System.currentTimeMillis();
-		    long endTime = start + duration;
-		    do {
-	    	    invoker.invoke(argsProvider.next());
-		    } while (System.currentTimeMillis() < endTime);
-		} catch (Exception e) {
-			throw ContiPerfUtil.executionError(e);
-		}
+	public PerfTestConfigurationError(String message, Throwable cause) {
+	    super(message, cause);
+    }
+
+	public PerfTestConfigurationError(String message) {
+	    super(message);
+    }
+
+	public PerfTestConfigurationError(Throwable cause) {
+	    super(cause);
     }
 
 }
