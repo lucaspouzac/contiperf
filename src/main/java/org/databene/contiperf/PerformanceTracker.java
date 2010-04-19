@@ -41,6 +41,10 @@ public class PerformanceTracker extends InvokerProxy {
     private LatencyCounter counter;
     private boolean started;
 
+	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, ExecutionLogger logger) {
+	    this(target, requirement, true, logger);
+    }
+
 	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, boolean cancelOnViolation, ExecutionLogger logger) {
 	    super(target);
 	    this.requirement = requirement;
