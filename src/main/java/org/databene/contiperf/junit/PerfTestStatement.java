@@ -89,7 +89,7 @@ final class PerfTestStatement extends Statement {
     	} else if (invocations >= 0) {
     		if (threads == 1) {
     			// single-threaded count-based test
-    			runner = new CountRunner(tracker, provider, invocations);
+    			runner = new CountRunner(tracker, provider, invocations, false);
     		} else {
     			// multi-threaded count-based test
     			Runnable[] runners = new Runnable[threads];
@@ -97,7 +97,7 @@ final class PerfTestStatement extends Statement {
 	        	int longerLoops = invocations - invocationsPerLoop * threads;
 	        	for (int i = 0; i < threads; i++) {
 	        		int loopSize = (i < longerLoops ? invocationsPerLoop + 1 : invocationsPerLoop);
-	        		runners[i] = new CountRunner(tracker, provider, loopSize);
+	        		runners[i] = new CountRunner(tracker, provider, loopSize, true);
 	        	}
 				runner = new ConcurrentRunner(id, runners);
     		}

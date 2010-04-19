@@ -35,17 +35,22 @@ public class CountRunner implements Runnable {
     private ArgumentsProvider argsProvider;
     private Invoker invoker;
     private long invocations;
+    private boolean yield;
 
-    public CountRunner(Invoker invoker, ArgumentsProvider argsProvider, long invocations) {
+    public CountRunner(Invoker invoker, ArgumentsProvider argsProvider, long invocations, boolean yield) {
 	    this.invoker = invoker;
 	    this.argsProvider = argsProvider;
 	    this.invocations = invocations;
+	    this.yield  = yield;
     }
 
     public void run() {
     	try {
-			for (int i = 0; i < invocations; i++)
+			for (int i = 0; i < invocations; i++) { 
 	    	    invoker.invoke(argsProvider.next());
+	    	    if (yield)
+	    	    	Thread.yield();
+			}
     	} catch (Exception e) {
     		throw ContiPerfUtil.executionError(e);
     	}
