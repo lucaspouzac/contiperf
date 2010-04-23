@@ -92,28 +92,34 @@ public class PerformanceTracker extends InvokerProxy {
     		checkRequirements(elapsedTime);
 	}
 
-	private void checkRequirements(long elapsedMillis) throws AssertionError {
+	private void checkRequirements(long elapsedMillis) throws PerfTestFailure {
+	    long requiredMax = requirement.getMax();
+    	if (requiredMax >= 0) {
+    		if (counter.maxLatency() > requiredMax)
+    			throw new PerfTestFailure("The maximum latency of " + 
+    					requiredMax + " ms was exceeded, Measured: " + elapsedMillis + " ms");
+    	}
 	    long requiredTotalTime = requirement.getTotalTime();
     	if (requiredTotalTime >= 0) {
     		if (elapsedMillis > requiredTotalTime)
-    			throw new AssertionError("Test run " + getId() + " exceeded timeout of " + 
+    			throw new PerfTestFailure("Test run " + getId() + " exceeded timeout of " + 
     				requiredTotalTime + " ms running " + elapsedMillis + " ms");
     	}
     	int requiredThroughput = requirement.getThroughput();
     	if (requiredThroughput > 0) {
     		long actualThroughput = counter.sampleCount() * 1000 / elapsedMillis;
     		if (actualThroughput < requiredThroughput)
-    			throw new AssertionError("Test " + getId() + " had a throughput of only " + 
+    			throw new PerfTestFailure("Test " + getId() + " had a throughput of only " + 
         				actualThroughput + " calls per second, required: " + requiredThroughput + " calls per second");
     	}
     	int requiredAverage = requirement.getAverage();
 		if (requiredAverage >= 0 && counter.averageLatency() > requiredAverage)
-			throw new AssertionError("Average execution time of " + getId() + " exceeded the requirement of " + 
+			throw new PerfTestFailure("Average execution time of " + getId() + " exceeded the requirement of " + 
 					requiredAverage + " ms, measured " + counter.averageLatency() + " ms");
     	for (PercentileRequirement percentile : requirement.getPercentileRequirements()) {
     		long measuredLatency = counter.percentileLatency(percentile.getPercentage());
 			if (measuredLatency > percentile.getMillis())
-    			throw new AssertionError(percentile.getPercentage() + "-percentile of " + getId() + " exceeded the requirement of " + 
+    			throw new PerfTestFailure(percentile.getPercentage() + "-percentile of " + getId() + " exceeded the requirement of " + 
     					percentile.getMillis() + " ms, measured " + measuredLatency + " ms");
     	}
     }
