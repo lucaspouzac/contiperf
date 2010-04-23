@@ -29,7 +29,7 @@ import java.text.ParseException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.databene.contiperf.PerfTest;
-import org.databene.contiperf.PerfTestException;
+import org.databene.contiperf.PerfTestFailure;
 import org.databene.contiperf.Required;
 import org.databene.contiperf.log.ListExecutionLogger;
 import org.junit.Test;
@@ -68,7 +68,7 @@ public class ContiPerfRuleTest {
 		check("median100Successful");
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test(expected = PerfTestFailure.class)
 	public void testMedianFailed() throws Throwable {
 		check("median1Failed");
 	}
@@ -78,7 +78,7 @@ public class ContiPerfRuleTest {
 		check("average100Successful");
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test(expected = PerfTestFailure.class)
 	public void testAverageFailed() throws Throwable {
 		check("average1Failed");
 	}
@@ -93,7 +93,7 @@ public class ContiPerfRuleTest {
 		check("throughputSuccessful");
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = PerfTestFailure.class)
 	public void testThroughputFailed() throws Throwable {
 		check("throughputFailed");
 	}
@@ -103,7 +103,7 @@ public class ContiPerfRuleTest {
 		check("totalTimeSuccessful");
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = PerfTestFailure.class)
 	public void testTotalTimeFailed() throws Throwable {
 		check("totalTimeFailed");
 	}
@@ -113,7 +113,7 @@ public class ContiPerfRuleTest {
 		check("percentileSuccessful");
 	}
 	
-	@Test(expected = AssertionError.class)
+	@Test(expected = PerfTestFailure.class)
 	public void testPercentileFailed() throws Throwable {
 		check("percentileFailed");
 	}
@@ -130,25 +130,50 @@ public class ContiPerfRuleTest {
 		check("threads3Failed");
 	}
 	
-	@Test
+	@Test(expected = PerfTestFailure.class)
 	public void testCancelOnViolationDefault() throws Throwable {
-		check("cancelOnViolationDefault");
+		TestBean test = new TestBean();
+		try {
+			check(test, "cancelOnViolationDefault");
+		} catch (PerfTestFailure e) {
+			int count = test.cancelOnViolationDefaultCount.get();
+			assertEquals(3, count);
+			throw e;
+		}
 	}
 	
-	@Test(expected = PerfTestException.class)
+	@Test(expected = PerfTestFailure.class)
 	public void testCancelOnViolation() throws Throwable {
-		check("cancelOnViolation");
+		TestBean test = new TestBean();
+		try {
+			check(test, "cancelOnViolation");
+		} catch (PerfTestFailure e) {
+			int count = test.cancelOnViolationCount.get();
+			assertEquals(2, count);
+			throw e;
+		}
 	}
 	
-	@Test
+	@Test(expected = PerfTestFailure.class)
 	public void testDontCancelOnViolation() throws Throwable {
-		check("dontCancelOnViolation");
+		TestBean test = new TestBean();
+		try {
+			check(test, "dontCancelOnViolation");
+		} catch (PerfTestFailure e) {
+			int count = test.dontCancelOnViolationCount.get();
+			assertEquals(3, count);
+			throw e;
+		}
 	}
 	
+	// helper methods --------------------------------------------------------------------------------------------------
 
 	private TestBean check(String methodName) throws NoSuchMethodException, Throwable {
+	    return check(new TestBean(), methodName);
+    }
+	
+	private TestBean check(TestBean target, String methodName) throws NoSuchMethodException, Throwable {
 	    ContiPerfRule rule = new ContiPerfRule(new ListExecutionLogger());
-		TestBean target = new TestBean();
 		Method method = TestBean.class.getDeclaredMethod(methodName, new Class<?>[0]);
 		Statement base = new InvokerStatement(target, method);
 		FrameworkMethod fwMethod = new FrameworkMethod(method);
@@ -257,21 +282,28 @@ public class ContiPerfRuleTest {
 			throw new ParseException("", 0);
 		}
 		
-		@Required(max = 1)
+		public AtomicInteger cancelOnViolationDefaultCount = new AtomicInteger();
+		@PerfTest(invocations = 3)
+		@Required(max = 200)
 		public void cancelOnViolationDefault() throws InterruptedException {
-			Thread.sleep(10);
+			int n = cancelOnViolationDefaultCount.incrementAndGet();
+			Thread.sleep(n * 150);
 		}
 		
-		@Required(max = 1)
-		@PerfTest(cancelOnViolation = true)
+		public AtomicInteger cancelOnViolationCount = new AtomicInteger();
+		@Required(max = 200)
+		@PerfTest(invocations = 3, cancelOnViolation = true)
 		public void cancelOnViolation() throws InterruptedException {
-			Thread.sleep(10);
+			int n = cancelOnViolationCount.incrementAndGet();
+			Thread.sleep(n * 150);
 		}
 		
-		@Required(max = 1)
-		@PerfTest(cancelOnViolation = false)
+		public AtomicInteger dontCancelOnViolationCount = new AtomicInteger();
+		@Required(max = 200)
+		@PerfTest(invocations = 3, cancelOnViolation = false)
 		public void dontCancelOnViolation() throws InterruptedException {
-			Thread.sleep(10);
+			int n = dontCancelOnViolationCount.incrementAndGet();
+			Thread.sleep(n * 150);
 		}
 		
 	}
