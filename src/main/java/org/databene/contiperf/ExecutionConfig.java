@@ -72,4 +72,9 @@ public class ExecutionConfig {
 		return cancelOnViolation;
 	}
 
+	@Override
+	public String toString() {
+	    return invocations + " invocations in " + threads + " threads";
+	}
+	
 }
