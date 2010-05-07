@@ -84,4 +84,15 @@ public class PerformanceRequirement {
 	    setPercentileValues(ContiPerfUtil.parsePercentiles(percentilesSpec));
     }
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("average=").append(average);
+		builder.append(", max=").append(max);
+		builder.append(", totalTime=").append(totalTime);
+		builder.append(", throughput=").append(throughput);
+		builder.append(", percentiles=").append(percentiles);
+		return builder.toString();
+	}
+
 }
