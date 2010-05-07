@@ -3,14 +3,9 @@ package org.databene.contiperf.junit;
 import org.databene.contiperf.Required;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.Unrepeatable;
-import org.junit.Rule;
 import org.junit.Test;
 
-public class SmokeTest {
-	
-	@Rule
-	public ContiPerfRule i = new ContiPerfRule();
-
+public class SmokeTest extends ContiPerfTest {
 	
 	@Test
 	public void simpleTest() throws Exception {
