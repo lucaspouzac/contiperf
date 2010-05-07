@@ -1,0 +1,7 @@
+ContiPerf 1.05 Release Notes
+----------------------------
+
+- Added ContiPerfTest as optional parent class for ContiPerf based performance tests.
+  Any ContiPerf performance test must either extend the class ContiPerfTest
+  or have the following attribute: @Rule public ContiPerfRule i = new ContiPerfRule();
+
