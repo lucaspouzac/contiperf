@@ -96,16 +96,16 @@ import org.junit.runners.model.Statement;
  */
 public class ContiPerfRule implements MethodRule {
 	
-	private ExecutionLogger logger;
+	private final ExecutionLogger logger;
 	
 	// initialization --------------------------------------------------------------------------------------------------
 	
    public ContiPerfRule() {
-    	this(new FileExecutionLogger());
+	    this(new FileExecutionLogger());
     }
 
 	public ContiPerfRule(ExecutionLogger logger) {
-	    this.logger = logger;
+		this.logger = logger;
     }
 	
 	// MethodRule interface implementation -----------------------------------------------------------------------------
@@ -119,21 +119,15 @@ public class ContiPerfRule implements MethodRule {
 				requirements(method, testId), logger);
     }
 
-	private String methodName(FrameworkMethod method, Object target) {
+	private static String methodName(FrameworkMethod method, Object target) {
 		return target.getClass().getName() + '.' + method.getName(); 
 		// no need to check signature: JUnit test methods have no parameters
 	}
 	
 	private ExecutionConfig executionConfig(FrameworkMethod method, String methodName) {
-		ExecutionConfig config = ContiPerfUtil.mapPerfTestAnnotation(method.getAnnotation(PerfTest.class));
-		if (config == null)
-			config = new ExecutionConfig(1);
-		int count = Config.instance().getInvocationCount(methodName);
-		if (count >= 0)
-			config.setInvocations(count);
-		return config;
+		return ContiPerfUtil.configurePerfTest(method.getAnnotation(PerfTest.class), methodName);
 	}
-	
+
 	private PerformanceRequirement requirements(FrameworkMethod method, @SuppressWarnings("unused") String testId) {
 		// TODO v1.x make use of config file
 		return ContiPerfUtil.mapRequired(method.getAnnotation(Required.class));
