@@ -23,6 +23,7 @@
 package org.databene.contiperf;
 
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -36,7 +37,7 @@ import java.lang.annotation.Target;
  * @author Volker Bergmann
  */
 @Documented
-@Target({ METHOD })
+@Target({ METHOD, TYPE })
 @Retention(RUNTIME)
 public @interface PerfTest {
 	int invocations()   default  1;
