@@ -22,11 +22,13 @@
 
 package org.databene.contiperf.junit;
 
+import java.lang.annotation.Annotation;
+
 import org.databene.contiperf.Config;
 import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.ExecutionLogger;
-import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.PerfTest;
+import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.Required;
 import org.databene.contiperf.log.FileExecutionLogger;
 import org.databene.contiperf.util.ContiPerfUtil;
@@ -96,6 +98,8 @@ import org.junit.runners.model.Statement;
  */
 public class ContiPerfRule implements MethodRule {
 	
+	private ExecutionConfig defaultExecutionConfig;
+	private PerformanceRequirement defaultRequirements;
 	private final ExecutionLogger logger;
 	
 	// initialization --------------------------------------------------------------------------------------------------
@@ -104,7 +108,15 @@ public class ContiPerfRule implements MethodRule {
 	    this(new FileExecutionLogger());
     }
 
-	public ContiPerfRule(ExecutionLogger logger) {
+	public ContiPerfRule(ExecutionLogger executionLogger) {
+	    this(null, executionLogger);
+    }
+
+	public ContiPerfRule(Class<?> suiteClass, ExecutionLogger logger) {
+		if (suiteClass != null) {
+			defaultExecutionConfig = configurePerfTest(suiteClass.getAnnotation(PerfTest.class), suiteClass.getName());
+			defaultRequirements = ContiPerfUtil.mapRequired(suiteClass.getAnnotation(Required.class));
+		}
 		this.logger = logger;
     }
 	
@@ -118,6 +130,8 @@ public class ContiPerfRule implements MethodRule {
 		return new PerfTestStatement(base, testId, executionConfig(method, testId), 
 				requirements(method, testId), logger);
     }
+	
+	// helpers ---------------------------------------------------------------------------------------------------------
 
 	private static String methodName(FrameworkMethod method, Object target) {
 		return target.getClass().getName() + '.' + method.getName(); 
@@ -125,12 +139,41 @@ public class ContiPerfRule implements MethodRule {
 	}
 	
 	private ExecutionConfig executionConfig(FrameworkMethod method, String methodName) {
-		return ContiPerfUtil.configurePerfTest(method.getAnnotation(PerfTest.class), methodName);
+		PerfTest annotation = annotationOfMethodOrClass(method, PerfTest.class);
+        if (annotation != null)
+        	return configurePerfTest(annotation, methodName);
+        if (defaultExecutionConfig != null)
+        	return defaultExecutionConfig;
+        return new ExecutionConfig(1);
 	}
 
 	private PerformanceRequirement requirements(FrameworkMethod method, @SuppressWarnings("unused") String testId) {
 		// TODO v1.x make use of config file
-		return ContiPerfUtil.mapRequired(method.getAnnotation(Required.class));
+		Required annotation = annotationOfMethodOrClass(method, Required.class);
+		if (annotation != null)
+			return ContiPerfUtil.mapRequired(annotation);
+        if (defaultRequirements != null)
+        	return defaultRequirements;
+		return null;
     }
+
+	private static <T extends Annotation> T annotationOfMethodOrClass(FrameworkMethod method, Class<T> annotationClass) {
+		T methodAnnotation = method.getAnnotation(annotationClass);
+		if (methodAnnotation != null)
+			return methodAnnotation;
+		T classAnnotation = method.getMethod().getDeclaringClass().getAnnotation(annotationClass);
+        return classAnnotation;
+	}
+	
+	private static ExecutionConfig configurePerfTest(PerfTest annotation, String testId) {
+		ExecutionConfig config = ContiPerfUtil.mapPerfTestAnnotation(annotation);
+		if (annotation == null)
+			config = new ExecutionConfig(1);
+		int count = Config.instance().getInvocationCount(testId);
+		if (count >= 0)
+			config.setInvocations(count);
+		return config;
+    }
+
 
 }
