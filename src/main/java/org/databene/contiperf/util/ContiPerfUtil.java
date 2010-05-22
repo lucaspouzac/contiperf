@@ -27,7 +27,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.databene.contiperf.Config;
 import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.PercentileRequirement;
 import org.databene.contiperf.PerfTest;
@@ -71,16 +70,6 @@ public class ContiPerfUtil {
 				annotation.cancelOnViolation() /*, annotation.timeout()*/);
 		else
 			return null;
-    }
-
-	public static ExecutionConfig configurePerfTest(PerfTest annotation, String testId) {
-		ExecutionConfig config = mapPerfTestAnnotation(annotation);
-		if (annotation == null)
-			config = new ExecutionConfig(1);
-		int count = Config.instance().getInvocationCount(testId);
-		if (count >= 0)
-			config.setInvocations(count);
-		return config;
     }
 
 	public static PerformanceRequirement mapRequired(Required annotation) {
