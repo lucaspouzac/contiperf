@@ -25,7 +25,7 @@ package org.databene.contiperf.junit;
 import org.junit.runner.RunWith;
 
 /**
- * TODO Document class.<br/><br/>
+ * Parent class for ContiPerf test suites.<br/><br/>
  * Created: 22.05.2010 12:36:14
  * @since 0.6.2
  * @author Volker Bergmann

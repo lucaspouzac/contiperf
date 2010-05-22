@@ -23,13 +23,13 @@
 package org.databene.contiperf.junit;
 
 import java.util.List;
-
 import org.junit.rules.MethodRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 
 /**
- * TODO Document class.<br/><br/>
+ * Replaces the standard {@link BlockJUnit4ClassRunner} for supporting ContiPerf features 
+ * in performance test suites.<br/><br/>
  * Created: 02.05.2010 07:54:08
  * @since 1.05
  * @author Volker Bergmann

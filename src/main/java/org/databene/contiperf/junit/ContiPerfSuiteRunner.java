@@ -34,7 +34,8 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 
 /**
- * TODO Document class.<br/><br/>
+ * JUnit {@link Runner} class for wrapping test classes that are unaware of ContiPerf with 
+ * a suite class that adds performance test and requirements configuration.<br/><br/>
  * Created: 02.05.2010 07:32:02
  * @since 1.05
  * @author Volker Bergmann
