@@ -22,6 +22,7 @@
 
 package org.databene.contiperf.junit;
 
+import org.databene.contiperf.ExecutionLogger;
 import org.junit.Rule;
 
 /**
@@ -35,5 +36,15 @@ import org.junit.Rule;
  * @author Volker Bergmann
  */
 public abstract class ContiPerfTest {
-	@Rule public ContiPerfRule i = new ContiPerfRule();
+	
+	@Rule public ContiPerfRule contiPerfRule;
+	
+	public ContiPerfTest() {
+	    contiPerfRule = new ContiPerfRule();
+	}
+
+	public ContiPerfTest(ExecutionLogger executionLogger) {
+	    contiPerfRule = new ContiPerfRule(executionLogger);
+    }
+	
 }
