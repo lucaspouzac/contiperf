@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.databene.contiperf.ExecutionLogger;
 import org.databene.contiperf.util.ContiPerfUtil;
@@ -43,6 +44,7 @@ public class FileExecutionLogger implements ExecutionLogger {
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	
 	private static boolean firstCall = true;
+	static AtomicLong invocationCount = new AtomicLong();
 
 	public FileExecutionLogger() {
 		if (firstCall) {
@@ -52,6 +54,7 @@ public class FileExecutionLogger implements ExecutionLogger {
     }
 
 	public void logInvocation(String id, int latency, long startTime) {
+		invocationCount.incrementAndGet();
 	    System.out.println(id + ',' + latency + ',' + startTime);
     }
 
@@ -68,6 +71,12 @@ public class FileExecutionLogger implements ExecutionLogger {
 	        ContiPerfUtil.close(out);
         }
     }
+	
+	public long invocationCount() {
+		return invocationCount.get();
+	}
+	
+	// private helpers -------------------------------------------------------------------------------------------------
 
 	private void createSummaryFile() {
 	    File file = new File(".", FILENAME);
