@@ -64,23 +64,52 @@ public class ContiPerfSuiteTest {
 	@Test
 	public void testConfiguredSuiteForUnconfiguredTest() throws InitializationError {
 		runSuite(ConfiguredSuiteForUnconfiguredTest.class);
-		assertEquals(3, uCount.get());
+		assertEquals(11, uCount.get());
 		assertEquals(0, cCount.get());
 	}
 
 	@Test
-	public void testUnconfiguredSuiteForConfiguredTest() throws InitializationError {
-		runSuite(UnconfiguredSuiteForConfiguredTest.class);
+	public void testUnconfiguredSuiteForConfiguredMethodTest() throws InitializationError {
+		runSuite(UnconfiguredSuiteForConfiguredMethodTest.class);
 		assertEquals(0, uCount.get());
 		assertEquals(2, cCount.get());
 	}
 
 	@Test
-	public void testConfiguredSuiteForConfiguredTest() throws InitializationError {
-		runSuite(ConfiguredSuiteForConfiguredTest.class);
+	public void testConfiguredSuiteForConfiguredMethodTest() throws InitializationError {
+		runSuite(ConfiguredSuiteForConfiguredMethodTest.class);
 		assertEquals(0, uCount.get());
 		assertEquals(2, cCount.get());
 	}
+
+	@Test
+	public void testUnconfiguredSuiteForConfiguredClassTest() throws InitializationError {
+		runSuite(UnconfiguredSuiteForConfiguredClassTest.class);
+		assertEquals(0, uCount.get());
+		assertEquals(3, cCount.get());
+	}
+
+	@Test
+	public void testConfiguredSuiteForConfiguredClassTest() throws InitializationError {
+		runSuite(ConfiguredSuiteForConfiguredClassTest.class);
+		assertEquals(0, uCount.get());
+		assertEquals(3, cCount.get());
+	}
+
+	@Test
+	public void testUnconfiguredSuiteForConfiguredClassAndMethodTest() throws InitializationError {
+		runSuite(UnconfiguredSuiteForConfiguredClassAndMethodTest.class);
+		assertEquals(0, uCount.get());
+		assertEquals(7, cCount.get());
+	}
+
+	@Test
+	public void testConfiguredSuiteForConfiguredClassAndMethodTest() throws InitializationError {
+		runSuite(ConfiguredSuiteForConfiguredClassAndMethodTest.class);
+		assertEquals(0, uCount.get());
+		assertEquals(7, cCount.get());
+	}
+
 /*	
 	@Test
 	public void testConfiguredSuiteForParameterizedTest() throws InitializationError {
@@ -107,25 +136,45 @@ public class ContiPerfSuiteTest {
 	
 	@RunWith(ContiPerfSuiteRunner.class)
 	@SuiteClasses(UnconfiguredTest.class)
-	@PerfTest(invocations = 3, threads = 2)
+	@PerfTest(invocations = 11, threads = 2)
 	public static class ConfiguredSuiteForUnconfiguredTest {
 	}
 	
 	@RunWith(ContiPerfSuiteRunner.class)
-	@SuiteClasses(ConfiguredTest.class)
-	public static class UnconfiguredSuiteForConfiguredTest {
+	@SuiteClasses(ConfiguredMethodTest.class)
+	public static class UnconfiguredSuiteForConfiguredMethodTest {
 	}
 	
-	@SuiteClasses(ConfiguredTest.class)
-	@PerfTest(invocations = 3, threads = 2)
-	public static class ConfiguredSuiteForConfiguredTest extends ContiPerfSuite {
+	@SuiteClasses(ConfiguredMethodTest.class)
+	@PerfTest(invocations = 13, threads = 2)
+	public static class ConfiguredSuiteForConfiguredMethodTest extends ContiPerfSuite {
+	}
+	
+	@RunWith(ContiPerfSuiteRunner.class)
+	@SuiteClasses(ConfiguredClassTest.class)
+	public static class UnconfiguredSuiteForConfiguredClassTest {
+	}
+	
+	@SuiteClasses(ConfiguredClassTest.class)
+	@PerfTest(invocations = 17, threads = 2)
+	public static class ConfiguredSuiteForConfiguredClassTest extends ContiPerfSuite {
+	}
+	
+	@RunWith(ContiPerfSuiteRunner.class)
+	@SuiteClasses(ConfiguredClassAndMethodTest.class)
+	public static class UnconfiguredSuiteForConfiguredClassAndMethodTest {
+	}
+	
+	@SuiteClasses(ConfiguredClassAndMethodTest.class)
+	@PerfTest(invocations = 19, threads = 2)
+	public static class ConfiguredSuiteForConfiguredClassAndMethodTest extends ContiPerfSuite {
 	}
 	
 /* 
 	@RunWith(ContiPerfSuite.class)
 	@SuiteClasses(ParameterizedTest.class)
 	@PerfTest(invocations = 3, threads = 2)
-	public static class ConfiguredSuiteForParametrizedTest {
+	public static class ConfiguredSuiteForParameterizedTest {
 	}
 */
 	static volatile AtomicInteger uCount = new AtomicInteger();
@@ -142,13 +191,36 @@ public class ContiPerfSuiteTest {
 
 	
 	
-	public static class ConfiguredTest extends ContiPerfTest {
+	public static class ConfiguredMethodTest extends ContiPerfTest {
 		@Test
 		@PerfTest(invocations = 2)
 		public void test() throws Exception {
 			cCount.incrementAndGet();
 		}
 	}
+	
+	
+	
+	@PerfTest(invocations = 3)
+	public static class ConfiguredClassTest extends ContiPerfTest {
+		@Test
+		public void test() throws Exception {
+			cCount.incrementAndGet();
+		}
+	}
+	
+	
+	
+	@PerfTest(invocations = 5)
+	public static class ConfiguredClassAndMethodTest extends ContiPerfTest {
+		@Test
+		@PerfTest(invocations = 7)
+		public void test() throws Exception {
+			cCount.incrementAndGet();
+		}
+	}
+	
+	
 	
 /*	TODO support parameterized tests
 	@RunWith(Parameterized.class)
