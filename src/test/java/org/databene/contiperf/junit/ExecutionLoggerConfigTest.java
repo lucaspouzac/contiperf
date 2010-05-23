@@ -94,15 +94,15 @@ public class ExecutionLoggerConfigTest {
 	@Test
 	public void testConfigured() throws Exception {
 		runPlainTestClass(ConfiguredTest.class);
-		assertEquals(TestExecutionLogger.class, usedLogger.getClass());
-		assertEquals(1, ((TestExecutionLogger) usedLogger).id);
-		assertEquals(4, ((TestExecutionLogger) usedLogger).invocations);
+		assertEquals(ExecutionTestLogger.class, usedLogger.getClass());
+		assertEquals(1, ((ExecutionTestLogger) usedLogger).id);
+		assertEquals(4, ((ExecutionTestLogger) usedLogger).invocations);
 	}
 
 	public static class ConfiguredTest extends ContiPerfTest {
 		
 		public ConfiguredTest() {
-			super(new TestExecutionLogger(1));
+			super(new ExecutionTestLogger(1));
 		}
 
 		@Test
@@ -119,8 +119,8 @@ public class ExecutionLoggerConfigTest {
 	@Test
 	public void testConfiguredStandardSuite() throws Exception {
 		runSuite(ConfiguredStandardSuite.class);
-		assertEquals(2, TestExecutionLogger.latestInstance.id);
-		assertEquals(3, TestExecutionLogger.latestInstance.invocations);
+		assertEquals(2, ExecutionTestLogger.latestInstance.id);
+		assertEquals(3, ExecutionTestLogger.latestInstance.invocations);
 	}
 
 	@SuiteClasses(UnconfiguredCustomTest.class)
@@ -128,7 +128,7 @@ public class ExecutionLoggerConfigTest {
 	public static class ConfiguredStandardSuite extends ContiPerfSuite {
 		
 		public ConfiguredStandardSuite() {
-			super(new TestExecutionLogger(2));
+			super(new ExecutionTestLogger(2));
 		}
 
 	}
@@ -140,15 +140,15 @@ public class ExecutionLoggerConfigTest {
 	@Test
 	public void testConfiguredCustomSuite() throws Exception {
 		runSuite(ConfiguredCustomSuite.class);
-		assertEquals(TestExecutionLogger.class, usedLogger.getClass());
-		assertEquals(3, TestExecutionLogger.latestInstance.id);
-		assertEquals(3, TestExecutionLogger.latestInstance.invocations);
+		assertEquals(ExecutionTestLogger.class, usedLogger.getClass());
+		assertEquals(3, ExecutionTestLogger.latestInstance.id);
+		assertEquals(3, ExecutionTestLogger.latestInstance.invocations);
 	}
 
 	@SuiteClasses(UnconfiguredCustomTest.class)
 	@PerfTest(invocations = 6)
 	public static class ConfiguredCustomSuite {
-		public ExecutionLogger el = new TestExecutionLogger(3);
+		public ExecutionLogger el = new ExecutionTestLogger(3);
 	}
 
 	
