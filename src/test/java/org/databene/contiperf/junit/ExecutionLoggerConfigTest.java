@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 
 import org.databene.contiperf.ExecutionLogger;
 import org.databene.contiperf.PerfTest;
-import org.databene.contiperf.log.FileEexecutionLoggerTestUtil;
+import org.databene.contiperf.log.FileExecutionLoggerTestUtil;
 import org.databene.contiperf.log.FileExecutionLogger;
 import org.junit.Before;
 import org.junit.Rule;
@@ -49,7 +49,7 @@ public class ExecutionLoggerConfigTest {
 	@Before
 	public void setUp() {
 		usedLogger = null;
-		FileEexecutionLoggerTestUtil.resetInvocationCount();
+		FileExecutionLoggerTestUtil.resetInvocationCount();
 	}
 	
 	// testing default execution logger --------------------------------------------------------------------------------
