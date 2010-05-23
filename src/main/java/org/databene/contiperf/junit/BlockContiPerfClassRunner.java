@@ -22,7 +22,11 @@
 
 package org.databene.contiperf.junit;
 
+import java.lang.reflect.Field;
 import java.util.List;
+
+import org.databene.contiperf.Config;
+import org.databene.contiperf.ExecutionLogger;
 import org.junit.rules.MethodRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
@@ -36,23 +40,40 @@ import org.junit.runners.model.InitializationError;
  */
 public class BlockContiPerfClassRunner extends BlockJUnit4ClassRunner {
 	
-	protected ContiPerfRule rule;
+	protected ContiPerfRule defaultRule;
 
-	public BlockContiPerfClassRunner(Class<?> testClass, ContiPerfRule defaultRule) throws InitializationError {
+	public BlockContiPerfClassRunner(Class<?> testClass, Object suite) throws InitializationError {
 	    super(testClass);
-	    this.rule = defaultRule;
+	    defaultRule = new ContiPerfRule(findLoggers(suite), suite);
     }
-
+	
 	@Override
 	protected List<MethodRule> rules(Object test) {
 	    List<MethodRule> rules = super.rules(test);
 	    boolean configured = false;
 	    for (MethodRule targetRule : rules)
-	    	if (targetRule instanceof ContiPerfRule)
+	    	if (targetRule instanceof ContiPerfRule) {
+	    		ContiPerfRule cpRule = (ContiPerfRule) targetRule;
+				if (!cpRule.configuredExecutionLogger)
+	    			cpRule.setExecutionLogger(defaultRule.getExecutionLogger());
 	    		configured = true;
+	    	}
 	    if (!configured)
-	    	rules.add(rule);
+	    	rules.add(defaultRule);
 		return rules;
 	}
-	
+
+	private ExecutionLogger findLoggers(Object suite) {
+	    for (Field field : suite.getClass().getFields()) {
+	    	if (ExecutionLogger.class.isAssignableFrom(field.getType())) {
+	    		try {
+	                return (ExecutionLogger) field.get(suite);
+                } catch (Exception e) {
+	                throw new RuntimeException(e); // TODO Auto-generated catch block
+                }
+	    	}
+	    }
+	    return Config.instance().createDefaultExecutionLogger();
+    }
+
 }
