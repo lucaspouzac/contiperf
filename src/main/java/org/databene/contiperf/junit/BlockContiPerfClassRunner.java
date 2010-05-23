@@ -40,11 +40,11 @@ import org.junit.runners.model.InitializationError;
  */
 public class BlockContiPerfClassRunner extends BlockJUnit4ClassRunner {
 	
-	protected ContiPerfRule defaultRule;
+	protected ContiPerfRule rule;
 
 	public BlockContiPerfClassRunner(Class<?> testClass, Object suite) throws InitializationError {
 	    super(testClass);
-	    defaultRule = new ContiPerfRule(findLoggers(suite), suite);
+	    rule = new ContiPerfRule(findLoggers(suite), suite);
     }
 	
 	@Override
@@ -55,11 +55,11 @@ public class BlockContiPerfClassRunner extends BlockJUnit4ClassRunner {
 	    	if (targetRule instanceof ContiPerfRule) {
 	    		ContiPerfRule cpRule = (ContiPerfRule) targetRule;
 				if (!cpRule.configuredExecutionLogger)
-	    			cpRule.setExecutionLogger(defaultRule.getExecutionLogger());
+	    			cpRule.setExecutionLogger(rule.getExecutionLogger());
 	    		configured = true;
 	    	}
 	    if (!configured)
-	    	rules.add(defaultRule);
+	    	rules.add(rule);
 		return rules;
 	}
 
