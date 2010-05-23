@@ -30,7 +30,6 @@ import org.databene.contiperf.ExecutionLogger;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.Required;
-import org.databene.contiperf.log.FileExecutionLogger;
 import org.databene.contiperf.util.ContiPerfUtil;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
@@ -100,26 +99,34 @@ public class ContiPerfRule implements MethodRule {
 	
 	private ExecutionConfig defaultExecutionConfig;
 	private PerformanceRequirement defaultRequirements;
-	private final ExecutionLogger logger;
+	protected ExecutionLogger executionLogger;
+	protected final boolean configuredExecutionLogger;
 	
 	// initialization --------------------------------------------------------------------------------------------------
 	
    public ContiPerfRule() {
-	    this(new FileExecutionLogger());
+	    this(null);
     }
 
 	public ContiPerfRule(ExecutionLogger executionLogger) {
-	    this(null, executionLogger);
+		this(executionLogger, null);
     }
 
-	public ContiPerfRule(Class<?> suiteClass, ExecutionLogger logger) {
-		if (suiteClass != null) {
-			defaultExecutionConfig = configurePerfTest(suiteClass.getAnnotation(PerfTest.class), suiteClass.getName());
-			defaultRequirements = ContiPerfUtil.mapRequired(suiteClass.getAnnotation(Required.class));
+	public ContiPerfRule(ExecutionLogger executionLogger, Object suite) {
+		if (executionLogger == null) {
+			this.executionLogger = Config.instance().createDefaultExecutionLogger();
+			this.configuredExecutionLogger = false;
+		} else {
+			this.executionLogger = executionLogger;
+			this.configuredExecutionLogger = true;
 		}
-		this.logger = logger;
+		if (suite != null) {
+			Class<? extends Object> suiteClass = suite.getClass();
+			this.defaultExecutionConfig = configurePerfTest(suiteClass.getAnnotation(PerfTest.class), suiteClass.getName());
+			this.defaultRequirements = ContiPerfUtil.mapRequired(suiteClass.getAnnotation(Required.class));
+		}
     }
-	
+
 	// MethodRule interface implementation -----------------------------------------------------------------------------
 
 	public Statement apply(final Statement base, FrameworkMethod method, Object target) {
@@ -128,15 +135,19 @@ public class ContiPerfRule implements MethodRule {
 			return base;
 	    String testId = methodName(method, target);
 		return new PerfTestStatement(base, testId, executionConfig(method, testId), 
-				requirements(method, testId), logger);
+				requirements(method, testId), executionLogger);
     }
 	
-	// helpers ---------------------------------------------------------------------------------------------------------
+	public ExecutionLogger getExecutionLogger() {
+    	return executionLogger;
+    }
 
-	private static String methodName(FrameworkMethod method, Object target) {
-		return target.getClass().getName() + '.' + method.getName(); 
-		// no need to check signature: JUnit test methods have no parameters
+	void setExecutionLogger(ExecutionLogger executionLogger) {
+		this.executionLogger = executionLogger;
 	}
+	
+	
+	// helpers ---------------------------------------------------------------------------------------------------------
 	
 	private ExecutionConfig executionConfig(FrameworkMethod method, String methodName) {
 		PerfTest annotation = annotationOfMethodOrClass(method, PerfTest.class);
@@ -165,7 +176,7 @@ public class ContiPerfRule implements MethodRule {
         return classAnnotation;
 	}
 	
-	private static ExecutionConfig configurePerfTest(PerfTest annotation, String testId) {
+	public static ExecutionConfig configurePerfTest(PerfTest annotation, String testId) {
 		ExecutionConfig config = ContiPerfUtil.mapPerfTestAnnotation(annotation);
 		if (annotation == null)
 			config = new ExecutionConfig(1);
@@ -175,5 +186,9 @@ public class ContiPerfRule implements MethodRule {
 		return config;
     }
 
-
+	private static String methodName(FrameworkMethod method, Object target) {
+		return target.getClass().getName() + '.' + method.getName(); 
+		// no need to check signature: JUnit test methods have no parameters
+	}
+	
 }
