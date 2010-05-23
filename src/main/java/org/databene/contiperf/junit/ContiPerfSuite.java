@@ -22,6 +22,8 @@
 
 package org.databene.contiperf.junit;
 
+import org.databene.contiperf.Config;
+import org.databene.contiperf.ExecutionLogger;
 import org.junit.runner.RunWith;
 
 /**
@@ -33,4 +35,14 @@ import org.junit.runner.RunWith;
 @RunWith(ContiPerfSuiteRunner.class)
 public class ContiPerfSuite {
 
+	public final ExecutionLogger executionLogger;
+
+	public ContiPerfSuite() {
+		this(Config.instance().createDefaultExecutionLogger());
+	}
+
+	public ContiPerfSuite(ExecutionLogger executionLogger) {
+		this.executionLogger = executionLogger;
+	}
+	
 }
