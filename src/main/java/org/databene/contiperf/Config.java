@@ -22,6 +22,8 @@
 
 package org.databene.contiperf;
 
+import org.databene.contiperf.log.FileExecutionLogger;
+
 /**
  * Parses and provides the ContiPerf configuration.<br/><br/>
  * Created: 18.10.2009 06:46:31
@@ -60,6 +62,10 @@ public class Config {
 	public int getInvocationCount(String testId) {
 		// TODO v1.x read config file and support override of annotation settings
 		return -1;
+    }
+
+	public ExecutionLogger createDefaultExecutionLogger() {
+		return new FileExecutionLogger();
     }
 
 }
