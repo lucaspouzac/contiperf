@@ -25,7 +25,6 @@ package org.databene.contiperf.junit;
 import java.util.Arrays;
 import java.util.List;
 
-import org.databene.contiperf.log.FileExecutionLogger;
 import org.junit.internal.builders.AllDefaultPossibilitiesBuilder;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -42,8 +41,16 @@ import org.junit.runners.model.RunnerBuilder;
  */
 public class ContiPerfSuiteRunner extends Suite {
 
-	public ContiPerfSuiteRunner(Class<?> testClass) throws InitializationError {
-	    super(testClass, new ContiPerfRunnerBuilder(testClass));
+	public ContiPerfSuiteRunner(Class<?> suiteClass) throws InitializationError {
+	    super(suiteClass, new ContiPerfRunnerBuilder(instantiate(suiteClass)));
+    }
+
+	private static Object instantiate(Class<?> suiteClass) {
+	    try {
+	        return suiteClass.newInstance();
+        } catch (Exception e) {
+	        throw new RuntimeException(e); // TODO Auto-generated catch block
+        }
     }
 
 	@Override
@@ -53,11 +60,11 @@ public class ContiPerfSuiteRunner extends Suite {
 	
 	static class ContiPerfRunnerBuilder extends AllDefaultPossibilitiesBuilder {
 		
-		ContiPerfRule contiPerfRule;
+		protected Object suite;
 		
-		public ContiPerfRunnerBuilder(Class<?> suiteClass) {
+		public ContiPerfRunnerBuilder(Object suite) {
 			super(true);
-			this.contiPerfRule = new ContiPerfRule(suiteClass, new FileExecutionLogger()); // TODO configure ExecutionLogger
+			this.suite = suite;
         }
 
 		@Override
@@ -83,7 +90,7 @@ public class ContiPerfSuiteRunner extends Suite {
 
 				@Override
                 public Runner runnerForClass(Class<?> testClass) throws Throwable {
-	                return new BlockContiPerfClassRunner(testClass, contiPerfRule);
+	                return new BlockContiPerfClassRunner(testClass, suite);
                 }
 	        	
 	        };
