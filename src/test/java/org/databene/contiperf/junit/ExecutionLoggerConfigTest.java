@@ -31,10 +31,8 @@ import org.databene.contiperf.log.FileExecutionLogger;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
-import org.junit.runners.model.InitializationError;
 
 /**
  * Tests proper ExecutionLogger handling.<br/><br/>
@@ -42,43 +40,30 @@ import org.junit.runners.model.InitializationError;
  * @since 1.05
  * @author Volker Bergmann
  */
-public class ExecutionLoggerConfigTest {
+public class ExecutionLoggerConfigTest extends AbstractContiPerfTest {
 	
 	static ExecutionLogger usedLogger;
 
-	@Before
+	@Override
+    @Before
 	public void setUp() {
+		super.setUp();
 		usedLogger = null;
 		FileExecutionLoggerTestUtil.resetInvocationCount();
 	}
-	
-	// testing default execution logger --------------------------------------------------------------------------------
-	
-	@Test
-	public void testUnconfiguredStandardTest() throws Exception {
-		runPlainTestClass(UnconfiguredStandardTest.class);
-		assertEquals(FileExecutionLogger.class, usedLogger.getClass());
-		assertEquals(2, ((FileExecutionLogger) usedLogger).invocationCount());
-	}
 
-	public static class UnconfiguredStandardTest extends ContiPerfTest {
-		@Test
-		@PerfTest(invocations = 2)
-		public void test() {
-			usedLogger = contiPerfRule.executionLogger;
-		}
-	}
+	
 
 	// testing default execution logger --------------------------------------------------------------------------------
 	
 	@Test
-	public void testUnconfiguredCustomTest() throws Exception {
-		runPlainTestClass(UnconfiguredCustomTest.class);
+	public void testUnconfiguredTest() throws Exception {
+		runTest(UnconfiguredTest.class);
 		assertEquals(FileExecutionLogger.class, usedLogger.getClass());
 		assertEquals(3, ((FileExecutionLogger) usedLogger).invocationCount());
 	}
 
-	public static class UnconfiguredCustomTest {
+	public static class UnconfiguredTest {
 		
 		@Rule public ContiPerfRule rule = new ContiPerfRule();
 		
@@ -93,22 +78,20 @@ public class ExecutionLoggerConfigTest {
 	
 	@Test
 	public void testConfigured() throws Exception {
-		runPlainTestClass(ConfiguredTest.class);
+		runTest(ConfiguredTest.class);
 		assertEquals(ExecutionTestLogger.class, usedLogger.getClass());
 		assertEquals(1, ((ExecutionTestLogger) usedLogger).id);
 		assertEquals(4, ((ExecutionTestLogger) usedLogger).invocations);
 	}
 
-	public static class ConfiguredTest extends ContiPerfTest {
+	public static class ConfiguredTest {
 		
-		public ConfiguredTest() {
-			super(new ExecutionTestLogger(1));
-		}
+		@Rule public ContiPerfRule rule = new ContiPerfRule(new ExecutionTestLogger(1));
 
 		@Test
 		@PerfTest(invocations = 4)
 		public void test() {
-			usedLogger = contiPerfRule.executionLogger;
+			usedLogger = rule.executionLogger;
 		}
 	}
 	
@@ -117,54 +100,18 @@ public class ExecutionLoggerConfigTest {
 	// testing explicit suite execution logger -------------------------------------------------------------------------
 	
 	@Test
-	public void testConfiguredStandardSuite() throws Exception {
-		runSuite(ConfiguredStandardSuite.class);
-		assertEquals(2, ExecutionTestLogger.latestInstance.id);
-		assertEquals(3, ExecutionTestLogger.latestInstance.invocations);
-	}
-
-	@SuiteClasses(UnconfiguredCustomTest.class)
-	@PerfTest(invocations = 5)
-	public static class ConfiguredStandardSuite extends ContiPerfSuite {
-		
-		public ConfiguredStandardSuite() {
-			super(new ExecutionTestLogger(2));
-		}
-
-	}
-
-	
-	
-	// testing explicit suite execution logger -------------------------------------------------------------------------
-	
-	@Test
-	public void testConfiguredCustomSuite() throws Exception {
-		runSuite(ConfiguredCustomSuite.class);
+	public void testConfiguredSuite() throws Exception {
+		runTest(ConfiguredSuite.class);
 		assertEquals(ExecutionTestLogger.class, usedLogger.getClass());
 		assertEquals(3, ExecutionTestLogger.latestInstance.id);
 		assertEquals(3, ExecutionTestLogger.latestInstance.invocations);
 	}
 
-	@SuiteClasses(UnconfiguredCustomTest.class)
+	@RunWith(ContiPerfSuiteRunner.class)
+	@SuiteClasses(UnconfiguredTest.class)
 	@PerfTest(invocations = 6)
-	public static class ConfiguredCustomSuite {
+	public static class ConfiguredSuite {
 		public ExecutionLogger el = new ExecutionTestLogger(3);
 	}
-
-	
-	
-	// private helpers -------------------------------------------------------------------------------------------------
-	
-	private void runPlainTestClass(Class<?> testClass) throws InitializationError {
-		BlockJUnit4ClassRunner runner = new BlockJUnit4ClassRunner(testClass);
-		RunNotifier notifier = new RunNotifier();
-		runner.run(notifier);
-	}
-	
-	private void runSuite(Class<?> testClass) throws InitializationError {
-	    ContiPerfSuiteRunner suite = new ContiPerfSuiteRunner(testClass);
-		RunNotifier notifier = new RunNotifier();
-		suite.run(notifier);
-    }
 
 }
