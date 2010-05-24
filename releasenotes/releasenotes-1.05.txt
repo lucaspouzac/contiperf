@@ -1,7 +1,45 @@
 ContiPerf 1.05 Release Notes
 ----------------------------
 
-- Added ContiPerfTest as optional parent class for ContiPerf based performance tests.
-  Any ContiPerf performance test must either extend the class ContiPerfTest
-  or have the following attribute: @Rule public ContiPerfRule i = new ContiPerfRule();
+Class annotations
+-----------------
+@PerfTest and @Required can now be specified on class level 
+and provide defaults for all test methods that have not been 
+annotated themselves. 
 
+Example:
+
+  @PerfTest(invocations = 5)
+  @Required(max = 1200, average = 250)
+  public class SmokeTest {
+
+      @Rule
+      public ContiPerfRule i = new ContiPerfRule();
+
+      @Test
+      public void test1() throws Exception {
+          Thread.sleep(200);
+      }
+
+      @Test
+      public void test2() throws Exception {
+          Thread.sleep(150);
+      }
+
+ }
+
+
+Test suite mechanism
+--------------------
+Use @RunWith(ContiPerfSuiteRunner.class) to make use of ContiPerf's suite runner 
+and specify all test classes as comma-separated list in a @SuiteClasses annotation.
+Any @PerfTest or @Required annotation applied to the suite class is used for any 
+contained test that has now annotation of same type.
+
+Example:
+
+@RunWith(ContiPerfSuiteRunner.class)
+@SuiteClasses(MyApplicationTest.class)
+@PerfTest(invocations = 1000, threads = 30)
+public static class PeakLoadTest {
+}
