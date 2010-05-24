@@ -145,9 +145,10 @@ public class ContiPerfSuiteTest {
 	public static class UnconfiguredSuiteForConfiguredMethodTest {
 	}
 	
+	@RunWith(ContiPerfSuiteRunner.class)
 	@SuiteClasses(ConfiguredMethodTest.class)
 	@PerfTest(invocations = 13, threads = 2)
-	public static class ConfiguredSuiteForConfiguredMethodTest extends ContiPerfSuite {
+	public static class ConfiguredSuiteForConfiguredMethodTest {
 	}
 	
 	@RunWith(ContiPerfSuiteRunner.class)
@@ -155,9 +156,10 @@ public class ContiPerfSuiteTest {
 	public static class UnconfiguredSuiteForConfiguredClassTest {
 	}
 	
+	@RunWith(ContiPerfSuiteRunner.class)
 	@SuiteClasses(ConfiguredClassTest.class)
 	@PerfTest(invocations = 17, threads = 2)
-	public static class ConfiguredSuiteForConfiguredClassTest extends ContiPerfSuite {
+	public static class ConfiguredSuiteForConfiguredClassTest {
 	}
 	
 	@RunWith(ContiPerfSuiteRunner.class)
@@ -165,9 +167,10 @@ public class ContiPerfSuiteTest {
 	public static class UnconfiguredSuiteForConfiguredClassAndMethodTest {
 	}
 	
+	@RunWith(ContiPerfSuiteRunner.class)
 	@SuiteClasses(ConfiguredClassAndMethodTest.class)
 	@PerfTest(invocations = 19, threads = 2)
-	public static class ConfiguredSuiteForConfiguredClassAndMethodTest extends ContiPerfSuite {
+	public static class ConfiguredSuiteForConfiguredClassAndMethodTest {
 	}
 	
 /* 
@@ -191,7 +194,7 @@ public class ContiPerfSuiteTest {
 
 	
 	
-	public static class ConfiguredMethodTest extends ContiPerfTest {
+	public static class ConfiguredMethodTest extends AbstractContiPerfTest {
 		@Test
 		@PerfTest(invocations = 2)
 		public void test() throws Exception {
@@ -202,7 +205,7 @@ public class ContiPerfSuiteTest {
 	
 	
 	@PerfTest(invocations = 3)
-	public static class ConfiguredClassTest extends ContiPerfTest {
+	public static class ConfiguredClassTest extends AbstractContiPerfTest {
 		@Test
 		public void test() throws Exception {
 			cCount.incrementAndGet();
@@ -212,7 +215,7 @@ public class ContiPerfSuiteTest {
 	
 	
 	@PerfTest(invocations = 5)
-	public static class ConfiguredClassAndMethodTest extends ContiPerfTest {
+	public static class ConfiguredClassAndMethodTest extends AbstractContiPerfTest {
 		@Test
 		@PerfTest(invocations = 7)
 		public void test() throws Exception {
