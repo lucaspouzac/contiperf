@@ -32,7 +32,7 @@ import org.databene.contiperf.Invoker;
  */
 public class InvokerProxy implements Invoker {
 
-	protected Invoker target;
+	protected final Invoker target;
 
 	public InvokerProxy(Invoker target) {
 	    this.target = target;
