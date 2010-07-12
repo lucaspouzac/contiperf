@@ -1,0 +1,9 @@
+ContiPerf 1.06 Release Notes
+----------------------------
+
+Improvements:
+- Avoiding Windows' time resolution problem by using the most precise timer available on the system
+- Reduced the impact of single slow threads on the total execution time: 
+  Threads do not need to perform the same number of execution, each one runs as long as invocations are pending.
+- Improved thread handling and statistics allocation for reducing memory impact
+- Reduced the performance impact of the framework
