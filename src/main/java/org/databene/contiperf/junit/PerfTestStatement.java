@@ -22,10 +22,13 @@
 
 package org.databene.contiperf.junit;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.databene.contiperf.ArgumentsProvider;
 import org.databene.contiperf.EmptyArgumentsProvider;
 import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.ExecutionLogger;
+import org.databene.contiperf.InvocationRunner;
 import org.databene.contiperf.Invoker;
 import org.databene.contiperf.ConcurrentRunner;
 import org.databene.contiperf.PerfTestConfigurationError;
@@ -61,17 +64,23 @@ final class PerfTestStatement extends Statement {
 
     @Override
     public void evaluate() throws Throwable {
+		System.out.println(id);
     	Invoker invoker = new JUnitInvoker(id, base);
     	PerformanceTracker tracker = new PerformanceTracker(
     			invoker, requirement, config.isCancelOnViolation(), logger);
-    	Runnable runner = createRunner(tracker);
-		runner.run();
-		tracker.stop();
+    	InvocationRunner runner = createRunner(tracker);
+    	try {
+			runner.run();
+    	} finally {
+			tracker.stop();
+    		runner.close();
+    		tracker.clear();
+    	}
     }
 
-    private Runnable createRunner(PerformanceTracker tracker) {
+    private InvocationRunner createRunner(PerformanceTracker tracker) {
 	    ArgumentsProvider provider = new EmptyArgumentsProvider();
-	    Runnable runner;
+	    InvocationRunner runner;
         int threads = config.getThreads();
 		int duration = config.getDuration();
 		int invocations = config.getInvocations();
@@ -81,24 +90,21 @@ final class PerfTestStatement extends Statement {
 				runner = new TimedRunner(tracker, provider, duration);
 			} else {
 				// single-threaded timed test
-				Runnable[] runners = new Runnable[threads];
+				InvocationRunner[] runners = new InvocationRunner[threads];
 				for (int i = 0; i < threads; i++)
 					runners[i] = new TimedRunner(tracker, provider, duration);
 				runner = new ConcurrentRunner(id, runners);
 			}
     	} else if (invocations >= 0) {
+    		AtomicLong counter = new AtomicLong(invocations);
     		if (threads == 1) {
     			// single-threaded count-based test
-    			runner = new CountRunner(tracker, provider, invocations, false);
+    			runner = new CountRunner(tracker, provider, counter, false);
     		} else {
     			// multi-threaded count-based test
-    			Runnable[] runners = new Runnable[threads];
-	        	int invocationsPerLoop = invocations / threads;
-	        	int longerLoops = invocations - invocationsPerLoop * threads;
-	        	for (int i = 0; i < threads; i++) {
-	        		int loopSize = (i < longerLoops ? invocationsPerLoop + 1 : invocationsPerLoop);
-	        		runners[i] = new CountRunner(tracker, provider, loopSize, true);
-	        	}
+    			InvocationRunner[] runners = new InvocationRunner[threads];
+	        	for (int i = 0; i < threads; i++)
+	        		runners[i] = new CountRunner(tracker, provider, counter, /*true*/ false); // TODO when to set 'yield' to 'true'?
 				runner = new ConcurrentRunner(id, runners);
     		}
         } else 
