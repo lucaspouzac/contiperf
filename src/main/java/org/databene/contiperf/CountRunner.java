@@ -22,6 +22,8 @@
 
 package org.databene.contiperf;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.databene.contiperf.util.ContiPerfUtil;
 
 /**
@@ -30,23 +32,23 @@ import org.databene.contiperf.util.ContiPerfUtil;
  * @since 1.0
  * @author Volker Bergmann
  */
-public class CountRunner implements Runnable {
+public class CountRunner implements InvocationRunner {
 
     private ArgumentsProvider argsProvider;
     private Invoker invoker;
-    private long invocations;
+    private AtomicLong invocationsLeft;
     private boolean yield;
 
-    public CountRunner(Invoker invoker, ArgumentsProvider argsProvider, long invocations, boolean yield) {
+    public CountRunner(Invoker invoker, ArgumentsProvider argsProvider, AtomicLong invocationsLeft, boolean yield) {
 	    this.invoker = invoker;
 	    this.argsProvider = argsProvider;
-	    this.invocations = invocations;
+	    this.invocationsLeft = invocationsLeft;
 	    this.yield  = yield;
     }
 
     public void run() {
     	try {
-			for (int i = 0; i < invocations; i++) { 
+    		while (invocationsLeft.getAndDecrement() > 0) {
 	    	    invoker.invoke(argsProvider.next());
 	    	    if (yield)
 	    	    	Thread.yield();
@@ -56,4 +58,8 @@ public class CountRunner implements Runnable {
     	}
     }
 
+	public void close() {
+	    invoker = null;
+    }
+    
 }
