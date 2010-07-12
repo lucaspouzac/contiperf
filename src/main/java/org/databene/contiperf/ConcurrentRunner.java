@@ -31,12 +31,12 @@ import org.databene.contiperf.util.ContiPerfUtil;
  * @since 1.03
  * @author Volker Bergmann
  */
-public class ConcurrentRunner implements Runnable {
+public class ConcurrentRunner implements InvocationRunner {
 
 	private String name;
-	private Runnable[] runners;
+	private InvocationRunner[] runners;
 	
-	public ConcurrentRunner(String name, Runnable[] runners) {
+	public ConcurrentRunner(String name, InvocationRunner[] runners) {
 	    this.name = name;
 	    this.runners = runners;
     }
@@ -60,7 +60,7 @@ public class ConcurrentRunner implements Runnable {
     	if (threadGroup.throwable != null)
     		throw ContiPerfUtil.executionError(threadGroup.throwable);
     }
-
+    
     /** 
      * Implements the {@link ThreadGroup#uncaughtException(Thread, Throwable)} method
      * interrupting the execution of all threads in case of a {@link Throwable} and
@@ -80,6 +80,12 @@ public class ConcurrentRunner implements Runnable {
 		    	this.throwable = throwable;
 		    interrupt();
 		}
+    }
+
+	public void close() {
+		for (InvocationRunner runner : runners)
+			runner.close();
+	    runners = null;
     }
     
 }

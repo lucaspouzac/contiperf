@@ -30,7 +30,7 @@ import org.databene.contiperf.util.ContiPerfUtil;
  * @since 1.03
  * @author Volker Bergmann
  */
-public class TimedRunner implements Runnable {
+public class TimedRunner implements InvocationRunner {
 
     private long duration;
     private ArgumentsProvider argsProvider;
@@ -52,6 +52,10 @@ public class TimedRunner implements Runnable {
 		} catch (Exception e) {
 			throw ContiPerfUtil.executionError(e);
 		}
+    }
+
+	public void close() {
+	    invoker = null;
     }
 
 }
