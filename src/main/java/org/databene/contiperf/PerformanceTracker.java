@@ -72,9 +72,9 @@ public class PerformanceTracker extends InvokerProxy {
     public Object invoke(Object[] args) throws Exception {
 		if (!started)
 			start();
-	    long callStart = System.currentTimeMillis();
+	    long callStart = System.nanoTime();
 		Object result = super.invoke(args);
-	    int latency = (int) (System.currentTimeMillis() - callStart);
+	    int latency = (int) ((System.nanoTime() - callStart) / 1000000);
 	    counter.addSample(latency);
 	    logger.logInvocation(getId(), latency, callStart);
 	    if (requirement != null && requirement.getMax() >= 0 && latency > requirement.getMax() && cancelOnViolation)
@@ -92,6 +92,10 @@ public class PerformanceTracker extends InvokerProxy {
     		checkRequirements(elapsedTime);
 	}
 
+	public void clear() {
+		counter = null;
+	}
+	
 	private void checkRequirements(long elapsedMillis) throws PerfTestFailure {
 	    long requiredMax = requirement.getMax();
     	if (requiredMax >= 0) {
