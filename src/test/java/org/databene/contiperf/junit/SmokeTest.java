@@ -1,14 +1,17 @@
 package org.databene.contiperf.junit;
 
+import java.util.Random;
+
 import org.databene.contiperf.Required;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.Unrepeatable;
+import org.databene.contiperf.log.EmptyExecutionLogger;
 import org.junit.Rule;
 import org.junit.Test;
 
 public class SmokeTest {
 	
-	@Rule public ContiPerfRule rule = new ContiPerfRule();
+	@Rule public ContiPerfRule rule = new ContiPerfRule(new EmptyExecutionLogger());
 	
 	@Test
 	public void simpleTest() throws Exception {
@@ -42,6 +45,15 @@ public class SmokeTest {
 	@Required(max = 250, percentiles = "90:210,95:220")
 	public void complexTest() throws Exception {
 		Thread.sleep(200);
+	}
+
+	
+	Random random = new Random();
+	
+	@Test
+	@PerfTest(invocations = 1000, threads = 2)
+	public void threadTest() throws Exception {
+		Thread.sleep(random.nextInt(20));
 	}
 
 }
