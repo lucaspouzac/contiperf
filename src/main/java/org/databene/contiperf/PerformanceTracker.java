@@ -101,7 +101,7 @@ public class PerformanceTracker extends InvokerProxy {
     	if (requiredMax >= 0) {
     		if (counter.maxLatency() > requiredMax)
     			throw new PerfTestFailure("The maximum latency of " + 
-    					requiredMax + " ms was exceeded, Measured: " + elapsedMillis + " ms");
+    					requiredMax + " ms was exceeded, Measured: " + counter.maxLatency() + " ms");
     	}
 	    long requiredTotalTime = requirement.getTotalTime();
     	if (requiredTotalTime >= 0) {
