@@ -1,0 +1,5 @@
+ContiPerf 1.07 Release Notes
+----------------------------
+
+Bug fix:
+#3030070: max latency failure message uses incorrect value
