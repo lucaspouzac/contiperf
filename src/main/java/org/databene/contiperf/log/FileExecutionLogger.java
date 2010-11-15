@@ -40,15 +40,19 @@ import org.databene.contiperf.util.ContiPerfUtil;
  */
 public class FileExecutionLogger implements ExecutionLogger {
 	
-	private static final String FILENAME = "target/contiperf/contiperf.log";
+	private static final String DEFAULT_FILENAME = "target/contiperf/contiperf.log";
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	
 	private static boolean firstCall = true;
 	static AtomicLong invocationCount = new AtomicLong();
 
 	public FileExecutionLogger() {
+		this(DEFAULT_FILENAME);
+    }
+
+	public FileExecutionLogger(String fileName) {
 		if (firstCall) {
-			createSummaryFile();
+			createSummaryFile(fileName);
 			firstCall = false;
 		}
     }
@@ -63,7 +67,7 @@ public class FileExecutionLogger implements ExecutionLogger {
         String message = id + "," + elapsedTime + ',' 
         	+ invocationCount + ',' + startTime + LINE_SEPARATOR; // TODO v1.x make formatter a strategy
 		try {
-	        out = new FileOutputStream(FILENAME, true);
+	        out = new FileOutputStream(DEFAULT_FILENAME, true);
 	        out.write(message.getBytes());
         } catch (IOException e) {
 	        e.printStackTrace();
@@ -78,8 +82,8 @@ public class FileExecutionLogger implements ExecutionLogger {
 	
 	// private helpers -------------------------------------------------------------------------------------------------
 
-	private void createSummaryFile() {
-	    File file = new File(".", FILENAME);
+	private void createSummaryFile(String fileName) {
+	    File file = new File(".", fileName);
 	    try {
 		    ensureDirectoryExists(file.getParentFile());	
 		    if (file.exists())
