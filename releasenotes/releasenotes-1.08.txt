@@ -1,0 +1,11 @@
+ContiPerf 1.08 Release Notes
+----------------------------
+
+
+Enhancements:
+-------------
+Name of CSV log file is configurable
+
+
+Bug fixes:
+----------
