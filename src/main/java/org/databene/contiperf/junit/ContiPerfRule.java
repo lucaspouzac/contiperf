@@ -158,7 +158,7 @@ public class ContiPerfRule implements MethodRule {
         return new ExecutionConfig(1);
 	}
 
-	private PerformanceRequirement requirements(FrameworkMethod method, @SuppressWarnings("unused") String testId) {
+	private PerformanceRequirement requirements(FrameworkMethod method, String testId) {
 		// TODO v1.x make use of config file
 		Required annotation = annotationOfMethodOrClass(method, Required.class);
 		if (annotation != null)

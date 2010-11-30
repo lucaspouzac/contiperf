@@ -58,7 +58,6 @@ public class Config {
 	    return instance;
     }
 
-	@SuppressWarnings("unused") 
 	public int getInvocationCount(String testId) {
 		// TODO v1.x read config file and support override of annotation settings
 		return -1;
