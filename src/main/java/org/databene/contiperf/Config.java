@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2011 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -22,7 +22,10 @@
 
 package org.databene.contiperf;
 
-import org.databene.contiperf.log.FileExecutionLogger;
+import java.io.File;
+
+import org.databene.contiperf.report.HtmlReportModule;
+import org.databene.contiperf.report.ReportContext;
 
 /**
  * Parses and provides the ContiPerf configuration.<br/><br/>
@@ -32,6 +35,7 @@ import org.databene.contiperf.log.FileExecutionLogger;
  */
 public class Config {
 
+	private static final String DEFAULT_REPORT_FOLDER_NAME = "contiperf-report";
 	public static final String SYSPROP_ACTIVE = "contiperf.active";
 	public static final String SYSPROP_CONFIG_FILENAME = "contiperf.config";
 	public static final String DEFAULT_CONFIG_FILENAME = "contiperf.config.xml";
@@ -59,12 +63,23 @@ public class Config {
     }
 
 	public int getInvocationCount(String testId) {
-		// TODO v1.x read config file and support override of annotation settings
+		// TODO v2.x read config file and support override of annotation settings
 		return -1;
     }
 
-	public ExecutionLogger createDefaultExecutionLogger() {
-		return new FileExecutionLogger();
+	public ReportContext createDefaultReportContext(Class<? extends AssertionError> failureClass) {
+		File reportFolder = getReportFolder();
+		ReportContext context = new ReportContext(reportFolder, failureClass);
+		context.addReportModule(new HtmlReportModule());
+		return context;
     }
+
+	public File getReportFolder() {
+		File targetDir = new File("target");
+		File reportFolder = (targetDir.exists() ? 
+				new File(targetDir, DEFAULT_REPORT_FOLDER_NAME) : 
+				new File(DEFAULT_REPORT_FOLDER_NAME)); // TODO v2.x determine from config file
+		return reportFolder;
+	}
 
 }
