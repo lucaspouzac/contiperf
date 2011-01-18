@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2011 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -27,7 +27,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.databene.contiperf.ArgumentsProvider;
 import org.databene.contiperf.EmptyArgumentsProvider;
 import org.databene.contiperf.ExecutionConfig;
-import org.databene.contiperf.ExecutionLogger;
 import org.databene.contiperf.InvocationRunner;
 import org.databene.contiperf.Invoker;
 import org.databene.contiperf.ConcurrentRunner;
@@ -36,6 +35,7 @@ import org.databene.contiperf.PerformanceTracker;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.CountRunner;
 import org.databene.contiperf.TimedRunner;
+import org.databene.contiperf.report.ReportContext;
 import org.junit.runners.model.Statement;
 
 /**
@@ -49,17 +49,17 @@ final class PerfTestStatement extends Statement {
 	
     private String id;
     private final Statement base;
-    private ExecutionLogger logger;
+    private ReportContext context;
     private ExecutionConfig config;
     private PerformanceRequirement requirement;
 
     PerfTestStatement(Statement base, String id, ExecutionConfig config, 
-    		PerformanceRequirement requirement, ExecutionLogger logger) {
+    		PerformanceRequirement requirement, ReportContext context) {
 	    this.base = base;
 	    this.id = id;
 	    this.config = config;
 	    this.requirement = requirement;
-	    this.logger = logger;
+	    this.context = context;
     }
 
     @Override
@@ -67,7 +67,7 @@ final class PerfTestStatement extends Statement {
 		System.out.println(id);
     	Invoker invoker = new JUnitInvoker(id, base);
     	PerformanceTracker tracker = new PerformanceTracker(
-    			invoker, requirement, config.isCancelOnViolation(), logger);
+    			invoker, requirement, config.isCancelOnViolation(), context);
     	InvocationRunner runner = createRunner(tracker);
     	try {
 			runner.run();
@@ -104,7 +104,7 @@ final class PerfTestStatement extends Statement {
     			// multi-threaded count-based test
     			InvocationRunner[] runners = new InvocationRunner[threads];
 	        	for (int i = 0; i < threads; i++)
-	        		runners[i] = new CountRunner(tracker, provider, counter, /*true*/ false); // TODO when to set 'yield' to 'true'?
+	        		runners[i] = new CountRunner(tracker, provider, counter, false);
 				runner = new ConcurrentRunner(id, runners);
     		}
         } else 

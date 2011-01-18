@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2011 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -24,6 +24,8 @@ package org.databene.contiperf;
 
 import java.io.PrintWriter;
 
+import org.databene.contiperf.report.ReportContext;
+import org.databene.contiperf.report.ReportModule;
 import org.databene.contiperf.util.InvokerProxy;
 import org.databene.stat.LatencyCounter;
 
@@ -37,24 +39,24 @@ public class PerformanceTracker extends InvokerProxy {
 	
     private PerformanceRequirement requirement;
     private boolean cancelOnViolation;
-    private ExecutionLogger logger;
+    private ReportContext context;
     private LatencyCounter counter;
     private boolean started;
 
-	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, ExecutionLogger logger) {
-	    this(target, requirement, true, logger);
+	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, ReportContext context) {
+	    this(target, requirement, true, context);
     }
 
-	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, boolean cancelOnViolation, ExecutionLogger logger) {
+	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, boolean cancelOnViolation, ReportContext context) {
 	    super(target);
 	    this.requirement = requirement;
-	    setExecutionLogger(logger);
+	    setContext(context);
 	    this.started = false;
 	    this.cancelOnViolation = cancelOnViolation;
     }
 
-	public void setExecutionLogger(ExecutionLogger logger) {
-		this.logger = logger;
+	public void setContext(ReportContext context) {
+		this.context = context;
 	}
 	
     public LatencyCounter getCounter() {
@@ -62,6 +64,7 @@ public class PerformanceTracker extends InvokerProxy {
     }
 
 	public void start() {
+		reportStart();
     	int max = (requirement != null ? requirement.getMax() : -1);
     	counter = new LatencyCounter(max >= 0 ? max : 1000);
     	counter.start();
@@ -76,9 +79,9 @@ public class PerformanceTracker extends InvokerProxy {
 		Object result = super.invoke(args);
 	    int latency = (int) ((System.nanoTime() - callStart) / 1000000);
 	    counter.addSample(latency);
-	    logger.logInvocation(getId(), latency, callStart);
+	    reportInvocation(latency, callStart);
 	    if (requirement != null && requirement.getMax() >= 0 && latency > requirement.getMax() && cancelOnViolation)
-	    	throw new PerfTestFailure("Method " + getId() + " exceeded time limit of " + 
+	    	context.fail("Method " + getId() + " exceeded time limit of " + 
 	    			requirement.getMax() + " ms running " + latency + " ms");
 	    return result;
 	}
@@ -86,44 +89,60 @@ public class PerformanceTracker extends InvokerProxy {
 	public void stop() {
     	counter.stop();
     	counter.printSummary(new PrintWriter(System.out));
-    	long elapsedTime = counter.duration();
-    	logger.logSummary(getId(), elapsedTime, counter.sampleCount(), counter.getStartTime());
+    	reportCompletion();
     	if (requirement != null)
-    		checkRequirements(elapsedTime);
+    		checkRequirements(counter.duration());
 	}
 
 	public void clear() {
 		counter = null;
 	}
+
+	// helper methods --------------------------------------------------------------------------------------------------
 	
-	private void checkRequirements(long elapsedMillis) throws PerfTestFailure {
+	private void reportStart() {
+		for (ReportModule module : context.getReportModules())
+			module.starting(getId());
+	}
+
+	private void reportInvocation(int latency, long callStart) {
+		for (ReportModule module : context.getReportModules())
+			module.invoked(getId(), latency, callStart);
+	}
+
+	private void reportCompletion() {
+		for (ReportModule module : context.getReportModules())
+			module.completed(getId(), counter);
+	}
+
+	private void checkRequirements(long elapsedMillis) {
 	    long requiredMax = requirement.getMax();
     	if (requiredMax >= 0) {
     		if (counter.maxLatency() > requiredMax)
-    			throw new PerfTestFailure("The maximum latency of " + 
+    			context.fail("The maximum latency of " + 
     					requiredMax + " ms was exceeded, Measured: " + counter.maxLatency() + " ms");
     	}
 	    long requiredTotalTime = requirement.getTotalTime();
     	if (requiredTotalTime >= 0) {
     		if (elapsedMillis > requiredTotalTime)
-    			throw new PerfTestFailure("Test run " + getId() + " exceeded timeout of " + 
+    			context.fail("Test run " + getId() + " exceeded timeout of " + 
     				requiredTotalTime + " ms running " + elapsedMillis + " ms");
     	}
     	int requiredThroughput = requirement.getThroughput();
     	if (requiredThroughput > 0) {
     		long actualThroughput = counter.sampleCount() * 1000 / elapsedMillis;
     		if (actualThroughput < requiredThroughput)
-    			throw new PerfTestFailure("Test " + getId() + " had a throughput of only " + 
+    			context.fail("Test " + getId() + " had a throughput of only " + 
         				actualThroughput + " calls per second, required: " + requiredThroughput + " calls per second");
     	}
     	int requiredAverage = requirement.getAverage();
 		if (requiredAverage >= 0 && counter.averageLatency() > requiredAverage)
-			throw new PerfTestFailure("Average execution time of " + getId() + " exceeded the requirement of " + 
+			context.fail("Average execution time of " + getId() + " exceeded the requirement of " + 
 					requiredAverage + " ms, measured " + counter.averageLatency() + " ms");
     	for (PercentileRequirement percentile : requirement.getPercentileRequirements()) {
     		long measuredLatency = counter.percentileLatency(percentile.getPercentage());
 			if (measuredLatency > percentile.getMillis())
-    			throw new PerfTestFailure(percentile.getPercentage() + "-percentile of " + getId() + " exceeded the requirement of " + 
+				context.fail(percentile.getPercentage() + "-percentile of " + getId() + " exceeded the requirement of " + 
     					percentile.getMillis() + " ms, measured " + measuredLatency + " ms");
     	}
     }

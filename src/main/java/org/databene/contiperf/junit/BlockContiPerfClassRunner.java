@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2010-2011 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -22,11 +22,8 @@
 
 package org.databene.contiperf.junit;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
-import org.databene.contiperf.Config;
-import org.databene.contiperf.ExecutionLogger;
 import org.junit.rules.MethodRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
@@ -44,7 +41,7 @@ public class BlockContiPerfClassRunner extends BlockJUnit4ClassRunner {
 
 	public BlockContiPerfClassRunner(Class<?> testClass, Object suite) throws InitializationError {
 	    super(testClass);
-	    rule = new ContiPerfRule(findLoggers(suite), suite);
+	    rule = new ContiPerfRule(JUnitReportContext.createInstance(suite), suite);
     }
 	
 	@Override
@@ -54,26 +51,13 @@ public class BlockContiPerfClassRunner extends BlockJUnit4ClassRunner {
 	    for (MethodRule targetRule : rules)
 	    	if (targetRule instanceof ContiPerfRule) {
 	    		ContiPerfRule cpRule = (ContiPerfRule) targetRule;
-				if (!cpRule.configuredExecutionLogger)
-	    			cpRule.setExecutionLogger(rule.getExecutionLogger());
+				if (cpRule.getContext().getReportModules().size() == 0)
+	    			cpRule.setContext(rule.getContext());
 	    		configured = true;
 	    	}
 	    if (!configured)
 	    	rules.add(rule);
 		return rules;
 	}
-
-	private ExecutionLogger findLoggers(Object suite) {
-	    for (Field field : suite.getClass().getFields()) {
-	    	if (ExecutionLogger.class.isAssignableFrom(field.getType())) {
-	    		try {
-	                return (ExecutionLogger) field.get(suite);
-                } catch (Exception e) {
-	                throw new RuntimeException(e); // TODO Auto-generated catch block
-                }
-	    	}
-	    }
-	    return Config.instance().createDefaultExecutionLogger();
-    }
 
 }
