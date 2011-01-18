@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2011 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.databene.contiperf.ExecutionLogger;
+import org.databene.contiperf.report.CSVSummaryReportModule;
 import org.databene.contiperf.util.ContiPerfUtil;
 
 /**
@@ -37,7 +38,9 @@ import org.databene.contiperf.util.ContiPerfUtil;
  * Created: 12.10.09 10:12:39
  * @since 1.0
  * @author Volker Bergmann
+ * @deprecated Replaced with {@link CSVSummaryReportModule}
  */
+@Deprecated
 public class FileExecutionLogger implements ExecutionLogger {
 	
 	private static final String DEFAULT_FILENAME = "target/contiperf/contiperf.log";
@@ -65,7 +68,7 @@ public class FileExecutionLogger implements ExecutionLogger {
 	public void logSummary(String id, long elapsedTime, long invocationCount, long startTime) {
 		OutputStream out = null;
         String message = id + "," + elapsedTime + ',' 
-        	+ invocationCount + ',' + startTime + LINE_SEPARATOR; // TODO v1.x make formatter a strategy
+        	+ invocationCount + ',' + startTime + LINE_SEPARATOR;
 		try {
 	        out = new FileOutputStream(DEFAULT_FILENAME, true);
 	        out.write(message.getBytes());

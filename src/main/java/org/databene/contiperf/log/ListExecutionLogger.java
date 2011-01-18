@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.databene.contiperf.ExecutionLogger;
+import org.databene.contiperf.report.InvocationLog;
+import org.databene.contiperf.report.InvocationSummary;
+import org.databene.contiperf.report.ListReportModule;
 
 /**
  * {@link ExecutionLogger} implementation that stores all reported invocation logs and 
@@ -33,7 +36,9 @@ import org.databene.contiperf.ExecutionLogger;
  * Created: 29.03.2010 12:37:33
  * @since 1.0
  * @author Volker Bergmann
+ * @deprecated replaced with {@link ListReportModule}
  */
+@Deprecated
 public class ListExecutionLogger implements ExecutionLogger {
 	
 	private List<InvocationLog> invocations;

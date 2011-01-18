@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2010-2011 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -23,13 +23,16 @@
 package org.databene.contiperf.log;
 
 import org.databene.contiperf.ExecutionLogger;
+import org.databene.contiperf.report.EmptyReportModule;
 
 /**
  * Empty implementation of the {@link ExecutionLogger} interface.<br/><br/>
  * Created: 01.04.2010 12:05:53
  * @since 1.01
  * @author Volker Bergmann
+ * @deprecated Replaced with {@link EmptyReportModule}
  */
+@Deprecated
 public class EmptyExecutionLogger implements ExecutionLogger {
 
 	public void logInvocation(String id, int latency, long startTime) {
