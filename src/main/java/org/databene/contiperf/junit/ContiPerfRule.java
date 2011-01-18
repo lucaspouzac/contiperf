@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2011 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -24,12 +24,19 @@ package org.databene.contiperf.junit;
 
 import java.lang.annotation.Annotation;
 
+import junit.framework.AssertionFailedError;
+
 import org.databene.contiperf.Config;
 import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.ExecutionLogger;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.Required;
+import org.databene.contiperf.log.ConsoleExecutionLogger;
+import org.databene.contiperf.report.HtmlReportModule;
+import org.databene.contiperf.report.LoggerModuleAdapter;
+import org.databene.contiperf.report.ReportContext;
+import org.databene.contiperf.report.ReportModule;
 import org.databene.contiperf.util.ContiPerfUtil;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
@@ -95,31 +102,36 @@ import org.junit.runners.model.Statement;
  * @since 1.0
  * @author Volker Bergmann
  */
+@SuppressWarnings("deprecation")
 public class ContiPerfRule implements MethodRule {
 	
 	private ExecutionConfig defaultExecutionConfig;
+	ReportContext context;
 	private PerformanceRequirement defaultRequirements;
-	protected ExecutionLogger executionLogger;
-	protected final boolean configuredExecutionLogger;
 	
 	// initialization --------------------------------------------------------------------------------------------------
 	
    public ContiPerfRule() {
-	    this(null);
+	    this((ReportContext) null);
     }
 
-	public ContiPerfRule(ExecutionLogger executionLogger) {
-		this(executionLogger, null);
+	public ContiPerfRule(ExecutionLogger logger) {
+		this(createReportContext(logger), null);
     }
 
-	public ContiPerfRule(ExecutionLogger executionLogger, Object suite) {
-		if (executionLogger == null) {
-			this.executionLogger = Config.instance().createDefaultExecutionLogger();
-			this.configuredExecutionLogger = false;
-		} else {
-			this.executionLogger = executionLogger;
-			this.configuredExecutionLogger = true;
-		}
+	public ContiPerfRule(ReportModule... modules) {
+		this(createReportContext(modules), null);
+    }
+
+	protected ContiPerfRule(ReportContext context) {
+		this(context, null);
+    }
+
+	protected ContiPerfRule(ReportContext context, Object suite) {
+		if (context == null)
+			this.context = JUnitReportContext.createInstance(suite);
+		else
+			this.context = context;
 		if (suite != null) {
 			Class<? extends Object> suiteClass = suite.getClass();
 			this.defaultExecutionConfig = configurePerfTest(suiteClass.getAnnotation(PerfTest.class), suiteClass.getName());
@@ -127,28 +139,59 @@ public class ContiPerfRule implements MethodRule {
 		}
     }
 
+	public static ContiPerfRule createDefaultRule() {
+		ReportContext context = new JUnitReportContext();
+		context.addReportModule(new HtmlReportModule());
+		return new ContiPerfRule(context);
+	}
+	
+	public static ContiPerfRule createVerboseRule() {
+		ReportContext context = new JUnitReportContext();
+		context.addReportModule(new HtmlReportModule());
+		context.addReportModule(new LoggerModuleAdapter(new ConsoleExecutionLogger()));
+		return new ContiPerfRule(context);
+	}
+	
 	// MethodRule interface implementation -----------------------------------------------------------------------------
 
 	public Statement apply(final Statement base, FrameworkMethod method, Object target) {
 		Config config = Config.instance();
 		if (!config.active())
 			return base;
+		if (context.getReportModules().size() == 0) {
+			context = JUnitReportContext.createInstance(target);
+			if (context.getReportModules().size() == 0)
+				context = Config.instance().createDefaultReportContext(AssertionFailedError.class);
+		}
 	    String testId = methodName(method, target);
 		return new PerfTestStatement(base, testId, executionConfig(method, testId), 
-				requirements(method, testId), executionLogger);
+				requirements(method, testId), context);
     }
 	
-	public ExecutionLogger getExecutionLogger() {
-    	return executionLogger;
+	public ReportContext getContext() {
+    	return context;
     }
 
-	void setExecutionLogger(ExecutionLogger executionLogger) {
-		this.executionLogger = executionLogger;
+	void setContext(ReportContext context) {
+		this.context = context;
 	}
 	
 	
 	// helpers ---------------------------------------------------------------------------------------------------------
 	
+	private static ReportContext createReportContext(ExecutionLogger logger) {
+		ReportContext context = new JUnitReportContext();
+		context.addReportModule(new LoggerModuleAdapter(logger));
+		return context;
+	}
+
+	private static ReportContext createReportContext(ReportModule... modules) {
+		ReportContext context = new JUnitReportContext();
+		for (ReportModule module : modules)
+			context.addReportModule(module);
+		return context;
+	}
+
 	private ExecutionConfig executionConfig(FrameworkMethod method, String methodName) {
 		PerfTest annotation = annotationOfMethodOrClass(method, PerfTest.class);
         if (annotation != null)
@@ -188,7 +231,7 @@ public class ContiPerfRule implements MethodRule {
 
 	private static String methodName(FrameworkMethod method, Object target) {
 		return target.getClass().getName() + '.' + method.getName(); 
-		// no need to check signature: JUnit test methods have no parameters
+		// no need to check signature: JUnit test methods do not have parameters
 	}
-	
+
 }
