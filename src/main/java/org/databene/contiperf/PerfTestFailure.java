@@ -28,16 +28,12 @@ package org.databene.contiperf;
  * @since 1.03
  * @author Volker Bergmann
  */
-public class PerfTestFailure extends PerfTestException {
+public class PerfTestFailure extends AssertionError {
 
 	private static final long serialVersionUID = 8265877929635405862L;
 
 	public PerfTestFailure() {
 	    super();
-    }
-
-	public PerfTestFailure(String message, Throwable cause) {
-	    super(message, cause);
     }
 
 	public PerfTestFailure(String message) {
