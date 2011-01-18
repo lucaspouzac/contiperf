@@ -22,7 +22,7 @@
 
 package org.databene.contiperf.junit;
 
-import org.databene.contiperf.ExecutionLogger;
+import org.databene.contiperf.report.AbstractReportModule;
 
 /**
  * Helper class for testing ExecutionLogger handling.<br/><br/>
@@ -30,23 +30,20 @@ import org.databene.contiperf.ExecutionLogger;
  * @since 1.05
  * @author Volker Bergmann
  */
-@SuppressWarnings("deprecation")
-public class ExecutionTestLogger implements ExecutionLogger {
+public class ExecutionTestModule extends AbstractReportModule {
 	
 	final int id;
 	int invocations;
-	static ExecutionTestLogger latestInstance;
+	static ExecutionTestModule latestInstance;
 	
-	public ExecutionTestLogger(int id) {
+	public ExecutionTestModule(int id) {
 	    this.id = id;
 	    latestInstance = this;
     }
 
-	public synchronized void logInvocation(String id, int latency, long startTime) {
+	@Override
+	public synchronized void invoked(String id, int latency, long startTime) {
 		invocations++;
-    }
-
-	public void logSummary(String id, long elapsedTime, long invocationCount, long startTime) {
     }
 
 }

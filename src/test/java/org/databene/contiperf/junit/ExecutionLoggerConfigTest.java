@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 import org.databene.contiperf.ExecutionLogger;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.log.FileExecutionLoggerTestUtil;
-import org.databene.contiperf.log.FileExecutionLogger;
+import org.databene.contiperf.report.LoggerModuleAdapter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,6 +40,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * @since 1.05
  * @author Volker Bergmann
  */
+@SuppressWarnings("deprecation")
 public class ExecutionLoggerConfigTest extends AbstractContiPerfTest {
 	
 	static ExecutionLogger usedLogger;
@@ -53,26 +54,6 @@ public class ExecutionLoggerConfigTest extends AbstractContiPerfTest {
 	}
 
 	
-
-	// testing default execution logger --------------------------------------------------------------------------------
-	
-	@Test
-	public void testUnconfiguredTest() throws Exception {
-		runTest(UnconfiguredTest.class);
-		assertEquals(FileExecutionLogger.class, usedLogger.getClass());
-		assertEquals(3, ((FileExecutionLogger) usedLogger).invocationCount());
-	}
-
-	public static class UnconfiguredTest {
-		
-		@Rule public ContiPerfRule rule = new ContiPerfRule();
-		
-		@Test
-		@PerfTest(invocations = 3)
-		public void test() {
-			usedLogger = rule.executionLogger;
-		}
-	}
 
 	// testing explicit simple test case execution logger --------------------------------------------------------------
 	
@@ -91,7 +72,7 @@ public class ExecutionLoggerConfigTest extends AbstractContiPerfTest {
 		@Test
 		@PerfTest(invocations = 4)
 		public void test() {
-			usedLogger = rule.executionLogger;
+			usedLogger = ((LoggerModuleAdapter) rule.getContext().getReportModules().get(0)).getLogger();
 		}
 	}
 	
@@ -112,6 +93,17 @@ public class ExecutionLoggerConfigTest extends AbstractContiPerfTest {
 	@PerfTest(invocations = 6)
 	public static class ConfiguredSuite {
 		public ExecutionLogger el = new ExecutionTestLogger(3);
+	}
+
+	public static class UnconfiguredTest {
+		
+		@Rule public ContiPerfRule rule = new ContiPerfRule();
+		
+		@Test
+		@PerfTest(invocations = 3)
+		public void test() {
+			usedLogger = ((LoggerModuleAdapter) rule.getContext().getReportModules().get(0)).getLogger();
+		}
 	}
 
 }

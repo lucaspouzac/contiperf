@@ -5,13 +5,13 @@ import java.util.Random;
 import org.databene.contiperf.Required;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.Unrepeatable;
-import org.databene.contiperf.log.EmptyExecutionLogger;
+import org.databene.contiperf.report.EmptyReportModule;
 import org.junit.Rule;
 import org.junit.Test;
 
 public class SmokeTest {
 	
-	@Rule public ContiPerfRule rule = new ContiPerfRule(new EmptyExecutionLogger());
+	@Rule public ContiPerfRule rule = new ContiPerfRule(new EmptyReportModule());
 	
 	@Test
 	public void simpleTest() throws Exception {

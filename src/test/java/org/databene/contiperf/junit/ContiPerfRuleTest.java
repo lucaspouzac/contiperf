@@ -29,9 +29,8 @@ import java.text.ParseException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.databene.contiperf.PerfTest;
-import org.databene.contiperf.PerfTestFailure;
 import org.databene.contiperf.Required;
-import org.databene.contiperf.log.ListExecutionLogger;
+import org.databene.contiperf.report.ListReportModule;
 import org.junit.Test;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -68,7 +67,7 @@ public class ContiPerfRuleTest {
 		check("median100Successful");
 	}
 
-	@Test(expected = PerfTestFailure.class)
+	@Test(expected = PerformanceRequirementFailedError.class)
 	public void testMedianFailed() throws Throwable {
 		check("median1Failed");
 	}
@@ -78,7 +77,7 @@ public class ContiPerfRuleTest {
 		check("average100Successful");
 	}
 
-	@Test(expected = PerfTestFailure.class)
+	@Test(expected = PerformanceRequirementFailedError.class)
 	public void testAverageFailed() throws Throwable {
 		check("average1Failed");
 	}
@@ -93,7 +92,7 @@ public class ContiPerfRuleTest {
 		check("throughputSuccessful");
 	}
 	
-	@Test(expected = PerfTestFailure.class)
+	@Test(expected = PerformanceRequirementFailedError.class)
 	public void testThroughputFailed() throws Throwable {
 		check("throughputFailed");
 	}
@@ -103,7 +102,7 @@ public class ContiPerfRuleTest {
 		check("totalTimeSuccessful");
 	}
 	
-	@Test(expected = PerfTestFailure.class)
+	@Test(expected = PerformanceRequirementFailedError.class)
 	public void testTotalTimeFailed() throws Throwable {
 		check("totalTimeFailed");
 	}
@@ -113,7 +112,7 @@ public class ContiPerfRuleTest {
 		check("percentileSuccessful");
 	}
 	
-	@Test(expected = PerfTestFailure.class)
+	@Test(expected = PerformanceRequirementFailedError.class)
 	public void testPercentileFailed() throws Throwable {
 		check("percentileFailed");
 	}
@@ -130,36 +129,36 @@ public class ContiPerfRuleTest {
 		check("threads3Failed");
 	}
 	
-	@Test(expected = PerfTestFailure.class)
+	@Test(expected = PerformanceRequirementFailedError.class)
 	public void testCancelOnViolationDefault() throws Throwable {
 		TestBean test = new TestBean();
 		try {
 			check(test, "cancelOnViolationDefault");
-		} catch (PerfTestFailure e) {
+		} catch (PerformanceRequirementFailedError e) {
 			int count = test.cancelOnViolationDefaultCount.get();
 			assertEquals(3, count);
 			throw e;
 		}
 	}
 	
-	@Test(expected = PerfTestFailure.class)
+	@Test(expected = PerformanceRequirementFailedError.class)
 	public void testCancelOnViolation() throws Throwable {
 		TestBean test = new TestBean();
 		try {
 			check(test, "cancelOnViolation");
-		} catch (PerfTestFailure e) {
+		} catch (PerformanceRequirementFailedError e) {
 			int count = test.cancelOnViolationCount.get();
 			assertEquals(2, count);
 			throw e;
 		}
 	}
 	
-	@Test(expected = PerfTestFailure.class)
+	@Test(expected = PerformanceRequirementFailedError.class)
 	public void testDontCancelOnViolation() throws Throwable {
 		TestBean test = new TestBean();
 		try {
 			check(test, "dontCancelOnViolation");
-		} catch (PerfTestFailure e) {
+		} catch (PerformanceRequirementFailedError e) {
 			int count = test.dontCancelOnViolationCount.get();
 			assertEquals(3, count);
 			throw e;
@@ -173,7 +172,7 @@ public class ContiPerfRuleTest {
     }
 	
 	private TestBean check(TestBean target, String methodName) throws NoSuchMethodException, Throwable {
-	    ContiPerfRule rule = new ContiPerfRule(new ListExecutionLogger());
+	    ContiPerfRule rule = new ContiPerfRule(new ListReportModule());
 		Method method = TestBean.class.getDeclaredMethod(methodName, new Class<?>[0]);
 		Statement base = new InvokerStatement(target, method);
 		FrameworkMethod fwMethod = new FrameworkMethod(method);

@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2010-2011 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -223,25 +223,4 @@ public class ContiPerfSuiteTest {
 		}
 	}
 	
-	
-	
-/*	TODO support parameterized tests
-	@RunWith(Parameterized.class)
-	public static class ParameterizedTest {
-		
-		public ParameterizedTest(@SuppressWarnings("unused") Integer n) { }
-		
-		@SuppressWarnings("unchecked")
-        @Parameters
-		public static Collection params() {
-			return Arrays.asList(new Object[][] { { 1 }, { 2 } });
-		 }
-
-		@Test
-		public void test() {
-			pCount.incrementAndGet();
-			System.out.println(pCount);
-		}
-	}	
-*/
 }
