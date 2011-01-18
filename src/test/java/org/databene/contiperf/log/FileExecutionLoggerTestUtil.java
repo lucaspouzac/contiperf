@@ -30,6 +30,7 @@ package org.databene.contiperf.log;
  */
 public class FileExecutionLoggerTestUtil {
 
+	@SuppressWarnings("deprecation")
 	public static void resetInvocationCount() {
 		FileExecutionLogger.invocationCount.set(0L);
 	}
