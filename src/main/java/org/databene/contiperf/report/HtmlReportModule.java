@@ -34,6 +34,8 @@ import java.text.DecimalFormat;
 import java.util.Date;
 
 import org.databene.contiperf.Config;
+import org.databene.contiperf.PercentileRequirement;
+import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
 /**
@@ -50,36 +52,39 @@ public class HtmlReportModule extends AbstractReportModule {
 	private static final int WIDTH = 320;
 	private static final int HEIGHT = 240;
 	
-	private static final String CPF_MARKER = "<!-- !!__cpf-marker__!! -->";
+	private static final String CPF_MARKER_1 = "<!-- !!__cpf-marker1__!! -->";
+	private static final String CPF_MARKER_2 = "<!-- !!__cpf-marker2__!! -->";
 
 	ReportContext context;
 	private static boolean initialized = false;
+	DecimalFormat lf = new DecimalFormat();
 
-	
-	
+
+
 	// ReportModule interface implementation ---------------------------------------------------------------------------
 
 	public void setContext(ReportContext context) {
 		this.context = context;
 	}
 
-	public void completed(String id, LatencyCounter counter) {
-		updateReport(id, counter);
-	}
-	
-	
-	
-	// helper methods --------------------------------------------------------------------------------------------------
-	
-	private synchronized void updateReport(String id, LatencyCounter counter) {
-		File reportFile = new File(Config.instance().getReportFolder(), REPORT_FILENAME);
-		if (!initialized || !reportFile.exists())
-			initReportFile(reportFile, id, counter);
-		else
-			extendReportFile(reportFile, id, counter);
+	@Override
+	public void completed(String id, LatencyCounter counter, PerformanceRequirement requirement) {
+		updateReport(id, counter, requirement);
 	}
 
-	private void initReportFile(File reportFile, String id, LatencyCounter counter) {
+
+
+	// helper methods --------------------------------------------------------------------------------------------------
+	
+	private synchronized void updateReport(String id, LatencyCounter counter, PerformanceRequirement requirement) {
+		File reportFile = new File(Config.instance().getReportFolder(), REPORT_FILENAME);
+		if (!initialized || !reportFile.exists())
+			initReportFile(reportFile, id, counter, requirement);
+		else
+			extendReportFile(reportFile, id, counter, requirement);
+	}
+
+	private void initReportFile(File reportFile, String id, LatencyCounter counter, PerformanceRequirement requirement) {
 		ensureDirectoryExists(reportFile.getParentFile());
 		initialized = true;
 		try {
@@ -106,8 +111,18 @@ public class HtmlReportModule extends AbstractReportModule {
 			out.println("<a href='http://databene.org/contiperf'>Help</a>");
 			out.println("<hr/>");
 			out.println("<br/>");
-			appendEntry(id, counter, out);
-			out.println(CPF_MARKER);
+			out.println("<table border='1' cellspacing='0' cellpadding='3px' style='border-color:#eee'>");
+			out.println("	<tr>");
+			out.println("		<th style='background-color:#ffffdd; color:#EE6600'>&nbsp;&nbsp;&nbsp;</th>");
+			out.println("		<th style='background-color:#ffffdd; color:#EE6600'>Test</th>");
+			out.println("	<tr>");
+			appendHeader(id, counter, requirement, out);
+			out.println(CPF_MARKER_1);
+			out.println("</table>");
+			out.println("<br/>");
+			out.println("<hr/>");
+			appendEntry(id, counter, requirement, out);
+			out.println(CPF_MARKER_2);
 			out.println("<hr/>");
 			out.println("<div style='color:#EE6600;'>Report created by Volker Bergmann's <a href='http://databene.org'>Databene</a> <a href='http://databene.org/contiperf'>ContiPerf</a></div>");
 			out.println("</center>");
@@ -119,15 +134,18 @@ public class HtmlReportModule extends AbstractReportModule {
 		}
 	}
 	
-	private void extendReportFile(File reportFile, String id, LatencyCounter counter) {
+	private void extendReportFile(File reportFile, String id, LatencyCounter counter, PerformanceRequirement requirement) {
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(reportFile));
 			File tempFile = File.createTempFile("index", "html", reportFile.getParentFile());
 			PrintWriter out = new PrintWriter(tempFile);
 			String line;
-			while (!(line = in.readLine()).contains(CPF_MARKER))
+			while (!(line = in.readLine()).contains(CPF_MARKER_1))
 				out.println(line);
-			appendEntry(id, counter, out);
+			appendHeader(id, counter, requirement, out);
+			while (!(line = in.readLine()).contains(CPF_MARKER_2))
+				out.println(line);
+			appendEntry(id, counter, requirement, out);
 			out.println(line);
 			while ((line = in.readLine()) != null)
 				out.println(line);
@@ -140,15 +158,27 @@ public class HtmlReportModule extends AbstractReportModule {
 		}
 	}
 
-	private void appendEntry(String serviceId, LatencyCounter counter, PrintWriter out) {
-		out.println("<h2 style='color:#EE6600'>" + serviceId + "</h2>");
+	private void appendHeader(String id, LatencyCounter counter, PerformanceRequirement requirement, PrintWriter out) {
+		out.println("	<tr>");
+		out.println("		" + successCell(counter, requirement)); 
+		out.println("		<td><a href='#" + id + "'>" + id + "</td>");
+		out.println("	<tr>");
+	}
+
+	private String successCell(LatencyCounter counter, PerformanceRequirement requirement) {
+		boolean success = ReportUtil.success(counter, requirement);
+		return "<td style='background-color:" + (success ? "#00BB00" : "RED") + ";'>&nbsp;</td>";
+	}
+
+	private void appendEntry(String serviceId, LatencyCounter counter, PerformanceRequirement requirement, PrintWriter out) {
+		out.println("<a name='" + serviceId + "'><h2 style='color:#EE6600'>" + serviceId + "</h2></a>");
 		out.println("<table>");
 		out.println("	<tr>");
 		out.println("		<td>");
 		renderStats(serviceId, counter, out);
 		out.println("		</td>");
 		out.println("		<td>");
-		printStats(serviceId, counter, out); // TODO report requirements
+		printStats(serviceId, counter, requirement, out);
 		out.println("		</td>");
 		out.println("	</tr>");
 		out.println("</table>");
@@ -176,31 +206,94 @@ public class HtmlReportModule extends AbstractReportModule {
 		out.println("			<img src='" + chartUrl +"' width='" + WIDTH + "', height='" + HEIGHT + "'/>");
 	}
 
-	private void printStats(String id, LatencyCounter counter, PrintWriter out) {
-		DecimalFormat df = new DecimalFormat("0.#");
-		out.println("			<table>");
+	private void printStats(String id, LatencyCounter counter, PerformanceRequirement requirement, PrintWriter out) {
+		out.println("			<table style='font-family:sans-serif;'>");
 		Date startDate = new Date(counter.getStartTime());
-		printStatLine("Started at:", DateFormat.getDateInstance().format(startDate) + "<br/>" + DateFormat.getTimeInstance().format(startDate), out);
-		printStatMsLine("Execution time:", counter.duration(), out);
-		printStatLine("Total invocations:", "" + counter.sampleCount(), out);
-		printStatMsLine("min. latency:",counter.minLatency(), out);
-		printStatLine("avg. latency:", df.format(counter.averageLatency()) + " ms", out);
-		printStatMsLine("median:", counter.percentileLatency(50), out);
-		printStatMsLine("90%:", counter.percentileLatency(90), out);
-		printStatMsLine("95%:", counter.percentileLatency(95), out);
-		printStatMsLine("max latency:", counter.maxLatency(), out);
+		out.println("	<tr><th>Started at:</th><td colspan='2'>" + DateFormat.getDateTimeInstance().format(startDate) + "</td></tr>");
+		out.println("	<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		out.println("	<tr><th>&nbsp;</th><th>Measured</th><th>Required</th></tr>");
+		printDurationStats(counter, requirement, out);
+		printStatLine("Total invocations:", "" + counter.sampleCount(), "", out);
+		printThroughputStats(counter, requirement, out);
+		printStatMsLine("Min. latency:", counter.minLatency(), null, out);
+		printAverageStats(counter, requirement, out);
+		printPercentileStats(counter, requirement, out);
+		printMaxStats(counter, requirement, out);
 		out.println("			</table>");		
 	}
 
-	private void printStatMsLine(String label, long value, PrintWriter out) {
-		DecimalFormat lf = new DecimalFormat();
-		printStatLine(label, lf.format(value) + " ms", out);
+	private void printDurationStats(LatencyCounter counter, PerformanceRequirement requirement, PrintWriter out) {
+		Verdict verdict = ReportUtil.totalTimeVerdict(counter, requirement);
+		Long required = (requirement != null && requirement.getTotalTime() > 0 ? (long) requirement.getTotalTime() : null);
+		printStatMsLine("Execution time:", counter.duration(), required, verdict, out);
 	}
 
-	private void printStatLine(String label, String value, PrintWriter out) {
+	private void printThroughputStats(LatencyCounter counter, PerformanceRequirement requirement, PrintWriter out) {
+		Verdict verdict = ReportUtil.throughputVerdict(counter, requirement);
+		Long required = (requirement != null && requirement.getThroughput() > 0 ? (long) requirement.getThroughput() : null);
+		printStatLine("Throughput:", lf.format(counter.throughput()) + " / s", (required != null ? lf.format(required) + " / s" : null), verdict, out);
+	}
+
+	private void printAverageStats(LatencyCounter counter, PerformanceRequirement requirement, PrintWriter out) {
+		Verdict verdict = ReportUtil.averageVerdict(counter, requirement);
+		Long required = (requirement != null && requirement.getAverage() > 0 ? (long) requirement.getAverage() : null);
+		printStatMsLine("Average latency:", (long) counter.averageLatency(), required, verdict, out);
+	}
+
+	private void printPercentileStats(LatencyCounter counter, PerformanceRequirement requirement, PrintWriter out) {
+		if (requirement == null || requirement.getPercentileRequirements().length == 0) {
+			printStatMsLine("Median:", counter.percentileLatency(50), null, ReportUtil.percentileVerdict(counter, 50, null), out);
+			printStatMsLine("90%:", counter.percentileLatency(90), null, ReportUtil.percentileVerdict(counter, 90, null), out);
+		} else {
+			for (PercentileRequirement percentileRequirement : requirement.getPercentileRequirements()) {
+				int percentage = percentileRequirement.getPercentage();
+				String label = (percentage == 50 ? "Median:" : percentage + "%:");
+				long requiredMillis = percentileRequirement.getMillis();
+				Verdict verdict = ReportUtil.percentileVerdict(counter, percentage, requiredMillis);
+				printStatMsLine(label, counter.percentileLatency(percentage), requiredMillis, verdict, out);
+			}
+		}
+	}
+
+	private void printMaxStats(LatencyCounter counter, PerformanceRequirement requirement, PrintWriter out) {
+		Verdict verdict = ReportUtil.maxVerdict(counter, requirement);
+		Long required = (requirement != null && requirement.getMax() > 0 ? (long) requirement.getMax() : null);
+		printStatMsLine("Max latency:", counter.maxLatency(), required, verdict, out);
+	}
+
+	private String format(String text, Verdict verdict) {
+		StringBuilder builder = new StringBuilder();
+		switch (verdict) {
+			case SUCCESS : builder.append("<b style='color:#00BB00'>"); break;
+			case FAILURE : builder.append("<b style='color:RED'>"); break;
+		}
+		builder.append(text);
+		if (verdict != Verdict.IGNORED)
+			builder.append("</b>");
+		return builder.toString();
+	}
+
+	private void printStatMsLine(String label, long value, Long requirement, Verdict verdict, PrintWriter out) {
+		printStatLine(label, lf.format(value) + " ms", (requirement != null ? lf.format(requirement) + " ms" : null), verdict, out);
+	}
+
+	private void printStatMsLine(String label, long value, Long requirement, PrintWriter out) {
+		printStatLine(label, lf.format(value) + " ms", (requirement != null ? lf.format(requirement) + " ms" : null), out);
+	}
+
+	private void printStatLine(String label, String value, String requirement, Verdict verdict, PrintWriter out) {
+		out.println("				<tr>");
+		out.println("					<th align='right' valign='top'>" + format(label, verdict) + "</th>");
+		out.println("					<td align='right'>" + format(value, verdict) + "</td>");
+		out.println("					<td align='right'>" + format((requirement != null ? requirement : ""), verdict) + "</td>");
+		out.println("				</tr>");
+	}
+
+	private void printStatLine(String label, String value, String requirement, PrintWriter out) {
 		out.println("				<tr>");
 		out.println("					<th align='right' valign='top'>" + label + "</th>");
 		out.println("					<td align='right'>" + value + "</td>");
+		out.println("					<td align='right'>" + (requirement != null ? requirement : "") + "</td>");
 		out.println("				</tr>");
 	}
 
