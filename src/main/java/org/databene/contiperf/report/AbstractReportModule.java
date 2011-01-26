@@ -24,6 +24,7 @@ package org.databene.contiperf.report;
 
 import java.io.File;
 
+import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
 /**
@@ -59,7 +60,7 @@ public abstract class AbstractReportModule implements ReportModule {
 		// ignored
 	}
 	
-	public void completed(String serviceId, LatencyCounter counter) {
+	public void completed(String serviceId, LatencyCounter counter, PerformanceRequirement requirement) {
 		// ignored
 	}
 

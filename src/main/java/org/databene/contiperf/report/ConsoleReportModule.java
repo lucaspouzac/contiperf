@@ -22,6 +22,7 @@
 
 package org.databene.contiperf.report;
 
+import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
 /**
@@ -38,7 +39,7 @@ public class ConsoleReportModule extends AbstractReportModule {
     }
 
 	@Override
-    public void completed(String serviceId, LatencyCounter counter) {
+    public void completed(String serviceId, LatencyCounter counter, PerformanceRequirement requirement) {
 	    System.out.println(serviceId + ',' + counter.duration() + ',' + counter.sampleCount() + ',' + counter.getStartTime());
     }
 

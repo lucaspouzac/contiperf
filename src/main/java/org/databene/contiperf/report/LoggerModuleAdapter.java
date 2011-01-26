@@ -23,6 +23,7 @@
 package org.databene.contiperf.report;
 
 import org.databene.contiperf.ExecutionLogger;
+import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
 /**
@@ -70,7 +71,8 @@ public class LoggerModuleAdapter extends AbstractReportModule {
 		logger.logInvocation(serviceId, latency, startTime);
 	}
 
-	public void completed(String serviceId, LatencyCounter counter) {
+	@Override
+	public void completed(String serviceId, LatencyCounter counter, PerformanceRequirement requirement) {
 		logger.logSummary(serviceId, counter.duration(), counter.sampleCount(), counter.getStartTime());
 	}
 

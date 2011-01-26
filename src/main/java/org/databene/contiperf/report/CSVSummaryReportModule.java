@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.util.ContiPerfUtil;
 import org.databene.stat.LatencyCounter;
 
@@ -80,7 +81,7 @@ public class CSVSummaryReportModule extends AbstractReportModule {
 	}
 
 	@Override
-	public void completed(String serviceId, LatencyCounter counter) {
+	public void completed(String serviceId, LatencyCounter counter, PerformanceRequirement requirement) {
 		writeStats(serviceId, counter);
     }
 

@@ -26,6 +26,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
+import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
 /**
@@ -63,7 +64,7 @@ public class CSVInvocationReportModule extends AbstractReportModule {
 	}
 
 	@Override
-	public void completed(String serviceId, LatencyCounter counter) {
+	public void completed(String serviceId, LatencyCounter counter, PerformanceRequirement requirement) {
 		if (out != null)
 			out.close();
 	}

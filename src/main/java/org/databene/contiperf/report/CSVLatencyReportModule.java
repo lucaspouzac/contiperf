@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
 /**
@@ -75,7 +76,7 @@ public class CSVLatencyReportModule extends AbstractReportModule {
 	}
 
 	@Override
-	public void completed(String serviceId, LatencyCounter counter) {
+	public void completed(String serviceId, LatencyCounter counter, PerformanceRequirement requirement) {
 		writeStats(serviceId, counter);
 		try {
 			out.close();
