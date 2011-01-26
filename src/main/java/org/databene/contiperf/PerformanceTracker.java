@@ -54,6 +54,8 @@ public class PerformanceTracker extends InvokerProxy {
 	    this.started = false;
 	    this.cancelOnViolation = cancelOnViolation;
     }
+	
+	// interface -------------------------------------------------------------------------------------------------------
 
 	public void setContext(ReportContext context) {
 		this.context = context;
@@ -112,7 +114,7 @@ public class PerformanceTracker extends InvokerProxy {
 
 	private void reportCompletion() {
 		for (ReportModule module : context.getReportModules())
-			module.completed(getId(), counter);
+			module.completed(getId(), counter, requirement);
 	}
 
 	private void checkRequirements(long elapsedMillis) {
