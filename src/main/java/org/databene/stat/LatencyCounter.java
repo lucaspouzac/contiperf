@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2006-2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2006-2011 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -86,6 +86,10 @@ public final class LatencyCounter {
             return latencyCounts[(int) latency];
         else
             return 0;
+    }
+
+    public long totalLatency() {
+        return totalLatency;
     }
 
     public double averageLatency() {
