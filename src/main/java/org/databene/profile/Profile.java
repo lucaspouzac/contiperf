@@ -31,7 +31,7 @@ import org.databene.stat.LatencyCounter;
 /**
  * TODO Document class.<br/><br/>
  * Created: 19.05.2011 09:08:27
- * @since TODO version
+ * @since 2.0.0
  * @author Volker Bergmann
  */
 public class Profile {

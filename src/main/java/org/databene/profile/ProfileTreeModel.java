@@ -24,7 +24,7 @@ package org.databene.profile;
 /**
  * TODO Document class.<br/><br/>
  * Created: 19.05.2011 10:06:34
- * @since TODO version
+ * @since 2.0.0
  * @author Volker Bergmann
  */
 public class ProfileTreeModel { /* TODO implements TreeModel<Profile> {
