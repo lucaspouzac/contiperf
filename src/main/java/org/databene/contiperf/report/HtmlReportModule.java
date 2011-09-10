@@ -130,18 +130,19 @@ public class HtmlReportModule extends AbstractReportModule {
 			out.println("</html>");
 			out.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 	
 	private void extendReportFile(File reportFile, String id, LatencyCounter counter, PerformanceRequirement requirement) {
 		try {
-			BufferedReader in = new BufferedReader(new FileReader(reportFile));
 			File tempFile = File.createTempFile("index", "html", reportFile.getParentFile());
 			PrintWriter out = new PrintWriter(tempFile);
+			BufferedReader in = new BufferedReader(new FileReader(reportFile));
 			String line;
 			while (!(line = in.readLine()).contains(CPF_MARKER_1))
 				out.println(line);
+			out.println(line);
 			appendHeader(id, counter, requirement, out);
 			while (!(line = in.readLine()).contains(CPF_MARKER_2))
 				out.println(line);
