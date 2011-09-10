@@ -44,5 +44,5 @@ public @interface PerfTest {
 	int threads()       default  1;
 	int duration()      default -1;
 	boolean cancelOnViolation() default false;
-	// TODO v1.x int timeout()       default -1;
+	// TODO v2.x int timeout()       default -1;
 }

@@ -68,7 +68,7 @@ public class JUnitReportContext extends ReportContext {
 	            }
 		    }	
 		}
-		// TODO support annotation based ReportModule configuration
+		// TODO v2.x support annotation based ReportModule configuration
 	    return modules;
 	}
 	

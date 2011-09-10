@@ -65,7 +65,7 @@ public class StopWatchTest {
 
 	@Test
 	public void testParallelCalls() throws InterruptedException {
-		// TODO implement testParallelCalls()
+		// TODO v2.0.1 implement testParallelCalls()
 	}
 	
 	@Test(expected = RuntimeException.class)

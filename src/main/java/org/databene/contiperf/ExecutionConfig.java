@@ -34,7 +34,7 @@ public class ExecutionConfig {
 	private int duration;
 	private int threads;
 	private boolean cancelOnViolation;
-	// TODO v1.x private int timeout;
+	// TODO v2.x private int timeout;
 	
 	public ExecutionConfig(int invocations) {
 	    this(invocations, 1, -1, false /*, -1*/);
