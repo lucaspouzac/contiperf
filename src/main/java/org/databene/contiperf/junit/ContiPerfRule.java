@@ -23,6 +23,7 @@
 package org.databene.contiperf.junit;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 
 import junit.framework.AssertionFailedError;
 
@@ -38,6 +39,8 @@ import org.databene.contiperf.report.LoggerModuleAdapter;
 import org.databene.contiperf.report.ReportContext;
 import org.databene.contiperf.report.ReportModule;
 import org.databene.contiperf.util.ContiPerfUtil;
+import org.junit.internal.runners.statements.RunAfters;
+import org.junit.internal.runners.statements.RunBefores;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -109,7 +112,7 @@ public class ContiPerfRule implements MethodRule {
 	ReportContext context;
 	private PerformanceRequirement defaultRequirements;
 	
-	// initialization --------------------------------------------------------------------------------------------------
+	// constructors ----------------------------------------------------------------------------------------------------
 	
    public ContiPerfRule() {
 	    this((ReportContext) null);
@@ -138,6 +141,8 @@ public class ContiPerfRule implements MethodRule {
 			this.defaultRequirements = ContiPerfUtil.mapRequired(suiteClass.getAnnotation(Required.class));
 		}
     }
+	
+	// static factory methods ------------------------------------------------------------------------------------------
 
 	public static ContiPerfRule createDefaultRule() {
 		ReportContext context = new JUnitReportContext();
@@ -154,18 +159,60 @@ public class ContiPerfRule implements MethodRule {
 	
 	// MethodRule interface implementation -----------------------------------------------------------------------------
 
-	public Statement apply(final Statement base, FrameworkMethod method, Object target) {
+	public Statement apply(Statement base, FrameworkMethod method, Object target) {
+		// check if ContiPerf is active, if not then ignore the annotation
 		Config config = Config.instance();
 		if (!config.active())
 			return base;
+		// remove RunBefores and RunAfters from the statement cascade
+		RunBefores runBefores = null;
+		RunAfters runAfters = null;
+		while (base instanceof RunAfters || base instanceof RunBefores) {
+			try {
+				if (base instanceof RunAfters) {
+					runAfters = (RunAfters) base;
+					Field fNext = base.getClass().getDeclaredField("fNext");
+					fNext.setAccessible(true);
+					base = (Statement) fNext.get(base);
+				} else if (base instanceof RunBefores) {
+					runBefores = (RunBefores) base;
+					Field fNext = base.getClass().getDeclaredField("fNext");
+					fNext.setAccessible(true);
+					base = (Statement) fNext.get(base);
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		// set up report context
 		if (context.getReportModules().size() == 0) {
 			context = JUnitReportContext.createInstance(target);
 			if (context.getReportModules().size() == 0)
 				context = Config.instance().createDefaultReportContext(AssertionFailedError.class);
 		}
+		// create perf test statement
 	    String testId = methodName(method, target);
-		return new PerfTestStatement(base, testId, executionConfig(method, testId), 
+		base = new PerfTestStatement(base, testId, executionConfig(method, testId), 
 				requirements(method, testId), context);
+		try {
+			// if runBefores has been removed, reapply it
+			if (runBefores != null) {
+				Field fNext = runBefores.getClass().getDeclaredField("fNext");
+				fNext.setAccessible(true);
+				fNext.set(runBefores, base);
+				base = runBefores;
+			}
+			// if runAfters has been removed, reapply it
+			if (runAfters != null) {
+				Field fNext = runAfters.getClass().getDeclaredField("fNext");
+				fNext.setAccessible(true);
+				fNext.set(runAfters, base);
+				base = runAfters;
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return base;
     }
 	
 	public ReportContext getContext() {
@@ -202,7 +249,6 @@ public class ContiPerfRule implements MethodRule {
 	}
 
 	private PerformanceRequirement requirements(FrameworkMethod method, String testId) {
-		// TODO v1.x make use of config file
 		Required annotation = annotationOfMethodOrClass(method, Required.class);
 		if (annotation != null)
 			return ContiPerfUtil.mapRequired(annotation);
