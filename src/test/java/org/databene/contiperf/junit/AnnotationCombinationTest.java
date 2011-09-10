@@ -44,7 +44,7 @@ public class AnnotationCombinationTest extends AbstractContiPerfTest {
 	@Test
 	public void testSuccessfulSuiteWithExecutionConfig() throws Exception {
         runTest(SucessfulSuiteWithExecutionConfig.class);
-        // TODO this fails under Maven: assertFalse(failed);
+        assertFalse(failed);
 	}
 	
 	@RunWith(ContiPerfSuiteRunner.class)
