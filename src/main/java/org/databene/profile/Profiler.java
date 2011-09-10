@@ -24,7 +24,7 @@ package org.databene.profile;
 import java.util.List;
 
 /**
- * TODO Document class.<br/><br/>
+ * Organizes {@link Profile}s in a tree structure.<br/><br/>
  * Created: 19.05.2011 09:01:32
  * @since 2.0.0
  * @author Volker Bergmann
@@ -58,15 +58,6 @@ public class Profiler {
 			profile = profile.getOrCreateSubProfile(path.get(i));
 		profile.addSample((int) (duration / granularity));
 	}
-/* TODO improve summary printing
-	public ProfileTreeModel getProfileTree() {
-		return new ProfileTreeModel(rootProfile);
-	}
-	
-	public void printSummary() {
-		new TreeLogger().log(getProfileTree());
-	}
-*/
 
 	public void printSummary() {
 		printRecursively(rootProfile, "");
