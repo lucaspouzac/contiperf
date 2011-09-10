@@ -29,7 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * TODO Document class.<br/><br/>
+ * Tests the profiling feature.<br/><br/>
  * Created: 21.07.2011 08:30:37
  * @since 2.0.0
  * @author Volker Bergmann
