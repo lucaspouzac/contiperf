@@ -1,0 +1,63 @@
+<assembly>
+    <id>dist</id>
+    <formats>
+        <format>zip</format>
+        <format>tar.gz</format>
+    </formats>
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <fileSets>
+        <!-- license files and release notes -->
+        <fileSet>
+            <directory>/</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>Apache_License-2.0.txt</include>
+                <include>bsd-license.txt</include>
+                <include>epl-v10.html</include>
+                <include>lgpl-version3.txt</include>
+            </includes>
+        </fileSet>
+        <!-- doc -->
+        <fileSet>
+            <directory>target/site/apidocs</directory>
+            <outputDirectory>doc/api</outputDirectory>
+        </fileSet>
+        <!-- main -->
+        <fileSet>
+            <directory>src/main/java</directory>
+            <outputDirectory>src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/resources</directory>
+            <outputDirectory>src</outputDirectory>
+        </fileSet>
+        <!-- test -->
+        <fileSet>
+            <directory>src/test/java</directory>
+            <outputDirectory>test</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>src/test/resources</directory>
+            <outputDirectory>test</outputDirectory>
+        </fileSet>
+	    <fileSet>
+			<directory>target</directory>
+			<outputDirectory>lib</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<excludes>
+				<exclude>*-sources.jar</exclude>
+			</excludes>
+	    </fileSet>
+    </fileSets>
+
+    <dependencySets>
+        <dependencySet>
+			<useProjectArtifact>false</useProjectArtifact>
+            <outputDirectory>lib</outputDirectory>
+            <unpack>false</unpack>
+        </dependencySet>
+    </dependencySets>
+
+</assembly>
