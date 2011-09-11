@@ -131,7 +131,7 @@ public class PerformanceTracker extends InvokerProxy {
     				requiredTotalTime + " ms running " + elapsedMillis + " ms");
     	}
     	int requiredThroughput = requirement.getThroughput();
-    	if (requiredThroughput > 0) {
+    	if (requiredThroughput > 0 && elapsedMillis > 0) {
     		long actualThroughput = counter.sampleCount() * 1000 / elapsedMillis;
     		if (actualThroughput < requiredThroughput)
     			context.fail("Test " + getId() + " had a throughput of only " + 
