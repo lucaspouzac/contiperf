@@ -135,9 +135,7 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <descriptors>
-                        <descriptor>src/main/assembly/source-assembly.xml</descriptor>
                         <descriptor>src/main/assembly/dist-assembly.xml</descriptor>
-                        <descriptor>src/main/assembly/backup-assembly.xml</descriptor>
                     </descriptors>
                 </configuration>
             </plugin>
