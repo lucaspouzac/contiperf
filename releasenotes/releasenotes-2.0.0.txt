@@ -1,0 +1,18 @@
+ContiPerf 2.0.0 Release Notes
+-----------------------------
+
+
+Enhancements:
+-------------
+- Consistent behaviour on all JUnit versions from JUnit 4.7 to 4.9
+- HTML report with distribution chart
+
+
+Changes:
+--------
+- Dropped ExecutionLogger concept
+
+
+Bug fixes:
+----------
+- @Before and @After behaviour on JUnit 4.8+
