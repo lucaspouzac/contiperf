@@ -70,14 +70,16 @@ public class CSVSummaryReportModule extends AbstractReportModule {
 	
 	@Override
 	public void starting(String serviceId) {
-		file = new File(context.getReportFolder(), filename());
-		if (!usedFiles.contains(file) && file.exists()) {
-			if (!file.delete())
-				throw new RuntimeException("Previous file version could not be deleted: " + file);
-			usedFiles.add(file);
+		synchronized (usedFiles) {
+			file = new File(context.getReportFolder(), filename());
+			if (!usedFiles.contains(file) && file.exists()) {
+				if (!file.delete())
+					throw new RuntimeException("Previous file version could not be deleted: " + file);
+				usedFiles.add(file);
+			}
+			if (!file.exists())
+				writeHeader(serviceId);
 		}
-		if (!file.exists())
-			writeHeader(serviceId);
 	}
 
 	@Override
