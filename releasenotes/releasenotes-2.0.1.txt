@@ -1,0 +1,18 @@
+ContiPerf 2.0.1 Release Notes
+-----------------------------
+
+
+Enhancements:
+-------------
+- Method StopWatch.stop() returns the elapsed time in milliseconds
+
+
+Changes:
+--------
+- 
+
+
+Bug fixes:
+----------
+- #3486460: CSVSummaryReportModule causes FileNotFoundException
+- #3486461: HTML report displays the wrong date
