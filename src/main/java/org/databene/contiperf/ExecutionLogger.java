@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2011 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2012 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -22,10 +22,6 @@
 
 package org.databene.contiperf;
 
-import org.databene.contiperf.report.CSVSummaryReportModule;
-import org.databene.contiperf.report.ConsoleReportModule;
-import org.databene.contiperf.report.EmptyReportModule;
-import org.databene.contiperf.report.HtmlReportModule;
 import org.databene.contiperf.report.LoggerModuleAdapter;
 import org.databene.contiperf.report.ReportModule;
 
@@ -53,10 +49,6 @@ import org.databene.contiperf.report.ReportModule;
  * <pre>
  *     @Rule public ContiPerfRule = new ContiPerfRule(new LoggerModuleAdapter(new MyCustomLogger()));
  * </pre>
- * @see ConsoleReportModule
- * @see EmptyReportModule
- * @see CSVSummaryReportModule
- * @see HtmlReportModule
  */
 @Deprecated
 public interface ExecutionLogger {
