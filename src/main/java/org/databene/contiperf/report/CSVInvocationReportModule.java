@@ -23,6 +23,7 @@
 package org.databene.contiperf.report;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
@@ -48,7 +49,7 @@ public class CSVInvocationReportModule extends AbstractReportModule {
 	}
 	
 	public String getReportReference(String serviceId) {
-		return (serviceId != null ? createFilename(serviceId) : null);
+		return (serviceId != null ? filename(serviceId) : null);
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public class CSVInvocationReportModule extends AbstractReportModule {
 	
 	private void createFile(String serviceId) {
 		try {
-			String filename = "target/contiperf-report/" + createFilename(serviceId);
+			String filename = filename(serviceId);
 			out = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
 			out.println("latency,startTimeNanos");
 		} catch (Exception e) {
@@ -79,8 +80,8 @@ public class CSVInvocationReportModule extends AbstractReportModule {
 		}
 	}
 
-	private String createFilename(String serviceId) {
-		return serviceId + FILE_SUFFIX;
+	private String filename(String serviceId) {
+		return context.getReportFolder() + File.separator + serviceId + FILE_SUFFIX;
 	}
 
 }
