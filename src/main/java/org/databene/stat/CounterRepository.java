@@ -24,6 +24,7 @@ package org.databene.stat;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Repository that binds {@link LatencyCounter}s to a name and makes them available to clients.<br/><br/>
@@ -60,6 +61,10 @@ public class CounterRepository {
 
 	public LatencyCounter getCounter(String name) {
 		return counters.get(name);
+	}
+	
+	public Set<Map.Entry<String, LatencyCounter>> getCounters() {
+		return counters.entrySet();
 	}
 	
 	public void clear() {
