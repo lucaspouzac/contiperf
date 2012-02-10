@@ -58,7 +58,7 @@ public final class LatencyCounter {
     // interface -------------------------------------------------------------------------------------------------------
 
     public void start() {
-    	this.startTime = System.nanoTime() / 1000000;
+    	this.startTime = System.currentTimeMillis();
     }
     
     public synchronized void addSample(int latency) {
@@ -74,7 +74,7 @@ public final class LatencyCounter {
     }
 
     public void stop() {
-    	this.endTime = System.nanoTime() / 1000000;
+    	this.endTime = System.currentTimeMillis();
     }
     
 	public long getStartTime() {
