@@ -42,6 +42,7 @@ public class ReportContext {
 	
 	public ReportContext(File reportFolder, Class<? extends Error> failureClass) {
 		this.reportFolder = reportFolder;
+		ensureDirectoryExists(reportFolder);
 		try {
 			this.failureCtor = failureClass.getConstructor(String.class);
 		} catch (SecurityException e) {
@@ -82,4 +83,13 @@ public class ReportContext {
 		throw new RuntimeException("No module of type '" + moduleClass.getName() + " found. Available: " + modules);
 	}
 	
+	protected void ensureDirectoryExists(File dir) {
+	    if (!dir.exists()) {
+		    File parent = dir.getParentFile();
+	    	if (parent != null)
+	    		ensureDirectoryExists(parent);
+	    	dir.mkdir();
+	    }
+    }
+
 }
