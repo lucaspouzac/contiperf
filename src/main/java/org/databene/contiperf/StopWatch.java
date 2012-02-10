@@ -61,12 +61,13 @@ public class StopWatch {
 		this.startTime = System.nanoTime();
 	}
 	
-	public void stop() {
+	public long stop() {
 		if (startTime == -1)
 			throw new RuntimeException("Called stop() on StopWatch '" + name + "' which has already been stopped");
 		int latency = (int) ((System.nanoTime() - startTime) / 1000000L);
 		startTime = -1;
 		CounterRepository.getInstance().addSample(name, latency);
+		return latency;
 	}
 	
 }
