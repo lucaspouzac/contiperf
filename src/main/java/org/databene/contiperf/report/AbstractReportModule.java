@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2011 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2011-2012 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -21,8 +21,6 @@
  */
 
 package org.databene.contiperf.report;
-
-import java.io.File;
 
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
@@ -63,14 +61,5 @@ public abstract class AbstractReportModule implements ReportModule {
 	public void completed(String serviceId, LatencyCounter counter, PerformanceRequirement requirement) {
 		// ignored
 	}
-
-	protected void ensureDirectoryExists(File dir) {
-	    if (!dir.exists()) {
-		    File parent = dir.getParentFile();
-	    	if (parent != null)
-	    		ensureDirectoryExists(parent);
-	    	dir.mkdir();
-	    }
-    }
 
 }
