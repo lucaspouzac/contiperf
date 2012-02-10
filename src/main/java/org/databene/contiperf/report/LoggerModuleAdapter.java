@@ -53,10 +53,6 @@ import org.databene.stat.LatencyCounter;
  * Created: 16.01.2011 08:06:47
  * @since 2.0.0
  * @author Volker Bergmann
- * @see ConsoleReportModule
- * @see CSVSummaryReportModule
- * @see EmptyReportModule
- * @see HtmlReportModule
  */
 @SuppressWarnings("deprecation")
 public class LoggerModuleAdapter extends AbstractReportModule {
