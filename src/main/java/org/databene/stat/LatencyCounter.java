@@ -36,6 +36,7 @@ public final class LatencyCounter {
     private int maxLatency;
     private long latencyCounts[];
 
+    private boolean running;
     private long startTime;
     private long endTime;
     private long sampleCount;
@@ -58,7 +59,10 @@ public final class LatencyCounter {
     // interface -------------------------------------------------------------------------------------------------------
 
     public void start() {
+    	if (running)
+    		throw new IllegalStateException(this + " has already been started");
     	this.startTime = System.currentTimeMillis();
+    	this.running = true;
     }
     
     public synchronized void addSample(int latency) {
@@ -74,8 +78,15 @@ public final class LatencyCounter {
     }
 
     public void stop() {
+    	if (!running)
+    		throw new IllegalStateException("Stopping " + this + " without having started it");
+    	this.running = false;
     	this.endTime = System.currentTimeMillis();
     }
+    
+	public boolean isRunning() {
+		return running;
+	}
     
 	public long getStartTime() {
 	    return startTime;
@@ -155,5 +166,12 @@ public final class LatencyCounter {
     		out.println(percentile + "%:     " + percentileLatency(percentile));
     	out.flush();
     }
-
+	
+	// java.lang.Object overrides --------------------------------------------------------------------------------------
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName();
+	}
+	
 }
