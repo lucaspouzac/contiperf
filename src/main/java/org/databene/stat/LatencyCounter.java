@@ -119,6 +119,13 @@ public final class LatencyCounter {
         return maxLatency;
     }
     
+    public double percentileAboveLatency(int latency) {
+        long count = 0;
+        for (long value = latency + 1; value <= maxLatency; value++)
+            count += getLatencyCount(value);
+        return (count * 100.) / sampleCount;
+    }
+    
     public double throughput() {
     	if (startTime == -1 || endTime == -1)
     		throw new IllegalArgumentException("Invalid setup: Use start() and stop() to indicate test start and end!");

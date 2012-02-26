@@ -5,6 +5,7 @@ ContiPerf 2.0.1 Release Notes
 Enhancements:
 -------------
 - Method StopWatch.stop() returns the elapsed time in milliseconds
+- Method LatencyCounter.percentileAboveLatency(latency)
 
 
 Changes:
