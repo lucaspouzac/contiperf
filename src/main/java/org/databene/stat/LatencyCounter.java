@@ -79,7 +79,7 @@ public final class LatencyCounter {
 
     public void stop() {
     	if (!running)
-    		throw new IllegalStateException("Stopping " + this + " without having started it");
+    		throw new IllegalStateException("Stopping " + this + " which is not running");
     	this.running = false;
     	this.endTime = System.currentTimeMillis();
     }
