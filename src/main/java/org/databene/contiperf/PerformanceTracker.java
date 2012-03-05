@@ -88,12 +88,17 @@ public class PerformanceTracker extends InvokerProxy {
 	    return result;
 	}
 	
+	public boolean isStarted() {
+		return started;
+	}
+	
 	public void stop() {
     	counter.stop();
     	counter.printSummary(new PrintWriter(System.out));
     	reportCompletion();
     	if (requirement != null)
     		checkRequirements(counter.duration());
+    	this.started = false;
 	}
 
 	public void clear() {
