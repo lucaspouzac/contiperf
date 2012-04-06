@@ -4,8 +4,9 @@ ContiPerf 2.0.1 Release Notes
 
 Enhancements:
 -------------
+- @PerfTest(rampUp = 1000)
 - Method StopWatch.stop() returns the elapsed time in milliseconds
-- Method LatencyCounter.percentileAboveLatency(latency)
+- new method LatencyCounter.percentileAboveLatency(latency)
 
 
 Changes:
