@@ -32,18 +32,20 @@ public class ExecutionConfig {
 	
 	private int invocations;
 	private int duration;
+	private int rampUp;
 	private int threads;
 	private boolean cancelOnViolation;
 	// TODO v2.x private int timeout;
 	
 	public ExecutionConfig(int invocations) {
-	    this(invocations, 1, -1, false /*, -1*/);
+	    this(invocations, 1, -1, 0, false /*, -1*/);
     }
 
-	public ExecutionConfig(int invocations, int threads, int duration, boolean cancelOnViolation /*, int timeout*/) {
+	public ExecutionConfig(int invocations, int threads, int duration, int rampUp, boolean cancelOnViolation /*, int timeout*/) {
 	    this.invocations = invocations;
 	    this.threads = threads;
 	    this.duration = duration;
+	    this.rampUp = rampUp;
 	    this.cancelOnViolation = cancelOnViolation;
 	    //this.timeout = timeout;
     }
@@ -63,6 +65,11 @@ public class ExecutionConfig {
 	public int getDuration() {
 		return duration;
 	}
+	
+	public int getRampUp() {
+		return rampUp;
+	}
+	
 /* 
 	public int getTimeout() {
 		return timeout;
@@ -74,7 +81,8 @@ public class ExecutionConfig {
 
 	@Override
 	public String toString() {
-	    return invocations + " invocations in " + threads + " threads";
+	    return (invocations > 0 ? invocations + " invocations" : "Running" + duration + " ms") + 
+	    	" with " + threads + " threads";
 	}
 	
 }

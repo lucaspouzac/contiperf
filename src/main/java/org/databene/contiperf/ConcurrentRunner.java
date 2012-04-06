@@ -35,10 +35,12 @@ public class ConcurrentRunner implements InvocationRunner {
 
 	private String name;
 	private InvocationRunner[] runners;
+	private int rampUp;
 	
-	public ConcurrentRunner(String name, InvocationRunner[] runners) {
+	public ConcurrentRunner(String name, InvocationRunner[] runners, int rampUp) {
 	    this.name = name;
 	    this.runners = runners;
+	    this.rampUp = rampUp;
     }
 
     public void run() {
@@ -46,8 +48,12 @@ public class ConcurrentRunner implements InvocationRunner {
 	    Thread[] threads = new Thread[runners.length];
 	    for (int i = 0; i < runners.length; i++)
 	        threads[i] = new Thread(threadGroup, runners[i]);
-	    for (Thread thread : threads)
+	    for (int i = 0; i < runners.length; i++) {
+	    	Thread thread = threads[i];
 	    	thread.start();
+	    	if (rampUp > 0 && i < runners.length - 1)
+	    		sleepForRampUpTime();
+	    }
 	    try {
 	        for (Thread thread : threads)
 	        	thread.join();
@@ -61,7 +67,15 @@ public class ConcurrentRunner implements InvocationRunner {
     		throw ContiPerfUtil.executionError(threadGroup.throwable);
     }
     
-    /** 
+    private void sleepForRampUpTime() {
+		try {
+			Thread.sleep(rampUp);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/** 
      * Implements the {@link ThreadGroup#uncaughtException(Thread, Throwable)} method
      * interrupting the execution of all threads in case of a {@link Throwable} and
      * memorizing the {@link Throwable}.

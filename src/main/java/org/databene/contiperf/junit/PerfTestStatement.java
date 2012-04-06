@@ -84,6 +84,7 @@ final class PerfTestStatement extends Statement {
         int threads = config.getThreads();
 		int duration = config.getDuration();
 		int invocations = config.getInvocations();
+		int rampUp = config.getRampUp();
 		if (duration > 0) {
 			if (threads == 1) {
 				// multi-threaded timed test
@@ -93,7 +94,7 @@ final class PerfTestStatement extends Statement {
 				InvocationRunner[] runners = new InvocationRunner[threads];
 				for (int i = 0; i < threads; i++)
 					runners[i] = new TimedRunner(tracker, provider, duration);
-				runner = new ConcurrentRunner(id, runners);
+				runner = new ConcurrentRunner(id, runners, rampUp);
 			}
     	} else if (invocations >= 0) {
     		AtomicLong counter = new AtomicLong(invocations);
@@ -105,7 +106,7 @@ final class PerfTestStatement extends Statement {
     			InvocationRunner[] runners = new InvocationRunner[threads];
 	        	for (int i = 0; i < threads; i++)
 	        		runners[i] = new CountRunner(tracker, provider, counter, false);
-				runner = new ConcurrentRunner(id, runners);
+				runner = new ConcurrentRunner(id, runners, rampUp);
     		}
         } else 
         	throw new PerfTestConfigurationError("No useful invocation count or duration defined");
