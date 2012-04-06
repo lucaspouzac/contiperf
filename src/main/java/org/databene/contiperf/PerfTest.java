@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2012 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -30,6 +30,8 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.databene.contiperf.timer.None;
+
 /**
  * Defines execution details and performance requirements for a test method.<br/><br/>
  * Created: 14.10.2009 14:41:18
@@ -45,5 +47,9 @@ public @interface PerfTest {
 	int duration()      default -1;
 	int rampUp()        default  0;
 	boolean cancelOnViolation() default false;
+	
+	Class<? extends WaitTimer> timer() default None.class;
+	double[] timerParams() default { };
+	
 	// TODO v2.x int timeout()       default -1;
 }

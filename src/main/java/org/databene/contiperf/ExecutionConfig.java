@@ -22,6 +22,8 @@
 
 package org.databene.contiperf;
 
+import org.databene.contiperf.timer.None;
+
 /**
  * Holds the execution configuration for a single test.<br/><br/>
  * Created: 18.10.2009 06:31:25
@@ -34,19 +36,27 @@ public class ExecutionConfig {
 	private int duration;
 	private int rampUp;
 	private int threads;
+	WaitTimer waitTimer;
 	private boolean cancelOnViolation;
 	// TODO v2.x private int timeout;
 	
 	public ExecutionConfig(int invocations) {
-	    this(invocations, 1, -1, 0, false /*, -1*/);
+	    this(invocations, 1, -1, 0, false, None.class, new double[0] /*, -1*/);
     }
 
-	public ExecutionConfig(int invocations, int threads, int duration, int rampUp, boolean cancelOnViolation /*, int timeout*/) {
+	public ExecutionConfig(int invocations, int threads, int duration, int rampUp, boolean cancelOnViolation,
+			Class<? extends WaitTimer> waitTimerClass, double[] waitParams /*, int timeout*/) {
 	    this.invocations = invocations;
 	    this.threads = threads;
 	    this.duration = duration;
 	    this.rampUp = rampUp;
 	    this.cancelOnViolation = cancelOnViolation;
+	    try {
+			waitTimer = (WaitTimer) waitTimerClass.newInstance();
+			waitTimer.init(waitParams);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	    //this.timeout = timeout;
     }
 
@@ -70,6 +80,10 @@ public class ExecutionConfig {
 		return rampUp;
 	}
 	
+	public WaitTimer getWaitTimer() {
+		return waitTimer;
+	}
+	
 /* 
 	public int getTimeout() {
 		return timeout;
@@ -84,5 +98,5 @@ public class ExecutionConfig {
 	    return (invocations > 0 ? invocations + " invocations" : "Running" + duration + " ms") + 
 	    	" with " + threads + " threads";
 	}
-	
+
 }

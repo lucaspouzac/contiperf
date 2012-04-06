@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2012 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -20,45 +20,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.databene.contiperf;
+package org.databene.contiperf.timer;
 
-import java.util.concurrent.atomic.AtomicLong;
+import static org.junit.Assert.*;
 
-import org.databene.contiperf.util.ContiPerfUtil;
+import org.databene.contiperf.WaitTimer;
+import org.junit.Test;
 
 /**
- * Calls the invoker a fixed number of times.<br/><br/>
- * Created: 22.10.2009 06:30:28
- * @since 1.0
+ * TODO Document class.<br/><br/>
+ * Created: 06.04.2012 18:10:41
+ * @since TODO version
  * @author Volker Bergmann
  */
-public class CountRunner extends AbstractInvocationRunner {
+public class ConstantTimerTest {
 
-    private ArgumentsProvider argsProvider;
-    private Invoker invoker;
-    private AtomicLong invocationsLeft;
-
-    public CountRunner(Invoker invoker, ArgumentsProvider argsProvider, 
-    		WaitTimer waitTimer, AtomicLong invocationsLeft) {
-    	super(waitTimer);
-	    this.invoker = invoker;
-	    this.argsProvider = argsProvider;
-	    this.invocationsLeft = invocationsLeft;
-    }
-
-    public void run() {
-    	try {
-    		while (invocationsLeft.getAndDecrement() > 0) {
-	    	    invoker.invoke(argsProvider.next());
-	    	    sleep();
-			}
-    	} catch (Exception e) {
-    		throw ContiPerfUtil.executionError(e);
-    	}
-    }
-
-	public void close() {
-	    invoker = null;
-    }
-    
+	@Test
+	public void testEmptyInitialization() throws Exception {
+		WaitTimer timer = ConstantTimer.class.newInstance();
+		timer.init(new double[0]);
+		for (int i = 0; i < 1000; i++)
+			assertEquals(1000, timer.getWaitTime());
+	}
+	
+	@Test
+	public void testNormalInitialization() throws Exception {
+		WaitTimer timer = ConstantTimer.class.newInstance();
+		timer.init(new double[] { 123 });
+		for (int i = 0; i < 1000; i++)
+			assertEquals(123, timer.getWaitTime());
+	}
+	
+	@Test
+	public void testTooManyParams() throws Exception {
+		WaitTimer timer = ConstantTimer.class.newInstance();
+		timer.init(new double[] { 234, 456 });
+		for (int i = 0; i < 1000; i++)
+			assertEquals(234, timer.getWaitTime());
+	}
+	
 }

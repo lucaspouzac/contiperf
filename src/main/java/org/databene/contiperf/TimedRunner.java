@@ -30,13 +30,15 @@ import org.databene.contiperf.util.ContiPerfUtil;
  * @since 1.03
  * @author Volker Bergmann
  */
-public class TimedRunner implements InvocationRunner {
+public class TimedRunner extends AbstractInvocationRunner {
 
     private long duration;
     private ArgumentsProvider argsProvider;
     private Invoker invoker;
 
-    public TimedRunner(Invoker invoker, ArgumentsProvider argsProvider, long duration) {
+    public TimedRunner(Invoker invoker, ArgumentsProvider argsProvider, 
+    		WaitTimer waitTimer, long duration) {
+    	super(waitTimer);
 	    this.invoker = invoker;
 	    this.argsProvider = argsProvider;
 	    this.duration = duration;
@@ -48,6 +50,7 @@ public class TimedRunner implements InvocationRunner {
 		    long endTime = start + duration;
 		    do {
 	    	    invoker.invoke(argsProvider.next());
+	    	    sleep();
 		    } while (System.currentTimeMillis() < endTime);
 		} catch (Exception e) {
 			throw ContiPerfUtil.executionError(e);

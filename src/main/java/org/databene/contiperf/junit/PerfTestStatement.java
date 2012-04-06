@@ -35,6 +35,7 @@ import org.databene.contiperf.PerformanceTracker;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.CountRunner;
 import org.databene.contiperf.TimedRunner;
+import org.databene.contiperf.WaitTimer;
 import org.databene.contiperf.report.ReportContext;
 import org.junit.runners.model.Statement;
 
@@ -85,27 +86,28 @@ final class PerfTestStatement extends Statement {
 		int duration = config.getDuration();
 		int invocations = config.getInvocations();
 		int rampUp = config.getRampUp();
+		WaitTimer wait = config.getWaitTimer();
 		if (duration > 0) {
 			if (threads == 1) {
-				// multi-threaded timed test
-				runner = new TimedRunner(tracker, provider, duration);
-			} else {
 				// single-threaded timed test
+				runner = new TimedRunner(tracker, provider, wait, duration);
+			} else {
+				// multi-threaded timed test
 				InvocationRunner[] runners = new InvocationRunner[threads];
 				for (int i = 0; i < threads; i++)
-					runners[i] = new TimedRunner(tracker, provider, duration);
+					runners[i] = new TimedRunner(tracker, provider, wait, duration);
 				runner = new ConcurrentRunner(id, runners, rampUp);
 			}
     	} else if (invocations >= 0) {
     		AtomicLong counter = new AtomicLong(invocations);
     		if (threads == 1) {
     			// single-threaded count-based test
-    			runner = new CountRunner(tracker, provider, counter, false);
+    			runner = new CountRunner(tracker, provider, wait, counter);
     		} else {
     			// multi-threaded count-based test
     			InvocationRunner[] runners = new InvocationRunner[threads];
 	        	for (int i = 0; i < threads; i++)
-	        		runners[i] = new CountRunner(tracker, provider, counter, false);
+	        		runners[i] = new CountRunner(tracker, provider, wait, counter);
 				runner = new ConcurrentRunner(id, runners, rampUp);
     		}
         } else 

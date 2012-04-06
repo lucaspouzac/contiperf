@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2012 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -20,45 +20,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.databene.contiperf;
-
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.databene.contiperf.util.ContiPerfUtil;
+package org.databene.contiperf.timer;
 
 /**
- * Calls the invoker a fixed number of times.<br/><br/>
- * Created: 22.10.2009 06:30:28
- * @since 1.0
+ * TODO Document class.<br/><br/>
+ * Created: 06.04.2012 17:05:54
+ * @since TODO version
  * @author Volker Bergmann
  */
-public class CountRunner extends AbstractInvocationRunner {
+public class None extends AbstractTimer {
 
-    private ArgumentsProvider argsProvider;
-    private Invoker invoker;
-    private AtomicLong invocationsLeft;
+	public void init(double[] params) {
+		checkParamCount(0, params);
+	}
+	
+	public int getWaitTime() {
+		return 0;
+	}
 
-    public CountRunner(Invoker invoker, ArgumentsProvider argsProvider, 
-    		WaitTimer waitTimer, AtomicLong invocationsLeft) {
-    	super(waitTimer);
-	    this.invoker = invoker;
-	    this.argsProvider = argsProvider;
-	    this.invocationsLeft = invocationsLeft;
-    }
-
-    public void run() {
-    	try {
-    		while (invocationsLeft.getAndDecrement() > 0) {
-	    	    invoker.invoke(argsProvider.next());
-	    	    sleep();
-			}
-    	} catch (Exception e) {
-    		throw ContiPerfUtil.executionError(e);
-    	}
-    }
-
-	public void close() {
-	    invoker = null;
-    }
-    
 }

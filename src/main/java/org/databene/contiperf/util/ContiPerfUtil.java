@@ -68,7 +68,8 @@ public class ContiPerfUtil {
 		if (annotation != null)
 			return new ExecutionConfig(annotation.invocations(), annotation.threads(), 
 					annotation.duration(), annotation.rampUp(), 
-					annotation.cancelOnViolation() /*, annotation.timeout()*/);
+					annotation.cancelOnViolation(), 
+					annotation.timer(), annotation.timerParams() /*, annotation.timeout()*/);
 		else
 			return null;
     }

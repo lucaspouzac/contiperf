@@ -4,14 +4,13 @@ ContiPerf 2.0.1 Release Notes
 
 Enhancements:
 -------------
-- @PerfTest(rampUp = 1000)
+- Ramp up time to specify the time to wait before adding a new thread, e.g. @PerfTest(rampUp = 1000)
+- Supporting wait timers to issue wait time between invocations
+  - usage e.g. @PerfTest(timer = RandomTimer.class, timerParams = { 200, 400 })
+  - predefined timers: None, ConstantTimer, RandomTimer, CumulatedTimer
+  - custom timers by implementing the WaitTimer interface
 - Method StopWatch.stop() returns the elapsed time in milliseconds
 - new method LatencyCounter.percentileAboveLatency(latency)
-
-
-Changes:
---------
-- 
 
 
 Bug fixes:
