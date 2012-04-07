@@ -12,6 +12,7 @@ Enhancements:
   - custom timers by implementing the WaitTimer interface
 - Method StopWatch.stop() returns the elapsed time in milliseconds
 - new method LatencyCounter.percentileAboveLatency(latency)
+- Javadoc for tooltip help
 
 
 Bug fixes:
