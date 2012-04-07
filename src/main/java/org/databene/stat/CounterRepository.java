@@ -77,11 +77,15 @@ public class CounterRepository {
 	
 	private LatencyCounter getOrCreateCounter(String name) {
 		LatencyCounter counter = getCounter(name);
+		if (counter == null)
+			counter = createCounter(name);
+		return counter;
+	}
+
+	public synchronized LatencyCounter createCounter(String name) {
+		LatencyCounter counter = getCounter(name);
 		if (counter == null) {
-			synchronized (this) {
-				if (counter == null)
-					counter = new LatencyCounter();
-			}
+			counter = new LatencyCounter();
 			counters.put(name, counter);
 		}
 		return counter;
