@@ -31,6 +31,7 @@ import org.databene.contiperf.InvocationRunner;
 import org.databene.contiperf.Invoker;
 import org.databene.contiperf.ConcurrentRunner;
 import org.databene.contiperf.PerfTestConfigurationError;
+import org.databene.contiperf.PerfTestExecutionError;
 import org.databene.contiperf.PerformanceTracker;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.CountRunner;
@@ -68,12 +69,15 @@ final class PerfTestStatement extends Statement {
 		System.out.println(id);
     	Invoker invoker = new JUnitInvoker(id, base);
     	PerformanceTracker tracker = new PerformanceTracker(
-    			invoker, requirement, config.isCancelOnViolation(), context);
+    			invoker, requirement, config.getWarmUp(), config.isCancelOnViolation(), context);
     	InvocationRunner runner = createRunner(tracker);
     	try {
 			runner.run();
+			if (!tracker.isCounterStarted())
+				throw new PerfTestExecutionError("Test finished before warm-up period (" + config.getWarmUp() + " ms) was over");
     	} finally {
-			tracker.stop();
+    		if (tracker.isCounterStarted())
+    			tracker.stopCounter();
     		runner.close();
     		tracker.clear();
     	}
@@ -83,19 +87,21 @@ final class PerfTestStatement extends Statement {
 	    ArgumentsProvider provider = new EmptyArgumentsProvider();
 	    InvocationRunner runner;
         int threads = config.getThreads();
-		int duration = config.getDuration();
-		int invocations = config.getInvocations();
 		int rampUp = config.getRampUp();
+		int durationWithRampUp = config.getDuration() + config.getRampUp() * (config.getThreads() - 1);
+		int invocations = config.getInvocations();
 		WaitTimer wait = config.getWaitTimer();
-		if (duration > 0) {
+		if (config.getDuration() > 0) {
 			if (threads == 1) {
 				// single-threaded timed test
-				runner = new TimedRunner(tracker, provider, wait, duration);
+				runner = new TimedRunner(tracker, provider, wait, durationWithRampUp);
 			} else {
 				// multi-threaded timed test
+				if (durationWithRampUp - (threads - 1) * rampUp <= 0)
+					throw new IllegalArgumentException("test duration is shorter than the cumulated ramp-up times");
 				InvocationRunner[] runners = new InvocationRunner[threads];
 				for (int i = 0; i < threads; i++)
-					runners[i] = new TimedRunner(tracker, provider, wait, duration);
+					runners[i] = new TimedRunner(tracker, provider, wait, durationWithRampUp - i * rampUp);
 				runner = new ConcurrentRunner(id, runners, rampUp);
 			}
     	} else if (invocations >= 0) {

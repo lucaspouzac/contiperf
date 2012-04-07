@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2011 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2012 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -38,21 +38,28 @@ import org.databene.stat.LatencyCounter;
 public class PerformanceTracker extends InvokerProxy {
 	
     private PerformanceRequirement requirement;
+    private int warmUp;
     private boolean cancelOnViolation;
     private ReportContext context;
+    
     private LatencyCounter counter;
-    private boolean started;
+    private boolean counterStarted;
+    private long warmUpFinishedTime;
 
 	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, ReportContext context) {
-	    this(target, requirement, true, context);
+	    this(target, requirement, 0, true, context);
     }
 
-	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, boolean cancelOnViolation, ReportContext context) {
+	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, 
+			int warmUp, boolean cancelOnViolation, ReportContext context) {
 	    super(target);
 	    this.requirement = requirement;
-	    setContext(context);
-	    this.started = false;
+	    this.warmUp = warmUp;
 	    this.cancelOnViolation = cancelOnViolation;
+	    this.setContext(context);
+	    this.counter = null;
+	    this.counterStarted = false;
+	    this.warmUpFinishedTime = -1;
     }
 	
 	// interface -------------------------------------------------------------------------------------------------------
@@ -65,40 +72,51 @@ public class PerformanceTracker extends InvokerProxy {
 	    return counter;
     }
 
-	public void start() {
+	public void startCounter() {
 		reportStart();
     	int max = (requirement != null ? requirement.getMax() : -1);
     	counter = new LatencyCounter(max >= 0 ? max : 1000);
     	counter.start();
-    	started = true;
+    	counterStarted = true;
 	}
 	
 	@Override
     public Object invoke(Object[] args) throws Exception {
-		if (!started)
-			start();
 	    long callStart = System.nanoTime();
+		if (warmUpFinishedTime == -1)
+	    	warmUpFinishedTime = callStart + warmUp * 1000000;
+	    checkState(callStart);
 		Object result = super.invoke(args);
 	    int latency = (int) ((System.nanoTime() - callStart) / 1000000);
-	    counter.addSample(latency);
+	    if (counterStarted)
+	    	counter.addSample(latency);
 	    reportInvocation(latency, callStart);
 	    if (requirement != null && requirement.getMax() >= 0 && latency > requirement.getMax() && cancelOnViolation)
 	    	context.fail("Method " + getId() + " exceeded time limit of " + 
 	    			requirement.getMax() + " ms running " + latency + " ms");
 	    return result;
 	}
-	
-	public boolean isStarted() {
-		return started;
+
+	private synchronized void checkState(long callStart) {
+		if (callStart >= warmUpFinishedTime && !counterStarted) {
+			startCounter();
+			System.out.println("Counter started");
+		}
 	}
 	
-	public void stop() {
+	public boolean isCounterStarted() {
+		return counterStarted;
+	}
+	
+	public void stopCounter() {
+		if (!isCounterStarted())
+			throw new RuntimeException("Trying to stop counter before it was started");
     	counter.stop();
     	counter.printSummary(new PrintWriter(System.out));
     	reportCompletion();
     	if (requirement != null)
     		checkRequirements(counter.duration());
-    	this.started = false;
+    	this.counterStarted = false;
 	}
 
 	public void clear() {

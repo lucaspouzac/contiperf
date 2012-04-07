@@ -35,21 +35,23 @@ public class ExecutionConfig {
 	private int invocations;
 	private int duration;
 	private int rampUp;
+	private int warmUp;
 	private int threads;
 	WaitTimer waitTimer;
 	private boolean cancelOnViolation;
 	// TODO v2.x private int timeout;
 	
 	public ExecutionConfig(int invocations) {
-	    this(invocations, 1, -1, 0, false, None.class, new double[0] /*, -1*/);
+	    this(invocations, 1, -1, 0, 0, false, None.class, new double[0] /*, -1*/);
     }
 
-	public ExecutionConfig(int invocations, int threads, int duration, int rampUp, boolean cancelOnViolation,
+	public ExecutionConfig(int invocations, int threads, int duration, int rampUp, int warmUp, boolean cancelOnViolation,
 			Class<? extends WaitTimer> waitTimerClass, double[] waitParams /*, int timeout*/) {
 	    this.invocations = invocations;
 	    this.threads = threads;
 	    this.duration = duration;
 	    this.rampUp = rampUp;
+	    this.warmUp = warmUp;
 	    this.cancelOnViolation = cancelOnViolation;
 	    try {
 			waitTimer = (WaitTimer) waitTimerClass.newInstance();
@@ -78,6 +80,10 @@ public class ExecutionConfig {
 	
 	public int getRampUp() {
 		return rampUp;
+	}
+	
+	public int getWarmUp() {
+		return warmUp;
 	}
 	
 	public WaitTimer getWaitTimer() {
