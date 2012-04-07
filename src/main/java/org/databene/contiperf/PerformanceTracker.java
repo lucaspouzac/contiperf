@@ -98,10 +98,8 @@ public class PerformanceTracker extends InvokerProxy {
 	}
 
 	private synchronized void checkState(long callStart) {
-		if (callStart >= warmUpFinishedTime && !counterStarted) {
+		if (callStart >= warmUpFinishedTime && !counterStarted)
 			startCounter();
-			System.out.println("Counter started");
-		}
 	}
 	
 	public boolean isCounterStarted() {
