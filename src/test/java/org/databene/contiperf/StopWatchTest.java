@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2011 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2011-2012 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -65,7 +65,29 @@ public class StopWatchTest {
 
 	@Test
 	public void testParallelCalls() throws InterruptedException {
-		// TODO v2.0.1 implement testParallelCalls()
+		Thread[] threads = new Thread[20];
+		for (int i = 0; i < threads.length; i++) {
+			threads[i] = new Thread() {
+				public void run() {
+					try {
+						for (int i = 0; i < 20; i++)
+							sleepTimed(50);
+					} catch (InterruptedException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			};
+		}
+		for (int i = 0; i < threads.length; i++)
+			threads[i].start();
+		for (int i = 0; i < threads.length; i++)
+			threads[i].join();
+		LatencyCounter counter = getCounter();
+		assertEquals(400, counter.sampleCount());
+		assertTrue(counter.minLatency() >= 39);
+		assertTrue(counter.minLatency() < 100);
+		assertTrue(counter.averageLatency() >= 39);
+		assertTrue(counter.averageLatency() < 100);
 	}
 	
 	@Test(expected = RuntimeException.class)
