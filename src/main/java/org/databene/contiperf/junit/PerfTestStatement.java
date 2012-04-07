@@ -90,30 +90,30 @@ final class PerfTestStatement extends Statement {
 		int rampUp = config.getRampUp();
 		int durationWithRampUp = config.getDuration() + config.getRampUp() * (config.getThreads() - 1);
 		int invocations = config.getInvocations();
-		WaitTimer wait = config.getWaitTimer();
+		WaitTimer waitTimer = config.getWaitTimer();
 		if (config.getDuration() > 0) {
 			if (threads == 1) {
 				// single-threaded timed test
-				runner = new TimedRunner(tracker, provider, wait, durationWithRampUp);
+				runner = new TimedRunner(tracker, provider, waitTimer, durationWithRampUp);
 			} else {
 				// multi-threaded timed test
 				if (durationWithRampUp - (threads - 1) * rampUp <= 0)
 					throw new IllegalArgumentException("test duration is shorter than the cumulated ramp-up times");
 				InvocationRunner[] runners = new InvocationRunner[threads];
 				for (int i = 0; i < threads; i++)
-					runners[i] = new TimedRunner(tracker, provider, wait, durationWithRampUp - i * rampUp);
+					runners[i] = new TimedRunner(tracker, provider, waitTimer, durationWithRampUp - i * rampUp);
 				runner = new ConcurrentRunner(id, runners, rampUp);
 			}
     	} else if (invocations >= 0) {
     		AtomicLong counter = new AtomicLong(invocations);
     		if (threads == 1) {
     			// single-threaded count-based test
-    			runner = new CountRunner(tracker, provider, wait, counter);
+    			runner = new CountRunner(tracker, provider, waitTimer, counter);
     		} else {
     			// multi-threaded count-based test
     			InvocationRunner[] runners = new InvocationRunner[threads];
 	        	for (int i = 0; i < threads; i++)
-	        		runners[i] = new CountRunner(tracker, provider, wait, counter);
+	        		runners[i] = new CountRunner(tracker, provider, waitTimer, counter);
 				runner = new ConcurrentRunner(id, runners, rampUp);
     		}
         } else 
