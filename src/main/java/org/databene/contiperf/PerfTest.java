@@ -30,13 +30,53 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.databene.contiperf.timer.ConstantTimer;
+import org.databene.contiperf.timer.CumulatedTimer;
 import org.databene.contiperf.timer.None;
+import org.databene.contiperf.timer.RandomTimer;
 
 /**
- * Defines execution details and performance requirements for a test method.
- * TODO invocations/duration guidance
- * TODO ramp-up and warm-up advice
- * TODO WaitTimer example
+ * Defines execution details and performance requirements for a test method:
+ * How long the test should take, the level of concurrency and timings to apply.
+ * Two basic modes can be used: count-based or duration-based execution.
+ * 
+ * <h3>Count-based execution</h3>
+ * In count-based execution, the total number of test executions is stated and 
+ * ContiPerf runs until the number has been reached - however slow or fast this 
+ * may be.
+ * Example: <code>@PerfTest(invocations = 3000, threads = 10)</code>
+ * advises ContiPerf to execute the annotated test method 3000 times with up to 10 threads in parallel
+ * 
+ * <h3>Duration-based execution</h3>
+ * In duration-based execution ContiPerf repeats test invocation only as long as 
+ * a stated test duration has been reached or exceeded. This is especially suited 
+ * for performing test runs over a certain (longer) period of time for memory leak 
+ * and stability testing.
+ * 
+ * <h3>Timing</h3>
+ * In order not to have tests run continuously at full speed, but to achieve some more 
+ * user-interaction-like behavior, timers can be used: They incur a wait time between 
+ * invocations. ContiPerf comes with some predefined timers ({@link ConstantTimer}, 
+ * {@link RandomTimer} and {@link CumulatedTimer}) and you can easily define custom ones.
+ * Example: <code>@PerfTest(invocations = 1000, threads = 10, timer = RandomTimer.class, 
+ * timerParams = { 30, 80 })</code>
+ * causes ContiPerf to wait for 30 to 80 milliseconds between the test invocations of 
+ * each thread. 
+ * 
+ * <h3>Ramp-up and warm-up time</h3>
+ * If the tested component or system would be overloaded if all thread were immediately 
+ * accessing it, a ramp-up mechanism can be used: When specifying a {@link #rampUp()} 
+ * time, the test run begins with a single thread. After the ramp-up period, a second 
+ * thread is added, after one more ramp-up period a third and so on until the full number
+ * of threads has been reached. In order to ease switching between ramp-up scenarios, 
+ * the {@link #duration()} always specifies the time running with full number of threads, 
+ * ramp-up times are always added to the duration. 
+ * Example: <code>@PerfTest(threads = 10, duration = 60000, rampUp = 1000)</code>
+ * makes ContiPerf start with one thread, add a new thread each second until 10 
+ * threads are reached (which is the case after 9 seconds) and then runs the test at the 
+ * full number of threads for 60 seconds. Consequentially, the total amount of time of 
+ * test runs is 69 seconds. 
+ * 
  * <br/><br/>
  * Created: 14.10.2009 14:41:18
  * @since 1.0
