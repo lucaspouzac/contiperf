@@ -29,7 +29,7 @@ import org.junit.Test;
 /**
  * Tests the {@link LatencyCounter}.<br/><br/>
  * Created: 26.02.2012 18:31:16
- * @since 2.0.1
+ * @since 2.1.0
  * @author Volker Bergmann
  */
 public class LatencyCounterTest {

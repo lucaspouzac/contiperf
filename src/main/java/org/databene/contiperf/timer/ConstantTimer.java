@@ -27,7 +27,7 @@ import org.databene.contiperf.WaitTimer;
 /**
  * {@link WaitTimer} implementation which provides a constant wait time.<br/><br/>
  * Created: 06.04.2012 17:09:47
- * @since 2.0.1
+ * @since 2.1.0
  * @author Volker Bergmann
  */
 public class ConstantTimer extends AbstractTimer {

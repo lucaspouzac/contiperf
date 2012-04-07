@@ -30,7 +30,7 @@ import org.junit.Test;
 /**
  * Tests the {@link ConstantTimer}.<br/><br/>
  * Created: 06.04.2012 18:10:41
- * @since 2.0.1
+ * @since 2.1.0
  * @author Volker Bergmann
  */
 public class ConstantTimerTest {

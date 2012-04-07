@@ -25,7 +25,7 @@ package org.databene.contiperf;
 /**
  * Common interface for components that provide a wait time.<br/><br/>
  * Created: 06.04.2012 17:04:42
- * @since 2.0.1
+ * @since 2.1.0
  * @author Volker Bergmann
  */
 public interface WaitTimer {

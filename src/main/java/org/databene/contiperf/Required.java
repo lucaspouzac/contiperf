@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2010 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2012 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -31,7 +31,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Used to specify performance requirements for a test.<br/><br/>
+ * Used to specify performance requirements for a test.
+ * TODO general advice and examples
+ * <br/><br/>
  * Created: 15.10.2009 14:42:57
  * @since 1.0
  * @author Volker Bergmann
@@ -40,17 +42,32 @@ import java.lang.annotation.Target;
 @Target({ METHOD, TYPE })
 @Retention(RUNTIME)
 public @interface Required {
+	
+	/** TODO javadoc */
 	int throughput()   default -1;
 
+	/** TODO javadoc */
 	int average()      default -1;
+	
+	/** TODO javadoc */
 	int median()       default -1;
+	
+	/** TODO javadoc */
 	int max()          default -1;
+	
+	/** TODO javadoc */
 	int totalTime()    default -1;
 	
+	/** TODO javadoc */
 	int percentile90() default -1;
+
+	/** TODO javadoc */
 	int percentile95() default -1;
+	
+	/** TODO javadoc */
 	int percentile99() default -1;
 	
+	/** TODO javadoc */
 	String percentiles() default "";
 	
 }

@@ -27,7 +27,7 @@ import org.databene.contiperf.WaitTimer;
 /**
  * {@link WaitTimer} implementation that provides a wait time uniformly distributed between a min and a max value.<br/><br/>
  * Created: 06.04.2012 17:13:42
- * @since 2.0.1
+ * @since 2.1.0
  * @author Volker Bergmann
  */
 public class RandomTimer extends AbstractTimer {

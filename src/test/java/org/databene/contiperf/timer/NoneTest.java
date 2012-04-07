@@ -30,7 +30,7 @@ import org.junit.Test;
 /**
  * Tests the '{@link None}' wait timer.<br/><br/>
  * Created: 06.04.2012 18:18:34
- * @since 2.0.1
+ * @since 2.1.0
  * @author Volker Bergmann
  */
 public class NoneTest {
