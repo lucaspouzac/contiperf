@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2011 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2012 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -24,10 +24,13 @@ package org.databene.contiperf.timer;
 
 import java.util.Random;
 
+import org.databene.contiperf.WaitTimer;
+
 /**
- * TODO Document class.<br/><br/>
+ * {@link WaitTimer} implementation which provides wait times in a range between min and max with lower probabilities
+ * for border values and higher probabilities for values close to the average.<br/><br/>
  * Created: 06.04.2012 17:20:27
- * @since TODO version
+ * @since 2.0.1
  * @author Volker Bergmann
  */
 public class CumulatedTimer extends AbstractTimer {

@@ -28,9 +28,9 @@ import org.databene.contiperf.WaitTimer;
 import org.junit.Test;
 
 /**
- * TODO Document class.<br/><br/>
+ * Tests the {@link ConstantTimer}.<br/><br/>
  * Created: 06.04.2012 18:10:41
- * @since TODO version
+ * @since 2.0.1
  * @author Volker Bergmann
  */
 public class ConstantTimerTest {

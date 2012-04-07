@@ -31,9 +31,9 @@ import org.junit.Rule;
 import org.junit.Test;
 
 /**
- * TODO Document class.<br/><br/>
+ * Tests initialization and application of timers.<br/><br/>
  * Created: 06.04.2012 17:57:32
- * @since TODO version
+ * @since 2.0.1
  * @author Volker Bergmann
  */
 public class TimerTest {

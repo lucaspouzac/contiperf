@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2011 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2012 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -28,9 +28,9 @@ import org.databene.contiperf.WaitTimer;
 import org.junit.Test;
 
 /**
- * TODO Document class.<br/><br/>
+ * Tests the '{@link None}' wait timer.<br/><br/>
  * Created: 06.04.2012 18:18:34
- * @since TODO version
+ * @since 2.0.1
  * @author Volker Bergmann
  */
 public class NoneTest {

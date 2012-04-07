@@ -22,10 +22,12 @@
 
 package org.databene.contiperf.timer;
 
+import org.databene.contiperf.WaitTimer;
+
 /**
- * TODO Document class.<br/><br/>
+ * {@link WaitTimer} implementation which provides a constant wait time.<br/><br/>
  * Created: 06.04.2012 17:09:47
- * @since TODO version
+ * @since 2.0.1
  * @author Volker Bergmann
  */
 public class ConstantTimer extends AbstractTimer {

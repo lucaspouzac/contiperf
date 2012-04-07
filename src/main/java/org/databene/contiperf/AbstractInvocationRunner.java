@@ -23,9 +23,9 @@
 package org.databene.contiperf;
 
 /**
- * TODO Document class.<br/><br/>
+ * Abstract helper class which provides common functionality for {@link InvocationRunner}s.<br/><br/>
  * Created: 06.04.2012 17:38:28
- * @since TODO version
+ * @since 2.0.1
  * @author Volker Bergmann
  */
 public abstract class AbstractInvocationRunner implements InvocationRunner {

@@ -22,16 +22,18 @@
 
 package org.databene.contiperf.timer;
 
+import org.databene.contiperf.WaitTimer;
+
 /**
- * TODO Document class.<br/><br/>
+ * {@link WaitTimer} implementation that provides a wait time uniformly distributed between a min and a max value.<br/><br/>
  * Created: 06.04.2012 17:13:42
- * @since TODO version
+ * @since 2.0.1
  * @author Volker Bergmann
  */
 public class RandomTimer extends AbstractTimer {
 	
 	private int min =  500;
-	private int range = 1000;
+	private int range = 1001;
 	private java.util.Random random = new java.util.Random();
 	
 	public void init(double[] params) {
@@ -39,7 +41,7 @@ public class RandomTimer extends AbstractTimer {
 		if (params.length > 0)
 			min = (int) params[0];
 		if (params.length > 1)
-			range = (int) params[1] - min;
+			range = (int) params[1] - min + 1;
 	}
 
 	public int getWaitTime() {

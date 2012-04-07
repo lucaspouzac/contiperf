@@ -28,9 +28,9 @@ import org.databene.contiperf.WaitTimer;
 import org.junit.Test;
 
 /**
- * TODO Document class.<br/><br/>
+ * Tests the {@link CumulatedTimer}.<br/><br/>
  * Created: 06.04.2012 18:19:40
- * @since TODO version
+ * @since 2.0.1
  * @author Volker Bergmann
  */
 public class CumulatedTimerTest {
