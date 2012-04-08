@@ -75,7 +75,7 @@ public class PerformanceTracker extends InvokerProxy {
 	public void startCounter() {
 		reportStart();
     	int max = (requirement != null ? requirement.getMax() : -1);
-    	counter = new LatencyCounter(max >= 0 ? max : 1000);
+    	counter = new LatencyCounter(target.toString(), max >= 0 ? max : 1000);
     	counter.start();
     	counterStarted = true;
 	}

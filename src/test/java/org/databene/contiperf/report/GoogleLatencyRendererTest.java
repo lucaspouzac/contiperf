@@ -64,7 +64,7 @@ public class GoogleLatencyRendererTest {
 
 	@Test
 	public void testCounter() {
-		LatencyCounter counter = new LatencyCounter();
+		LatencyCounter counter = new LatencyCounter("test");
 		for (int i = 0; i < 50000; i ++)
 			counter.addSample(rand() + rand() + rand() + rand());
 		System.out.println(new GoogleLatencyRenderer().render(counter, getClass().getSimpleName(), 400, 300));

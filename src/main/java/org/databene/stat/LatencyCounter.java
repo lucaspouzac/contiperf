@@ -31,7 +31,8 @@ import java.io.PrintWriter;
  * @author Volker Bergmann
  */
 public final class LatencyCounter {
-
+	
+	private String name;
     private int minLatency;
     private int maxLatency;
     private long latencyCounts[];
@@ -42,11 +43,12 @@ public final class LatencyCounter {
     private long sampleCount;
     private long totalLatency;
 
-    public LatencyCounter() {
-        this(1000);
+    public LatencyCounter(String name) {
+        this(name, 1000);
     }
 
-    public LatencyCounter(int expectedMaxLatency) {
+    public LatencyCounter(String name, int expectedMaxLatency) {
+    	this.name = name;
         this.latencyCounts = new long[1 + expectedMaxLatency];
         this.sampleCount = 0;
         this.totalLatency = 0;
@@ -56,6 +58,10 @@ public final class LatencyCounter {
         this.endTime = -1;
     }
     
+	public String getName() {
+		return name;
+	}
+	
     // interface -------------------------------------------------------------------------------------------------------
 
     public void start() {

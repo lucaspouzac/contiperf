@@ -36,14 +36,14 @@ public class LatencyCounterTest {
 	
 	@Test(expected = IllegalStateException.class)
 	public void testStartTwice() {
-		LatencyCounter counter = new LatencyCounter();
+		LatencyCounter counter = new LatencyCounter("test");
 		counter.start();
 		counter.start();
 	}
 	
 	@Test(expected = IllegalStateException.class)
 	public void testStopTwice() {
-		LatencyCounter counter = new LatencyCounter();
+		LatencyCounter counter = new LatencyCounter("test");
 		counter.start();
 		counter.stop();
 		counter.stop();
@@ -51,7 +51,7 @@ public class LatencyCounterTest {
 	
 	@Test
 	public void testPercentileAboveLatency() {
-		LatencyCounter counter = new LatencyCounter();
+		LatencyCounter counter = new LatencyCounter("test");
 		counter.start();
 		for (int i = 25; i <= 125; i += 25)
 			counter.addSample(i);
