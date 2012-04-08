@@ -92,7 +92,7 @@ public class CounterRepository {
 					counter.getName() + ":", 
 					counter.totalLatency() + " ms total,", 
 					counter.sampleCount() + " inv,", 
-					"avg. " + df.format(counter.averageLatency()) + " ms/inv" });
+					df.format(counter.averageLatency()) + " ms/inv (avg.)" });
 		}
 		printSummaryTable(list);
 	}
