@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2011 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2011-2012 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -22,7 +22,14 @@
 
 package org.databene.stat;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -71,6 +78,25 @@ public class CounterRepository {
 		counters.clear();
 	}
 
+	public void printSummary() {
+		DecimalFormat df = new DecimalFormat("0.0", DecimalFormatSymbols.getInstance(Locale.US));
+		List<String[]> list = new ArrayList<String[]>(counters.size());
+		List<LatencyCounter> sortedCounters = new ArrayList<LatencyCounter>(counters.values());
+		Collections.sort(sortedCounters, new Comparator<LatencyCounter>() {
+			public int compare(LatencyCounter c1, LatencyCounter c2) {
+				return - new Long(c1.totalLatency()).compareTo(c2.totalLatency());
+			}
+		});
+		for (LatencyCounter counter : sortedCounters) {
+			list.add(new String[] {
+					counter.getName() + ":", 
+					counter.totalLatency() + " ms total,", 
+					counter.sampleCount() + " inv,", 
+					"avg. " + df.format(counter.averageLatency()) + " ms/inv" });
+		}
+		printSummaryTable(list);
+	}
+
 
 
 	// helper methods --------------------------------------------------------------------------------------------------
@@ -82,13 +108,45 @@ public class CounterRepository {
 		return counter;
 	}
 
-	public synchronized LatencyCounter createCounter(String name) {
+	private synchronized LatencyCounter createCounter(String name) {
 		LatencyCounter counter = getCounter(name);
 		if (counter == null) {
-			counter = new LatencyCounter();
+			counter = new LatencyCounter(name);
 			counters.put(name, counter);
 		}
 		return counter;
+	}
+
+	private void printSummaryTable(List<String[]> list) {
+		// determine column widths
+		int[] widths = new int[4];
+		for (int col = 0; col < 4; col++) {
+			int width = 0;
+			for (int row = 0; row < list.size(); row++)
+				width = Math.max(width, list.get(row)[col].length());
+			widths[col] = width;
+		}
+		// print rows
+		for (int row = 0; row < list.size(); row++) {
+			for (int col = 0; col < 4; col++) {
+				String text = list.get(row)[col];
+				if (col > 0) {
+					pad(widths[col] - text.length());
+					System.out.print(text);
+				} else {
+					System.out.print(text);
+					pad(widths[col] - text.length());
+				}
+				if (col < 3)
+					System.out.print(' ');
+			}
+			System.out.println();
+		}
+	}
+
+	private void pad(int count) {
+		for (int i = 0; i < count; i++)
+			System.out.print(' ');
 	}
 
 }
