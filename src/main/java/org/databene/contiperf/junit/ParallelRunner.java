@@ -20,17 +20,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.databene.contiperf;
+package org.databene.contiperf.junit;
 
 import java.lang.reflect.Method;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -88,42 +80,4 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 		}
 	}
 
-	class ParallelScheduler implements RunnerScheduler {
-		
-		private Queue<Future<String>> tasks = new LinkedList<Future<String>>();
-		private ExecutorService executorService = Executors.newCachedThreadPool();
-		private CompletionService<String> completionService = new ExecutorCompletionService<String>(executorService);
-
-		public void schedule(final Runnable childStatement) {
-			Future<String> future = completionService.submit(new Callable<String>() {
-				public String call() {
-					childStatement.run();
-					return toString();
-				}
-				
-				@Override
-				public String toString() {
-					return childStatement.toString();
-				}
-			});
-			tasks.add(future);
-		}
-
-		public void finished() {
-			try {
-				while (!tasks.isEmpty()) {
-					Future<String> task = completionService.take();
-					//System.out.println("Completed " + task.get());
-					tasks.remove(task);
-				}
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-			} finally {
-				while (!tasks.isEmpty())
-					tasks.poll().cancel(true);
-				executorService.shutdownNow();
-			}
-		}
-	}
-	
 }

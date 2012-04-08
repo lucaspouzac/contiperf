@@ -24,7 +24,6 @@ package org.databene.contiperf.junit;
 
 import static org.junit.Assert.*;
 
-import org.databene.contiperf.ParallelRunner;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.timer.ConstantTimer;
 import org.junit.AfterClass;
@@ -50,13 +49,13 @@ public class ParallelRunnerTest {
 	private static volatile long test2Last = -1;
 	
 	@Test
-	@PerfTest(duration = 2000, threads = 2, timer = ConstantTimer.class, timerParams = { 1200 })
+	@PerfTest(duration = 2000, threads = 3, timer = ConstantTimer.class, timerParams = { 1200 })
 	public void test1() throws Exception {
 		long currentTime = System.currentTimeMillis();
 		if (test1First == -1)
 			test1First = currentTime;
 		test1Last = currentTime;
-		System.out.println("test1 " + (currentTime - Math.min(test1First, test2First)));
+		System.out.println("test1 - " + Thread.currentThread() + " - " + (currentTime - Math.min(test1First, test2First)));
 	}
 	
 	@Test
@@ -66,7 +65,7 @@ public class ParallelRunnerTest {
 		if (test2First == -1)
 			test2First = currentTime;
 		test2Last = currentTime;
-		System.out.println("test2 " + (currentTime - Math.min(test1First, test2First)));
+		System.out.println("test2 - " + Thread.currentThread() + " - " + (currentTime - Math.min(test1First, test2First)));
 	}
 	
 	@Test
