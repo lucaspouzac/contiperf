@@ -14,6 +14,7 @@ Enhancements:
 - new method LatencyCounter.percentileAboveLatency(latency)
 - @RunWith(ParallelRunner.class) to execute all tests of a class concurrently
 - Javadoc for tooltip help
+- new method CounterRepository.printSummary()
 
 
 Bug fixes:
