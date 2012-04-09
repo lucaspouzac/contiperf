@@ -32,7 +32,8 @@ import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 
 /**
- * TODO Document class.<br/><br/>
+ * Executes all tests of one test class concurrently. 
+ * Warning: This is an experimental implementation, so its behaviour may change in future versions.<br/><br/>
  * Created: 07.04.2012 17:18:54
  * @since 2.1.0
  * @author Volker Bergmann
