@@ -76,8 +76,12 @@ import org.databene.contiperf.timer.RandomTimer;
  * threads are reached (which is the case after 9 seconds) and then runs the test at the 
  * full number of threads for 60 seconds. Consequentially, the total amount of time of 
  * test runs is 69 seconds. 
- * 
- * <br/><br/>
+ * For measuring only the characteristics under full load, you can configure a {@link #warmUp()} 
+ * time to tell ContiPerf after which amount of time it should begin to measure and validate 
+ * test execution. For the example above, a minimum rampUp time of 9 seconds is useful:
+ * <code>@PerfTest(threads = 10, duration = 60000, rampUp = 1000, warmUp = 9000)</code> 
+ * <br/>
+ * <br/>
  * Created: 14.10.2009 14:41:18
  * @since 1.0
  * @author Volker Bergmann
