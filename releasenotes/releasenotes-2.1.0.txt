@@ -5,16 +5,17 @@ ContiPerf 2.0.1 Release Notes
 Enhancements:
 -------------
 - Ramp-up time to specify the time to wait before adding a new thread, e.g. @PerfTest(rampUp = 1000)
-- Supporting warm-up time to start measurement and requirement checking after an initial time period is over
-- Supporting wait timers to issue wait time between invocations
+- Supporting warm-up time to start measurement and requirement checking after an initial time period is over,
+  e.g. @PerfTest(warmUp = 1000)
+- Supporting wait timers to induce wait time between invocations
   - usage e.g. @PerfTest(timer = RandomTimer.class, timerParams = { 200, 400 })
   - predefined timers: None, ConstantTimer, RandomTimer, CumulatedTimer
   - custom timers by implementing the WaitTimer interface
-- Method StopWatch.stop() returns the elapsed time in milliseconds
 - new method LatencyCounter.percentileAboveLatency(latency)
 - @RunWith(ParallelRunner.class) to execute all tests of a class concurrently
-- Javadoc for tooltip help
+- Javadoc for tooltip help on @PerfTest and @Requirement
 - new method CounterRepository.printSummary()
+- Method StopWatch.stop() returns the elapsed time in milliseconds
 
 
 Bug fixes:
