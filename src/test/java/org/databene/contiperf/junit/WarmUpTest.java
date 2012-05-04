@@ -87,7 +87,7 @@ public class WarmUpTest {
 	@AfterClass
 	public static void verifyTimedSingleThreaded() {
 		verifyExecution("testTimedSingleThreaded()", 900, timedSingleThreadedEnd - timedSingleThreadedStart,
-				18, 22, timedSingleThreadedInvocations.get());
+				15, 22, timedSingleThreadedInvocations.get());
 	}
 
 	// concurrent throughput testing -----------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ public class WarmUpTest {
 	 */
 	@Test
 	@PerfTest(threads = 3, duration = 1000, rampUp = 500, warmUp = 1000)
-	@Required(throughput = 50)
+	@Required(throughput = 45)
 	public void testThroughputMeasurement() throws Exception {
 		long current = System.currentTimeMillis();
 		throughputInvocations.incrementAndGet();
