@@ -86,7 +86,7 @@ public class WarmUpTest {
 	
 	@AfterClass
 	public static void verifyTimedSingleThreaded() {
-		verifyExecution("testTimedSingleThreaded()", 950, timedSingleThreadedEnd - timedSingleThreadedStart,
+		verifyExecution("testTimedSingleThreaded()", 900, timedSingleThreadedEnd - timedSingleThreadedStart,
 				18, 22, timedSingleThreadedInvocations.get());
 	}
 
@@ -119,7 +119,7 @@ public class WarmUpTest {
 	@AfterClass
 	public static void verifyThroughputRun() {
 		verifyExecution("testThroughputMeasurement()", 1900, throughputMeasurementEnd - throughputMeasurementStart, 
-				87, 93, throughputInvocations.get());
+				72, 93, throughputInvocations.get());
 	}
 	
 	// private helpers -------------------------------------------------------------------------------------------------
@@ -129,9 +129,9 @@ public class WarmUpTest {
 		String message = testName + " is expected to run at least for " + expectedMinDuration + " ms, " +
 				"but it actually has run for " + actualDuration + " ms.";
 		assertTrue(message, actualDuration >= expectedMinDuration);
-		assertTrue("Expected at least " + expectedMinInvocations + " invocations, but measured " + actualInvocations, 
+		assertTrue("Expected at least " + expectedMinInvocations + " invocations of " + testName + ", but measured " + actualInvocations, 
 				actualInvocations >= expectedMinInvocations);
-		assertTrue("Expected at most " + expectedMaxInvocations + " invocations, but measured " + actualInvocations, 
+		assertTrue("Expected at most " + expectedMaxInvocations + " invocations of " + testName + ", but measured " + actualInvocations, 
 				actualInvocations <= expectedMaxInvocations);
 	}
 	
