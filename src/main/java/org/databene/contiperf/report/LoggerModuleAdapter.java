@@ -68,8 +68,8 @@ public class LoggerModuleAdapter extends AbstractReportModule {
 	}
 
 	@Override
-	public void completed(String serviceId, LatencyCounter counter, PerformanceRequirement requirement) {
-		logger.logSummary(serviceId, counter.duration(), counter.sampleCount(), counter.getStartTime());
+	public void completed(String serviceId, LatencyCounter[] counters, PerformanceRequirement requirement) {
+		logger.logSummary(serviceId, counters[0].duration(), counters[0].sampleCount(), counters[0].getStartTime());
 	}
 
 	public ExecutionLogger getLogger() {
