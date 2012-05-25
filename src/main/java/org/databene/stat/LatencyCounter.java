@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2006-2011 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2006-2012 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -24,6 +24,8 @@ package org.databene.stat;
 
 import java.io.PrintWriter;
 
+import org.databene.contiperf.clock.SystemClock;
+
 /**
  * Counts latencies and calculates performance-related statistics.<br/><br/>
  * Created: Created: 14.12.2006 18:11:58
@@ -33,6 +35,8 @@ import java.io.PrintWriter;
 public final class LatencyCounter {
 	
 	private String name;
+	private String clockName;
+	
     private int minLatency;
     private int maxLatency;
     private long latencyCounts[];
@@ -44,11 +48,12 @@ public final class LatencyCounter {
     private long totalLatency;
 
     public LatencyCounter(String name) {
-        this(name, 1000);
+        this(name, SystemClock.NAME, 1000);
     }
 
-    public LatencyCounter(String name, int expectedMaxLatency) {
+    public LatencyCounter(String name, String clockName, int expectedMaxLatency) {
     	this.name = name;
+    	this.clockName = clockName;
         this.latencyCounts = new long[1 + expectedMaxLatency];
         this.sampleCount = 0;
         this.totalLatency = 0;
@@ -60,6 +65,10 @@ public final class LatencyCounter {
     
 	public String getName() {
 		return name;
+	}
+	
+	public String getClockName() {
+		return clockName;
 	}
 	
     // interface -------------------------------------------------------------------------------------------------------
@@ -179,5 +188,5 @@ public final class LatencyCounter {
 	public String toString() {
 		return getClass().getSimpleName();
 	}
-	
+
 }
