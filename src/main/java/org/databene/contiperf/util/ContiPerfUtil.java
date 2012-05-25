@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.databene.contiperf.Clock;
 import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.PercentileRequirement;
 import org.databene.contiperf.PerfTest;
@@ -35,6 +36,7 @@ import org.databene.contiperf.PerfTestException;
 import org.databene.contiperf.PerfTestExecutionError;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.Required;
+import org.databene.contiperf.clock.SystemClock;
 
 /**
  * Provides I/O utility methods.<br/><br/>
@@ -67,12 +69,30 @@ public class ContiPerfUtil {
 	public static ExecutionConfig mapPerfTestAnnotation(PerfTest annotation) {
 		if (annotation != null)
 			return new ExecutionConfig(annotation.invocations(), annotation.threads(), 
-					annotation.duration(), annotation.rampUp(), annotation.warmUp(), 
+					annotation.duration(), clocks(annotation), annotation.rampUp(), annotation.warmUp(), 
 					annotation.cancelOnViolation(), 
 					annotation.timer(), annotation.timerParams() /*, annotation.timeout()*/);
 		else
 			return null;
     }
+
+	private static Clock[] clocks(PerfTest annotation) {
+		Class<? extends Clock>[] clockClasses = annotation.clocks();
+		if (clockClasses.length == 0)
+			return new Clock[] { new SystemClock() };
+		Clock[] clocks = new Clock[clockClasses.length];
+		for (int i = 0; i < clockClasses.length; i++)
+			clocks[i] = clock(clockClasses[i]);
+		return clocks;
+	}
+
+	private static Clock clock(Class<? extends Clock> clockClass) {
+		try {
+			return clockClass.newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException("Error creating clock " + clockClass.getName(), e);
+		}
+	}
 
 	public static PerformanceRequirement mapRequired(Required annotation) {
 	    if (annotation == null)

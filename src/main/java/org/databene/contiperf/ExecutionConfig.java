@@ -22,6 +22,7 @@
 
 package org.databene.contiperf;
 
+import org.databene.contiperf.clock.SystemClock;
 import org.databene.contiperf.timer.None;
 
 /**
@@ -34,6 +35,7 @@ public class ExecutionConfig {
 	
 	private int invocations;
 	private int duration;
+	private Clock[] clocks;
 	private int rampUp;
 	private int warmUp;
 	private int threads;
@@ -42,14 +44,15 @@ public class ExecutionConfig {
 	// TODO v2.x private int timeout;
 	
 	public ExecutionConfig(int invocations) {
-	    this(invocations, 1, -1, 0, 0, false, None.class, new double[0] /*, -1*/);
+	    this(invocations, 1, -1, new Clock[] { new SystemClock() }, 0, 0, false, None.class, new double[0] /*, -1*/);
     }
 
-	public ExecutionConfig(int invocations, int threads, int duration, int rampUp, int warmUp, boolean cancelOnViolation,
+	public ExecutionConfig(int invocations, int threads, int duration, Clock[] clocks, int rampUp, int warmUp, boolean cancelOnViolation,
 			Class<? extends WaitTimer> waitTimerClass, double[] waitParams /*, int timeout*/) {
 	    this.invocations = invocations;
 	    this.threads = threads;
 	    this.duration = duration;
+	    this.clocks = clocks;
 	    this.rampUp = rampUp;
 	    this.warmUp = warmUp;
 	    this.cancelOnViolation = cancelOnViolation;
@@ -103,6 +106,10 @@ public class ExecutionConfig {
 	public String toString() {
 	    return (invocations > 0 ? invocations + " invocations" : "Running" + duration + " ms") + 
 	    	" with " + threads + " threads";
+	}
+
+	public Clock[] getClocks() {
+		return clocks;
 	}
 
 }
