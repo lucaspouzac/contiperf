@@ -35,8 +35,10 @@ import org.databene.contiperf.Clock;
  */
 public class CpuClock extends AbstractClock {
 
+	public static final String NAME = "cpu";
+
 	public CpuClock() {
-		super("cpu");
+		super(NAME);
 	}
 
 	public long getTime() {

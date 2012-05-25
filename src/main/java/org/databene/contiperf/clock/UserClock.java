@@ -35,8 +35,10 @@ import org.databene.contiperf.Clock;
  */
 public class UserClock extends AbstractClock {
 
+	public static final String NAME = "user";
+
 	public UserClock() {
-		super("user");
+		super(NAME);
 	}
 
 	public long getTime() {

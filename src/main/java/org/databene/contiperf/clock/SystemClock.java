@@ -33,8 +33,10 @@ import org.databene.contiperf.Clock;
  */
 public class SystemClock extends AbstractClock {
 
+	public static final String NAME = "system";
+
 	public SystemClock() {
-		super("system");
+		super(NAME);
 	}
 
 	public long getTime() {
