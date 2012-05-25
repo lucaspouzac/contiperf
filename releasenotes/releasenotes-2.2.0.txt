@@ -1,0 +1,18 @@
+ContiPerf 2.2.0 Release Notes
+-----------------------------
+
+
+Enhancements:
+-------------
+- Using the system's most exact clock by default
+- Supporting custom clock implementations
+- Supporting multiple different clocks at the same time
+- Implemented alternative clocks:
+  - system (the system's clock)
+  - cpu    (the thread's CPU time)
+  - user   (the thread's user time)
+
+
+Bug fixes:
+----------
+- NullPointerException in reports during parallel test execution
