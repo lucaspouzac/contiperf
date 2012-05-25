@@ -58,7 +58,7 @@ public abstract class AbstractReportModule implements ReportModule {
 		// ignored
 	}
 	
-	public void completed(String serviceId, LatencyCounter counter, PerformanceRequirement requirement) {
+	public void completed(String serviceId, LatencyCounter[] counters, PerformanceRequirement requirement) {
 		// ignored
 	}
 
