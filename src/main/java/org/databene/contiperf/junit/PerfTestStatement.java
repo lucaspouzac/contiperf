@@ -25,6 +25,7 @@ package org.databene.contiperf.junit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.databene.contiperf.ArgumentsProvider;
+import org.databene.contiperf.Clock;
 import org.databene.contiperf.EmptyArgumentsProvider;
 import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.InvocationRunner;
@@ -68,16 +69,17 @@ final class PerfTestStatement extends Statement {
     public void evaluate() throws Throwable {
 		System.out.println(id);
     	Invoker invoker = new JUnitInvoker(id, base);
+    	Clock[] clocks = config.getClocks();
     	PerformanceTracker tracker = new PerformanceTracker(
-    			invoker, requirement, config.getWarmUp(), config.isCancelOnViolation(), context);
+    			invoker, requirement, clocks, config.getWarmUp(), config.isCancelOnViolation(), context);
     	InvocationRunner runner = createRunner(tracker);
     	try {
 			runner.run();
-			if (!tracker.isCounterStarted())
+			if (!tracker.isTrackingStarted() && config.getWarmUp() > 0)
 				throw new PerfTestExecutionError("Test finished before warm-up period (" + config.getWarmUp() + " ms) was over");
     	} finally {
-    		if (tracker.isCounterStarted())
-    			tracker.stopCounter();
+    		if (tracker.isTrackingStarted())
+    			tracker.stopTracking();
     		runner.close();
     		tracker.clear();
     	}

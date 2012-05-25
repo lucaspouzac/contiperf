@@ -24,6 +24,7 @@ package org.databene.contiperf;
 
 import java.io.PrintWriter;
 
+import org.databene.contiperf.clock.SystemClock;
 import org.databene.contiperf.report.ReportContext;
 import org.databene.contiperf.report.ReportModule;
 import org.databene.contiperf.util.InvokerProxy;
@@ -42,23 +43,25 @@ public class PerformanceTracker extends InvokerProxy {
     private boolean cancelOnViolation;
     private ReportContext context;
     
-    private LatencyCounter counter;
-    private boolean counterStarted;
+    private Clock[] clocks;
+    private LatencyCounter[] counters;
+    private boolean trackingStarted;
     private long warmUpFinishedTime;
 
 	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, ReportContext context) {
-	    this(target, requirement, 0, true, context);
+	    this(target, requirement, new Clock[] { new SystemClock() }, 0, true, context);
     }
 
 	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, 
-			int warmUp, boolean cancelOnViolation, ReportContext context) {
+			Clock[] clocks, int warmUp, boolean cancelOnViolation, ReportContext context) {
 	    super(target);
 	    this.requirement = requirement;
 	    this.warmUp = warmUp;
 	    this.cancelOnViolation = cancelOnViolation;
 	    this.setContext(context);
-	    this.counter = null;
-	    this.counterStarted = false;
+	    this.clocks = clocks;
+	    this.counters = null;
+	    this.trackingStarted = false;
 	    this.warmUpFinishedTime = -1;
     }
 	
@@ -68,28 +71,34 @@ public class PerformanceTracker extends InvokerProxy {
 		this.context = context;
 	}
 	
-    public LatencyCounter getCounter() {
-	    return counter;
+    public LatencyCounter[] getCounters() {
+	    return counters;
     }
 
-	public void startCounter() {
+	public void startTracking() {
 		reportStart();
     	int max = (requirement != null ? requirement.getMax() : -1);
-    	counter = new LatencyCounter(target.toString(), max >= 0 ? max : 1000);
-    	counter.start();
-    	counterStarted = true;
+    	this.counters = new LatencyCounter[clocks.length];
+    	for (int i = 0; i < clocks.length; i++) {
+        	LatencyCounter counter = new LatencyCounter(target.toString(), clocks[i].getName(), max >= 0 ? max : 1000);
+        	this.counters[i] = counter;
+    		counter.start();
+    	}
+    	trackingStarted = true;
 	}
 	
 	@Override
     public Object invoke(Object[] args) throws Exception {
-	    long callStart = System.nanoTime();
-		if (warmUpFinishedTime == -1)
-	    	warmUpFinishedTime = callStart + warmUp * 1000000;
+	    long callStart = clocks[0].getTime();
+		if (warmUpFinishedTime == -1) {
+	    	warmUpFinishedTime = System.nanoTime() / 1000000 + warmUp;
+		}
 	    checkState(callStart);
 		Object result = super.invoke(args);
-	    int latency = (int) ((System.nanoTime() - callStart) / 1000000);
-	    if (counterStarted)
-	    	counter.addSample(latency);
+	    int latency = (int) (clocks[0].getTime() - callStart);
+	    if (isTrackingStarted())
+	    	for (LatencyCounter counter : counters)
+	    		counter.addSample(latency);
 	    reportInvocation(latency, callStart);
 	    if (requirement != null && requirement.getMax() >= 0 && latency > requirement.getMax() && cancelOnViolation)
 	    	context.fail("Method " + getId() + " exceeded time limit of " + 
@@ -98,27 +107,29 @@ public class PerformanceTracker extends InvokerProxy {
 	}
 
 	private synchronized void checkState(long callStart) {
-		if (callStart >= warmUpFinishedTime && !counterStarted)
-			startCounter();
+		if (callStart >= warmUpFinishedTime && !trackingStarted)
+			startTracking();
 	}
 	
-	public boolean isCounterStarted() {
-		return counterStarted;
+	public boolean isTrackingStarted() {
+		return trackingStarted;
 	}
 	
-	public void stopCounter() {
-		if (!isCounterStarted())
+	public void stopTracking() {
+		if (!isTrackingStarted())
 			throw new RuntimeException("Trying to stop counter before it was started");
-    	counter.stop();
-    	counter.printSummary(new PrintWriter(System.out));
+		for (LatencyCounter counter : counters)
+			counter.stop();
+    	LatencyCounter mainCounter = counters[0];
+		mainCounter.printSummary(new PrintWriter(System.out));
     	reportCompletion();
     	if (requirement != null)
-    		checkRequirements(counter.duration());
-    	this.counterStarted = false;
+    		checkRequirements(mainCounter.duration());
+    	this.trackingStarted = false;
 	}
 
 	public void clear() {
-		counter = null;
+		counters = null;
 	}
 
 	// helper methods --------------------------------------------------------------------------------------------------
@@ -135,15 +146,16 @@ public class PerformanceTracker extends InvokerProxy {
 
 	private void reportCompletion() {
 		for (ReportModule module : context.getReportModules())
-			module.completed(getId(), counter, requirement);
+			module.completed(getId(), counters, requirement);
 	}
 
 	private void checkRequirements(long elapsedMillis) {
 	    long requiredMax = requirement.getMax();
-    	if (requiredMax >= 0) {
-    		if (counter.maxLatency() > requiredMax)
+    	LatencyCounter mainCounter = counters[0];
+		if (requiredMax >= 0) {
+    		if (mainCounter .maxLatency() > requiredMax)
     			context.fail("The maximum latency of " + 
-    					requiredMax + " ms was exceeded, Measured: " + counter.maxLatency() + " ms");
+    					requiredMax + " ms was exceeded, Measured: " + mainCounter.maxLatency() + " ms");
     	}
 	    long requiredTotalTime = requirement.getTotalTime();
     	if (requiredTotalTime >= 0) {
@@ -153,17 +165,17 @@ public class PerformanceTracker extends InvokerProxy {
     	}
     	int requiredThroughput = requirement.getThroughput();
     	if (requiredThroughput > 0 && elapsedMillis > 0) {
-    		long actualThroughput = counter.sampleCount() * 1000 / elapsedMillis;
+    		long actualThroughput = mainCounter.sampleCount() * 1000 / elapsedMillis;
     		if (actualThroughput < requiredThroughput)
     			context.fail("Test " + getId() + " had a throughput of only " + 
         				actualThroughput + " calls per second, required: " + requiredThroughput + " calls per second");
     	}
     	int requiredAverage = requirement.getAverage();
-		if (requiredAverage >= 0 && counter.averageLatency() > requiredAverage)
+		if (requiredAverage >= 0 && mainCounter.averageLatency() > requiredAverage)
 			context.fail("Average execution time of " + getId() + " exceeded the requirement of " + 
-					requiredAverage + " ms, measured " + counter.averageLatency() + " ms");
+					requiredAverage + " ms, measured " + mainCounter.averageLatency() + " ms");
     	for (PercentileRequirement percentile : requirement.getPercentileRequirements()) {
-    		long measuredLatency = counter.percentileLatency(percentile.getPercentage());
+    		long measuredLatency = mainCounter.percentileLatency(percentile.getPercentage());
 			if (measuredLatency > percentile.getMillis())
 				context.fail(percentile.getPercentage() + "-percentile of " + getId() + " exceeded the requirement of " + 
     					percentile.getMillis() + " ms, measured " + measuredLatency + " ms");
