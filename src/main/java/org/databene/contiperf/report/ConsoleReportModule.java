@@ -39,8 +39,8 @@ public class ConsoleReportModule extends AbstractReportModule {
     }
 
 	@Override
-    public void completed(String serviceId, LatencyCounter counter, PerformanceRequirement requirement) {
-	    System.out.println(serviceId + ',' + counter.duration() + ',' + counter.sampleCount() + ',' + counter.getStartTime());
+    public void completed(String serviceId, LatencyCounter[] counters, PerformanceRequirement requirement) {
+	    System.out.println(serviceId + ',' + counters[0].duration() + ',' + counters[0].sampleCount() + ',' + counters[0].getStartTime());
     }
 
 }

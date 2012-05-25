@@ -50,8 +50,8 @@ public class ListReportModule extends AbstractReportModule {
     }
 
 	@Override
-	public void completed(String id, LatencyCounter counter, PerformanceRequirement requirement) {
-	    summaries.add(new InvocationSummary(id, counter.duration(), counter.sampleCount(), counter.getStartTime()));
+	public void completed(String id, LatencyCounter[] counters, PerformanceRequirement requirement) {
+	    summaries.add(new InvocationSummary(id, counters[0].duration(), counters[0].sampleCount(), counters[0].getStartTime()));
     }
 
 	public List<InvocationLog> getInvocations() {

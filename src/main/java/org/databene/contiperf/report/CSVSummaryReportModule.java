@@ -83,8 +83,8 @@ public class CSVSummaryReportModule extends AbstractReportModule {
 	}
 
 	@Override
-	public void completed(String serviceId, LatencyCounter counter, PerformanceRequirement requirement) {
-		writeStats(serviceId, counter);
+	public void completed(String serviceId, LatencyCounter[] counters, PerformanceRequirement requirement) {
+		writeStats(serviceId, counters);
     }
 
 
@@ -104,19 +104,20 @@ public class CSVSummaryReportModule extends AbstractReportModule {
         }
 	}
 
-	private void writeStats(String serviceId, LatencyCounter counter) {
+	private void writeStats(String serviceId, LatencyCounter[] counters) {
 		OutputStream out = null;
 		try {
 	        out = new FileOutputStream(file, true);
 	        DecimalFormat decForm = new DecimalFormat("0.#", DecimalFormatSymbols.getInstance(Locale.US));
 	        decForm.setGroupingUsed(false);
-			String avg = decForm.format(counter.averageLatency());
-			String message = serviceId + ',' + counter.getStartTime() + ',' + 
-	        	counter.duration() + ',' + counter.sampleCount() + ',' + 
-	        	counter.minLatency() + ',' + avg + ',' + 
-	        	counter.percentileLatency(50) + ',' + counter.percentileLatency(90) + ',' + 
-	        	counter.percentileLatency(95) + ',' + counter.percentileLatency(99) + ',' + 
-	        	counter.maxLatency() + LINE_SEPARATOR;
+	        LatencyCounter mainCounter = counters[0];
+			String avg = decForm.format(mainCounter.averageLatency());
+			String message = serviceId + ',' + mainCounter.getStartTime() + ',' + 
+	        	mainCounter.duration() + ',' + mainCounter.sampleCount() + ',' + 
+	        	mainCounter.minLatency() + ',' + avg + ',' + 
+	        	mainCounter.percentileLatency(50) + ',' + mainCounter.percentileLatency(90) + ',' + 
+	        	mainCounter.percentileLatency(95) + ',' + mainCounter.percentileLatency(99) + ',' + 
+	        	mainCounter.maxLatency() + LINE_SEPARATOR;
 	        out.write(message.getBytes());
         } catch (IOException e) {
 	        e.printStackTrace();

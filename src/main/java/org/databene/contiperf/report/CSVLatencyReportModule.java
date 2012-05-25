@@ -76,8 +76,8 @@ public class CSVLatencyReportModule extends AbstractReportModule {
 	}
 
 	@Override
-	public void completed(String serviceId, LatencyCounter counter, PerformanceRequirement requirement) {
-		writeStats(serviceId, counter);
+	public void completed(String serviceId, LatencyCounter[] counters, PerformanceRequirement requirement) {
+		writeStats(serviceId, counters);
 		try {
 			out.close();
 		} catch (IOException e) {
@@ -98,8 +98,9 @@ public class CSVLatencyReportModule extends AbstractReportModule {
 		}
 	}
 
-	private void writeStats(String serviceId, LatencyCounter counter) {
+	private void writeStats(String serviceId, LatencyCounter[] counters) {
 		try {
+			LatencyCounter counter = counters[0];
 			for (long i = counter.minLatency(); i <= counter.maxLatency(); i++) {
 				String line = i + "," + counter.getLatencyCount(i) + LINE_SEPARATOR;
 		        out.write(line.getBytes());
