@@ -132,5 +132,10 @@ public @interface PerfTest {
 	 * The meaning of the values is individual for the WaitTimer implementation. */
 	double[] timerParams() default { };
 	
+	/** One ore more {@link Clock} classes to use for time measurement.
+	 * The first one specified is the one relevant for requirements verification. */
+	Class<? extends Clock>[] clocks() default { };
+	
 	// TODO v2.x int timeout()       default -1;
+	
 }
