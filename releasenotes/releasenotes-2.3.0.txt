@@ -1,0 +1,15 @@
+ContiPerf 2.3.0 Release Notes
+-----------------------------
+
+Enhancements:
+-------------
+- Reporting the invocation characteristics (thread count, warm up, ramp up)
+
+
+Changes:
+--------
+- Changed ReportModule interface to enable reporting of execution config
+
+
+Bug fixes:
+----------
