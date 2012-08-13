@@ -70,8 +70,7 @@ final class PerfTestStatement extends Statement {
 		System.out.println(id);
     	Invoker invoker = new JUnitInvoker(id, base);
     	Clock[] clocks = config.getClocks();
-    	PerformanceTracker tracker = new PerformanceTracker(
-    			invoker, requirement, clocks, config.getWarmUp(), config.isCancelOnViolation(), context);
+    	PerformanceTracker tracker = new PerformanceTracker(invoker, config, requirement, context, clocks);
     	InvocationRunner runner = createRunner(tracker);
     	try {
 			runner.run();

@@ -22,6 +22,7 @@
 
 package org.databene.contiperf.report;
 
+import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
@@ -39,5 +40,5 @@ public interface ReportModule {
 	
 	void starting(String serviceId);
 	void invoked(String serviceId, int latency, long startTime);
-	public void completed(String serviceId, LatencyCounter[] counters, PerformanceRequirement requirement);
+	public void completed(String serviceId, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement);
 }

@@ -38,9 +38,9 @@ import org.databene.stat.LatencyCounter;
  */
 public class PerformanceTracker extends InvokerProxy {
 	
-    private PerformanceRequirement requirement;
-    private int warmUp;
-    private boolean cancelOnViolation;
+	private final ExecutionConfig executionConfig;
+    private final PerformanceRequirement requirement;
+    
     private ReportContext context;
     
     private Clock[] clocks;
@@ -48,16 +48,16 @@ public class PerformanceTracker extends InvokerProxy {
     private boolean trackingStarted;
     private long warmUpFinishedTime;
 
-	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, ReportContext context) {
-	    this(target, requirement, new Clock[] { new SystemClock() }, 0, true, context);
+	public PerformanceTracker(Invoker target, 
+			PerformanceRequirement requirement, ReportContext context) {
+	    this(target, null, requirement, context, new Clock[] { new SystemClock() });
     }
 
-	public PerformanceTracker(Invoker target, PerformanceRequirement requirement, 
-			Clock[] clocks, int warmUp, boolean cancelOnViolation, ReportContext context) {
+	public PerformanceTracker(Invoker target, ExecutionConfig executionConfig, 
+			PerformanceRequirement requirement, ReportContext context, Clock[] clocks) {
 	    super(target);
+	    this.executionConfig = (executionConfig != null ? executionConfig : new ExecutionConfig(0));
 	    this.requirement = requirement;
-	    this.warmUp = warmUp;
-	    this.cancelOnViolation = cancelOnViolation;
 	    this.setContext(context);
 	    this.clocks = clocks;
 	    this.counters = null;
@@ -65,8 +65,6 @@ public class PerformanceTracker extends InvokerProxy {
 	    this.warmUpFinishedTime = -1;
     }
 	
-	// interface -------------------------------------------------------------------------------------------------------
-
 	public void setContext(ReportContext context) {
 		this.context = context;
 	}
@@ -91,7 +89,7 @@ public class PerformanceTracker extends InvokerProxy {
     public Object invoke(Object[] args) throws Exception {
 	    long callStart = clocks[0].getTime();
 		if (warmUpFinishedTime == -1) {
-	    	warmUpFinishedTime = System.nanoTime() / 1000000 + warmUp;
+	    	warmUpFinishedTime = System.nanoTime() / 1000000 + executionConfig.getWarmUp();
 		}
 	    checkState(callStart);
 		Object result = super.invoke(args);
@@ -100,7 +98,9 @@ public class PerformanceTracker extends InvokerProxy {
 	    	for (LatencyCounter counter : counters)
 	    		counter.addSample(latency);
 	    reportInvocation(latency, callStart);
-	    if (requirement != null && requirement.getMax() >= 0 && latency > requirement.getMax() && cancelOnViolation)
+	    if (requirement != null && requirement.getMax() >= 0 
+	    		&& latency > requirement.getMax() 
+	    		&& executionConfig.isCancelOnViolation())
 	    	context.fail("Method " + getId() + " exceeded time limit of " + 
 	    			requirement.getMax() + " ms running " + latency + " ms");
 	    return result;
@@ -146,7 +146,7 @@ public class PerformanceTracker extends InvokerProxy {
 
 	private void reportCompletion() {
 		for (ReportModule module : context.getReportModules())
-			module.completed(getId(), counters, requirement);
+			module.completed(getId(), counters, executionConfig, requirement);
 	}
 
 	private void checkRequirements(long elapsedMillis) {

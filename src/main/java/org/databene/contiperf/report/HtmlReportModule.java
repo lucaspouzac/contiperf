@@ -34,6 +34,7 @@ import java.text.DecimalFormat;
 import java.util.Date;
 
 import org.databene.contiperf.Config;
+import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.PercentileRequirement;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
@@ -68,25 +69,25 @@ public class HtmlReportModule extends AbstractReportModule {
 	}
 
 	@Override
-	public void completed(String id, LatencyCounter[] counters, PerformanceRequirement requirement) {
-		updateReport(id, counters, requirement, context);
+	public void completed(String id, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement) {
+		updateReport(id, counters, executionConfig, requirement, context);
 	}
 
 	// helper methods --------------------------------------------------------------------------------------------------
 	
-	private static synchronized void updateReport(String id, LatencyCounter[] counters, PerformanceRequirement requirement, ReportContext context) {
+	private static synchronized void updateReport(String id, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement, ReportContext context) {
 		File reportFile = reportFile();
 		if (!initialized || !reportFile.exists())
-			initReportFile(reportFile, id, counters, requirement, context);
+			initReportFile(reportFile, id, counters, executionConfig, requirement, context);
 		else
-			extendReportFile(reportFile, id, counters, requirement, context);
+			extendReportFile(reportFile, id, counters, executionConfig, requirement, context);
 	}
 
 	private static File reportFile() {
 		return new File(Config.instance().getReportFolder(), REPORT_FILENAME);
 	}
 
-	private static void initReportFile(File reportFile, String id, LatencyCounter[] counters, PerformanceRequirement requirement, ReportContext context) {
+	private static void initReportFile(File reportFile, String id, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement, ReportContext context) {
 		initialized = true;
 		try {
 			PrintWriter out = new PrintWriter(new FileOutputStream(reportFile));
@@ -131,7 +132,7 @@ public class HtmlReportModule extends AbstractReportModule {
 			out.println("<hr/>");
 			
 			// render first entry
-			appendEntry(id, counters, requirement, out, context);
+			appendEntry(id, counters, executionConfig, requirement, out, context);
 			
 			// render entry insertion marker
 			out.println(CPF_MARKER_2);
@@ -150,7 +151,7 @@ public class HtmlReportModule extends AbstractReportModule {
 		}
 	}
 	
-	private static void extendReportFile(File reportFile, String id, LatencyCounter[] counters, PerformanceRequirement requirement, ReportContext context) {
+	private static void extendReportFile(File reportFile, String id, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement, ReportContext context) {
 		try {
 			// create temp file
 			File tempFile = File.createTempFile("index", "html", reportFile.getParentFile());
@@ -167,7 +168,7 @@ public class HtmlReportModule extends AbstractReportModule {
 			// insert entry
 			while (!(line = in.readLine()).contains(CPF_MARKER_2))
 				out.println(line);
-			appendEntry(id, counters, requirement, out, context);
+			appendEntry(id, counters, executionConfig, requirement, out, context);
 			out.println(line);
 			
 			// finish temp file and replace original
@@ -194,7 +195,7 @@ public class HtmlReportModule extends AbstractReportModule {
 		return "<td style='background-color:" + (success ? "#00BB00" : "RED") + ";'>&nbsp;</td>";
 	}
 
-	private static void appendEntry(String serviceId, LatencyCounter[] counters, PerformanceRequirement requirement, PrintWriter out, ReportContext context) {
+	private static void appendEntry(String serviceId, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement, PrintWriter out, ReportContext context) {
 		// render header
 		out.println("<a name='" + serviceId + "'><h2 style='color:#EE6600'>" + serviceId + "</h2></a>");
 		// render stats table...
@@ -206,7 +207,7 @@ public class HtmlReportModule extends AbstractReportModule {
 		out.println("		</td>");
 		out.println("		<td>");
 		// ...and number table on the right
-		printStats(serviceId, counters, requirement, out);
+		printStats(serviceId, counters, executionConfig, requirement, out);
 		out.println("		</td>");
 		out.println("	</tr>");
 		out.println("</table>");
@@ -236,11 +237,17 @@ public class HtmlReportModule extends AbstractReportModule {
 		out.println("			<img src='" + chartUrl +"' width='" + WIDTH + "', height='" + HEIGHT + "'/>");
 	}
 
-	private static void printStats(String id, LatencyCounter[] counters, PerformanceRequirement requirement, PrintWriter out) {
+	private static void printStats(String id, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement, PrintWriter out) {
 		out.println("			<table style='font-family:sans-serif;'>");
 		Date startDate = new Date(counters[0].getStartTime());
 		out.println("	<tr><th>Started at:</th><td colspan='2'>" + DateFormat.getDateTimeInstance().format(startDate) + "</td></tr>");
-		printStatLine("Total invocations:", counters[0].sampleCount(), null, null, null, null, out);
+		printStatLine("Measured invocations:", counters[0].sampleCount(), null, null, null, null, out);
+		if (executionConfig.getThreads() > 1)
+			printStatLine("Thread Count:", executionConfig.getThreads(), null, null, null, null, out);
+		if (executionConfig.getWarmUp() > 0)
+			printStatLine("Warm up:", executionConfig.getWarmUp(), "ms", null, null, null, out);
+		if (executionConfig.getRampUp() > 0)
+			printStatLine("Ramp up:", executionConfig.getRampUp(), "ms", null, null, null, out);
 		out.println("	<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>");
 		out.println("	<tr valign='top'>");
 		out.println("		<th>&nbsp;</th>");

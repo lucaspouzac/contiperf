@@ -22,6 +22,7 @@
 
 package org.databene.contiperf.report;
 
+import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
@@ -58,8 +59,18 @@ public abstract class AbstractReportModule implements ReportModule {
 		// ignored
 	}
 	
+	/** implements backwards-compatibility of inheritors of older versions of this class */
+	public void completed(String serviceId, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement) {
+		completed(serviceId, counters, requirement);
+	}
+
+	/** 
+	 * Implements a method which has been removed from the interface but implemented by children 
+	 * of this class, probably using the Override annotation, which would cause compiler errors if 
+	 * the method were removed.
+	 */
 	public void completed(String serviceId, LatencyCounter[] counters, PerformanceRequirement requirement) {
 		// ignored
 	}
-
+	
 }

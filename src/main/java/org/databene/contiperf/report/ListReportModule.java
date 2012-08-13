@@ -25,6 +25,7 @@ package org.databene.contiperf.report;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.databene.contiperf.ExecutionConfig;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
@@ -50,7 +51,7 @@ public class ListReportModule extends AbstractReportModule {
     }
 
 	@Override
-	public void completed(String id, LatencyCounter[] counters, PerformanceRequirement requirement) {
+	public void completed(String id, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement) {
 	    summaries.add(new InvocationSummary(id, counters[0].duration(), counters[0].sampleCount(), counters[0].getStartTime()));
     }
 
