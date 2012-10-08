@@ -376,6 +376,7 @@ public class HtmlReportModule extends AbstractReportModule {
 			switch (verdict) {
 				case SUCCESS : builder.append("<b style='color:#00BB00'>"); break;
 				case FAILURE : builder.append("<b style='color:RED'>"); break;
+				case IGNORED : break; // ignore
 			}
 		}
 		builder.append(text);
