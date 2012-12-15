@@ -1,0 +1,15 @@
+ContiPerf 2.3.1 Release Notes
+-----------------------------
+
+Enhancements:
+-------------
+- 
+
+
+Changes:
+--------
+- Created MemorySensor which logs the maximum amount of used heap memory
+
+
+Bug fixes:
+----------
