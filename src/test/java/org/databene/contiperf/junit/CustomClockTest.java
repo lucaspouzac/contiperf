@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2012 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2012-2013 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -47,7 +47,8 @@ public class CustomClockTest {
 	
 	@Test
 	@PerfTest(invocations = 10, clocks = { ConstantClock.class })
-	public void test() {
+	public void test() throws InterruptedException {
+		Thread.sleep(50);
 	}
 	
 	public static class ConstantClock extends AbstractClock {
@@ -65,10 +66,8 @@ public class CustomClockTest {
 		ListReportModule report = rule.getContext().getReportModule(ListReportModule.class);
 		List<InvocationLog> invocations = report.getInvocations();
 		assertEquals(10, invocations.size());
-		for (InvocationLog log : invocations) {
-			assertEquals(35, log.startTime);
+		for (InvocationLog log : invocations)
 			assertEquals( 0, log.latency);
-		}
 	}
 	
 }

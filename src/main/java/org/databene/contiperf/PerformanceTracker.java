@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2009-2012 by Volker Bergmann. All rights reserved.
+ * (c) Copyright 2009-2013 by Volker Bergmann. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
@@ -87,19 +87,18 @@ public class PerformanceTracker extends InvokerProxy {
 	
 	@Override
     public Object invoke(Object[] args) throws Exception {
-	    long callStart = clocks[0].getTime();
-		if (warmUpFinishedTime == -1) {
-	    	warmUpFinishedTime = System.nanoTime() / 1000000 + executionConfig.getWarmUp();
-		}
-	    checkState(callStart);
+	    long clock0StartTime = clocks[0].getTime();
+    	long realStartMillis = System.nanoTime() / 1000000;
+		if (warmUpFinishedTime == -1)
+			warmUpFinishedTime = realStartMillis + executionConfig.getWarmUp();
+	    checkState(realStartMillis);
 		Object result = super.invoke(args);
-	    int latency = (int) (clocks[0].getTime() - callStart);
+	    int latency = (int) (clocks[0].getTime() - clock0StartTime);
 	    if (isTrackingStarted())
 	    	for (LatencyCounter counter : counters)
 	    		counter.addSample(latency);
-	    reportInvocation(latency, callStart);
-	    if (requirement != null && requirement.getMax() >= 0 
-	    		&& latency > requirement.getMax() 
+	    reportInvocation(latency, realStartMillis);
+	    if (requirement != null && requirement.getMax() >= 0 && latency > requirement.getMax() 
 	    		&& executionConfig.isCancelOnViolation())
 	    	context.fail("Method " + getId() + " exceeded time limit of " + 
 	    			requirement.getMax() + " ms running " + latency + " ms");
