@@ -92,6 +92,7 @@ public class MemorySensor {
 		
 		public MeasurementThread(int interval) {
 			this.interval = interval;
+			setDaemon(true);
 		}
 
 		public int getInterval() {
