@@ -12,3 +12,4 @@ Changes:
 Bug fixes:
 ----------
 - warmup time measurement handling fails with custom clock
+- client application hangs when finished
