@@ -1,13 +1,6 @@
 ContiPerf 2.3.2 Release Notes
 -----------------------------
 
-Enhancements:
--------------
-
-
-Changes:
---------
-
 
 Bug fixes:
 ----------
