@@ -1,8 +1,0 @@
-ContiPerf 2.3.2 Release Notes
------------------------------
-
-
-Bug fixes:
-----------
-- warmup time measurement handling fails with custom clock
-- client application hangs when finished

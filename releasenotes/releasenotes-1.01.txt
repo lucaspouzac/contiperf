@@ -1,4 +1,0 @@
-ContiPerf 1.01 Release Notes
-----------------------------
-- Preventing NullPointerException in programmatic use without percentile requirements
-- New EmptyExecutionLogger

@@ -1,4 +1,0 @@
-ContiPerf 1.04 Release Notes
-----------------------------
-
-Bug fix: verification of the 'max' requirement was broken in 1.03
