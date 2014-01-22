@@ -1,7 +1,7 @@
-# [ContiPerf](http://databene.org/contiperf/)
+## [ContiPerf](http://databene.org/contiperf/)
 
 
-## Continuous Performance Testing (Junit)
+### Continuous Performance Testing (Junit)
 
 In order to assure software performance, software needs to be tested accordingly as early as possible - only weaknesses diagnosed early can be assessed quickly and cheaply. ContiPerf enables performance testing already in early development phases and in an easy-to-learn manner: 
 
@@ -9,11 +9,11 @@ A developer writes a performance test in form of a JUnit 4 test case and adds pe
 
 A large feature set for execution settings and performance requirements is available, e.g. Ramp up, warm up, individual pause timing, concurrent exection of test groups and more.
 
-## Requirements
+### Requirements
 
 You need at least Java 5 and JUnit 4.7 to use ContiPerf
 
-## Licence
+### Licence
 
 ContiPerf is Open Source and you can choose among the following licenses:
 
@@ -22,7 +22,7 @@ ContiPerf is Open Source and you can choose among the following licenses:
 * [Eclipse Public License 1.0](epl-v10.html)
 * [BSD License](bsd-license.txt)
 
-## Getting help / getting involved
+### Getting help / getting involved
 
 If you are stuck, found a bug, have ideas for ContiPerf or want to help, visit the [forum](http://databene.org/forum).
 
