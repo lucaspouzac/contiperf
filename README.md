@@ -13,10 +13,6 @@ A large feature set for execution settings and performance requirements is avail
 
 You need at least Java 5 and JUnit 4.7 to use ContiPerf
 
-## Getting help / getting involved
-
-If you are stuck, found a bug, have ideas for ContiPerf or want to help, visit the [forum](http://databene.org/forum).
-
 ## Licence
 
 ContiPerf is Open Source and you can choose among the following licenses:
@@ -25,3 +21,11 @@ ContiPerf is Open Source and you can choose among the following licenses:
 * [Lesser GNU Public License (LGPL) 3.0](lgpl-version3.txt)
 * [Eclipse Public License 1.0](epl-v10.html)
 * [BSD License](bsd-license.txt)
+
+## Getting help / getting involved
+
+If you are stuck, found a bug, have ideas for ContiPerf or want to help, visit the [forum](http://databene.org/forum).
+
+### More
+
+Check out [Wiki](https://github.com/lucaspouzac/contiperf/wiki).
