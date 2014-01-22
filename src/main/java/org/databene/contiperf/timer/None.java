@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,19 +25,21 @@ package org.databene.contiperf.timer;
 import org.databene.contiperf.WaitTimer;
 
 /**
- * {@link WaitTimer} implementation which does not cause wait times.<br/><br/>
+ * {@link WaitTimer} implementation which does not cause wait times.<br/>
+ * <br/>
  * Created: 06.04.2012 17:05:54
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public class None extends AbstractTimer {
 
-	public void init(double[] params) {
-		checkParamCount(0, params);
-	}
-	
-	public int getWaitTime() {
-		return 0;
-	}
+    public void init(double[] params) {
+	checkParamCount(0, params);
+    }
+
+    public int getWaitTime() {
+	return 0;
+    }
 
 }

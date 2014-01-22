@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -27,22 +27,25 @@ import java.lang.management.ManagementFactory;
 import org.databene.contiperf.Clock;
 
 /**
- * {@link Clock} implementation which provides the CPU time of the current thread
- * via {@link java.lang.management.ThreadMXBean#getCurrentThreadCpuTime()}<br/><br/>
+ * {@link Clock} implementation which provides the CPU time of the current
+ * thread via
+ * {@link java.lang.management.ThreadMXBean#getCurrentThreadCpuTime()}<br/>
+ * <br/>
  * Created: 23.05.2012 07:53:29
+ * 
  * @since 2.2.0
  * @author Volker Bergmann
  */
 public class CpuClock extends AbstractClock {
 
-	public static final String NAME = "cpu";
+    public static final String NAME = "cpu";
 
-	public CpuClock() {
-		super(NAME);
-	}
+    public CpuClock() {
+	super(NAME);
+    }
 
-	public long getTime() {
-		return ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime() / 1000000;
-	}
-	
+    public long getTime() {
+	return ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime() / 1000000;
+    }
+
 }

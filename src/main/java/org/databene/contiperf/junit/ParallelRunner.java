@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -32,53 +32,58 @@ import org.junit.runners.model.RunnerScheduler;
 import org.junit.runners.model.Statement;
 
 /**
- * Executes all tests of one test class concurrently. 
- * Warning: This is an experimental implementation, so its behaviour may change in future versions.<br/><br/>
+ * Executes all tests of one test class concurrently. Warning: This is an
+ * experimental implementation, so its behaviour may change in future versions.<br/>
+ * <br/>
  * Created: 07.04.2012 17:18:54
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public class ParallelRunner extends BlockJUnit4ClassRunner {
 
-	public ParallelRunner(Class<?> klass) throws InitializationError {
-		super(klass);
+    public ParallelRunner(Class<?> klass) throws InitializationError {
+	super(klass);
+    }
+
+    @Override
+    protected Statement childrenInvoker(final RunNotifier notifier) {
+	return new Statement() {
+	    @Override
+	    public void evaluate() {
+		runChildren(notifier);
+	    }
+	};
+    }
+
+    private void runChildren(final RunNotifier notifier) {
+	RunnerScheduler scheduler = new ParallelScheduler();
+	for (FrameworkMethod method : getChildren()) {
+	    scheduler.schedule(new ChildRunnable(method, notifier));
+	}
+	scheduler.finished();
+    }
+
+    public class ChildRunnable implements Runnable {
+
+	FrameworkMethod method;
+	RunNotifier notifier;
+
+	public ChildRunnable(FrameworkMethod method, RunNotifier notifier) {
+	    this.method = method;
+	    this.notifier = notifier;
 	}
 
-	protected Statement childrenInvoker(final RunNotifier notifier) {
-		return new Statement() {
-			@Override
-			public void evaluate() {
-				runChildren(notifier);
-			}
-		};
+	public void run() {
+	    ParallelRunner.this.runChild(method, notifier);
 	}
 
-	private void runChildren(final RunNotifier notifier) {
-		RunnerScheduler scheduler = new ParallelScheduler();
-		for (FrameworkMethod method : getChildren())
- 			scheduler.schedule(new ChildRunnable(method, notifier));
-		scheduler.finished();
+	@Override
+	public String toString() {
+	    Method realMethod = method.getMethod();
+	    return realMethod.getDeclaringClass().getSimpleName() + '.'
+		    + realMethod.getName() + "()";
 	}
-
-	public class ChildRunnable implements Runnable {
-
-		FrameworkMethod method;
-		RunNotifier notifier;
-		
-		public ChildRunnable(FrameworkMethod method, RunNotifier notifier) {
-			this.method = method;
-			this.notifier = notifier;
-		}
-
-		public void run() {
-			ParallelRunner.this.runChild(method, notifier);
-		}
-		
-		@Override
-		public String toString() {
-			Method realMethod = method.getMethod();
-			return realMethod.getDeclaringClass().getSimpleName() + '.' + realMethod.getName() + "()";
-		}
-	}
+    }
 
 }

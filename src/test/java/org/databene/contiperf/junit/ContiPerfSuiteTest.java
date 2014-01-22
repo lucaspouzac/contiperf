@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -22,7 +22,7 @@
 
 package org.databene.contiperf.junit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -35,192 +35,197 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 
 /**
- * Tests {@link ContiPerfSuiteRunner} processing.<br/><br/>
+ * Tests {@link ContiPerfSuiteRunner} processing.<br/>
+ * <br/>
  * Created: 02.05.2010 09:18:31
+ * 
  * @since 1.05
  * @author Volker Bergmann
  */
 public class ContiPerfSuiteTest {
-	
-	@Before
-	public void setUp() {
-		uCount.set(0);
-		cCount.set(0);
-		//pCount.set(0);
-	}
-	
-	@Test
-	public void test() {
-		
-	}
-	
-	@Test
-	public void testUnconfiguredSuiteForUnconfiguredTest() throws InitializationError {
-		runSuite(UnconfiguredSuiteForUnconfiguredTest.class);
-		assertEquals(1, uCount.get());
-		assertEquals(0, cCount.get());
-	}
 
-	@Test
-	public void testConfiguredSuiteForUnconfiguredTest() throws InitializationError {
-		runSuite(ConfiguredSuiteForUnconfiguredTest.class);
-		assertEquals(11, uCount.get());
-		assertEquals(0, cCount.get());
-	}
-
-	@Test
-	public void testUnconfiguredSuiteForConfiguredMethodTest() throws InitializationError {
-		runSuite(UnconfiguredSuiteForConfiguredMethodTest.class);
-		assertEquals(0, uCount.get());
-		assertEquals(2, cCount.get());
-	}
-
-	@Test
-	public void testConfiguredSuiteForConfiguredMethodTest() throws InitializationError {
-		runSuite(ConfiguredSuiteForConfiguredMethodTest.class);
-		assertEquals(0, uCount.get());
-		assertEquals(2, cCount.get());
-	}
-
-	@Test
-	public void testUnconfiguredSuiteForConfiguredClassTest() throws InitializationError {
-		runSuite(UnconfiguredSuiteForConfiguredClassTest.class);
-		assertEquals(0, uCount.get());
-		assertEquals(3, cCount.get());
-	}
-
-	@Test
-	public void testConfiguredSuiteForConfiguredClassTest() throws InitializationError {
-		runSuite(ConfiguredSuiteForConfiguredClassTest.class);
-		assertEquals(0, uCount.get());
-		assertEquals(3, cCount.get());
-	}
-
-	@Test
-	public void testUnconfiguredSuiteForConfiguredClassAndMethodTest() throws InitializationError {
-		runSuite(UnconfiguredSuiteForConfiguredClassAndMethodTest.class);
-		assertEquals(0, uCount.get());
-		assertEquals(7, cCount.get());
-	}
-
-	@Test
-	public void testConfiguredSuiteForConfiguredClassAndMethodTest() throws InitializationError {
-		runSuite(ConfiguredSuiteForConfiguredClassAndMethodTest.class);
-		assertEquals(0, uCount.get());
-		assertEquals(7, cCount.get());
-	}
-
-/*	
-	@Test
-	public void testConfiguredSuiteForParameterizedTest() throws InitializationError {
-		runSuite(ConfiguredSuiteForParametrizedTest.class);
-		assertEquals(0, uCount.get());
-		assertEquals(0, cCount.get());
-		assertEquals(9, pCount.get());
-	}
-*/
-	// helper methods --------------------------------------------------------------------------------------------------
-
-	private void runSuite(Class<?> testClass) throws InitializationError {
-	    ContiPerfSuiteRunner suite = new ContiPerfSuiteRunner(testClass);
-		RunNotifier notifier = new RunNotifier();
-		suite.run(notifier);
+    @Before
+    public void setUp() {
+	uCount.set(0);
+	cCount.set(0);
+	// pCount.set(0);
     }
 
-	// tested classes and their invocation counters --------------------------------------------------------------------
-	
-	@RunWith(ContiPerfSuiteRunner.class)
-	@SuiteClasses(UnconfiguredTest.class)
-	public static class UnconfiguredSuiteForUnconfiguredTest {
-	}
-	
-	@RunWith(ContiPerfSuiteRunner.class)
-	@SuiteClasses(UnconfiguredTest.class)
-	@PerfTest(invocations = 11, threads = 2)
-	public static class ConfiguredSuiteForUnconfiguredTest {
-	}
-	
-	@RunWith(ContiPerfSuiteRunner.class)
-	@SuiteClasses(ConfiguredMethodTest.class)
-	public static class UnconfiguredSuiteForConfiguredMethodTest {
-	}
-	
-	@RunWith(ContiPerfSuiteRunner.class)
-	@SuiteClasses(ConfiguredMethodTest.class)
-	@PerfTest(invocations = 13, threads = 2)
-	public static class ConfiguredSuiteForConfiguredMethodTest {
-	}
-	
-	@RunWith(ContiPerfSuiteRunner.class)
-	@SuiteClasses(ConfiguredClassTest.class)
-	public static class UnconfiguredSuiteForConfiguredClassTest {
-	}
-	
-	@RunWith(ContiPerfSuiteRunner.class)
-	@SuiteClasses(ConfiguredClassTest.class)
-	@PerfTest(invocations = 17, threads = 2)
-	public static class ConfiguredSuiteForConfiguredClassTest {
-	}
-	
-	@RunWith(ContiPerfSuiteRunner.class)
-	@SuiteClasses(ConfiguredClassAndMethodTest.class)
-	public static class UnconfiguredSuiteForConfiguredClassAndMethodTest {
-	}
-	
-	@RunWith(ContiPerfSuiteRunner.class)
-	@SuiteClasses(ConfiguredClassAndMethodTest.class)
-	@PerfTest(invocations = 19, threads = 2)
-	public static class ConfiguredSuiteForConfiguredClassAndMethodTest {
-	}
-	
-/* 
-	@RunWith(ContiPerfSuite.class)
-	@SuiteClasses(ParameterizedTest.class)
-	@PerfTest(invocations = 3, threads = 2)
-	public static class ConfiguredSuiteForParameterizedTest {
-	}
-*/
-	static volatile AtomicInteger uCount = new AtomicInteger();
-	static volatile AtomicInteger cCount = new AtomicInteger();
-//	static volatile AtomicInteger pCount = new AtomicInteger();
-	
-	
-	public static class UnconfiguredTest {
-		@Test
-		public void test() throws Exception {
-			uCount.incrementAndGet();
-		}
-	}
+    @Test
+    public void test() {
 
-	
-	
-	public static class ConfiguredMethodTest extends AbstractContiPerfTest {
-		@Test
-		@PerfTest(invocations = 2)
-		public void test() throws Exception {
-			cCount.incrementAndGet();
-		}
+    }
+
+    @Test
+    public void testUnconfiguredSuiteForUnconfiguredTest()
+	    throws InitializationError {
+	runSuite(UnconfiguredSuiteForUnconfiguredTest.class);
+	assertEquals(1, uCount.get());
+	assertEquals(0, cCount.get());
+    }
+
+    @Test
+    public void testConfiguredSuiteForUnconfiguredTest()
+	    throws InitializationError {
+	runSuite(ConfiguredSuiteForUnconfiguredTest.class);
+	assertEquals(11, uCount.get());
+	assertEquals(0, cCount.get());
+    }
+
+    @Test
+    public void testUnconfiguredSuiteForConfiguredMethodTest()
+	    throws InitializationError {
+	runSuite(UnconfiguredSuiteForConfiguredMethodTest.class);
+	assertEquals(0, uCount.get());
+	assertEquals(2, cCount.get());
+    }
+
+    @Test
+    public void testConfiguredSuiteForConfiguredMethodTest()
+	    throws InitializationError {
+	runSuite(ConfiguredSuiteForConfiguredMethodTest.class);
+	assertEquals(0, uCount.get());
+	assertEquals(2, cCount.get());
+    }
+
+    @Test
+    public void testUnconfiguredSuiteForConfiguredClassTest()
+	    throws InitializationError {
+	runSuite(UnconfiguredSuiteForConfiguredClassTest.class);
+	assertEquals(0, uCount.get());
+	assertEquals(3, cCount.get());
+    }
+
+    @Test
+    public void testConfiguredSuiteForConfiguredClassTest()
+	    throws InitializationError {
+	runSuite(ConfiguredSuiteForConfiguredClassTest.class);
+	assertEquals(0, uCount.get());
+	assertEquals(3, cCount.get());
+    }
+
+    @Test
+    public void testUnconfiguredSuiteForConfiguredClassAndMethodTest()
+	    throws InitializationError {
+	runSuite(UnconfiguredSuiteForConfiguredClassAndMethodTest.class);
+	assertEquals(0, uCount.get());
+	assertEquals(7, cCount.get());
+    }
+
+    @Test
+    public void testConfiguredSuiteForConfiguredClassAndMethodTest()
+	    throws InitializationError {
+	runSuite(ConfiguredSuiteForConfiguredClassAndMethodTest.class);
+	assertEquals(0, uCount.get());
+	assertEquals(7, cCount.get());
+    }
+
+    /*
+     * @Test public void testConfiguredSuiteForParameterizedTest() throws
+     * InitializationError { runSuite(ConfiguredSuiteForParametrizedTest.class);
+     * assertEquals(0, uCount.get()); assertEquals(0, cCount.get());
+     * assertEquals(9, pCount.get()); }
+     */
+    // helper methods
+    // --------------------------------------------------------------------------------------------------
+
+    private void runSuite(Class<?> testClass) throws InitializationError {
+	ContiPerfSuiteRunner suite = new ContiPerfSuiteRunner(testClass);
+	RunNotifier notifier = new RunNotifier();
+	suite.run(notifier);
+    }
+
+    // tested classes and their invocation counters
+    // --------------------------------------------------------------------
+
+    @RunWith(ContiPerfSuiteRunner.class)
+    @SuiteClasses(UnconfiguredTest.class)
+    public static class UnconfiguredSuiteForUnconfiguredTest {
+    }
+
+    @RunWith(ContiPerfSuiteRunner.class)
+    @SuiteClasses(UnconfiguredTest.class)
+    @PerfTest(invocations = 11, threads = 2)
+    public static class ConfiguredSuiteForUnconfiguredTest {
+    }
+
+    @RunWith(ContiPerfSuiteRunner.class)
+    @SuiteClasses(ConfiguredMethodTest.class)
+    public static class UnconfiguredSuiteForConfiguredMethodTest {
+    }
+
+    @RunWith(ContiPerfSuiteRunner.class)
+    @SuiteClasses(ConfiguredMethodTest.class)
+    @PerfTest(invocations = 13, threads = 2)
+    public static class ConfiguredSuiteForConfiguredMethodTest {
+    }
+
+    @RunWith(ContiPerfSuiteRunner.class)
+    @SuiteClasses(ConfiguredClassTest.class)
+    public static class UnconfiguredSuiteForConfiguredClassTest {
+    }
+
+    @RunWith(ContiPerfSuiteRunner.class)
+    @SuiteClasses(ConfiguredClassTest.class)
+    @PerfTest(invocations = 17, threads = 2)
+    public static class ConfiguredSuiteForConfiguredClassTest {
+    }
+
+    @RunWith(ContiPerfSuiteRunner.class)
+    @SuiteClasses(ConfiguredClassAndMethodTest.class)
+    public static class UnconfiguredSuiteForConfiguredClassAndMethodTest {
+    }
+
+    @RunWith(ContiPerfSuiteRunner.class)
+    @SuiteClasses(ConfiguredClassAndMethodTest.class)
+    @PerfTest(invocations = 19, threads = 2)
+    public static class ConfiguredSuiteForConfiguredClassAndMethodTest {
+    }
+
+    /*
+     * @RunWith(ContiPerfSuite.class)
+     * 
+     * @SuiteClasses(ParameterizedTest.class)
+     * 
+     * @PerfTest(invocations = 3, threads = 2) public static class
+     * ConfiguredSuiteForParameterizedTest { }
+     */
+    static volatile AtomicInteger uCount = new AtomicInteger();
+    static volatile AtomicInteger cCount = new AtomicInteger();
+
+    // static volatile AtomicInteger pCount = new AtomicInteger();
+
+    public static class UnconfiguredTest {
+	@Test
+	public void test() throws Exception {
+	    uCount.incrementAndGet();
 	}
-	
-	
-	
-	@PerfTest(invocations = 3)
-	public static class ConfiguredClassTest extends AbstractContiPerfTest {
-		@Test
-		public void test() throws Exception {
-			cCount.incrementAndGet();
-		}
+    }
+
+    public static class ConfiguredMethodTest extends AbstractContiPerfTest {
+	@Test
+	@PerfTest(invocations = 2)
+	public void test() throws Exception {
+	    cCount.incrementAndGet();
 	}
-	
-	
-	
-	@PerfTest(invocations = 5)
-	public static class ConfiguredClassAndMethodTest extends AbstractContiPerfTest {
-		@Test
-		@PerfTest(invocations = 7)
-		public void test() throws Exception {
-			cCount.incrementAndGet();
-		}
+    }
+
+    @PerfTest(invocations = 3)
+    public static class ConfiguredClassTest extends AbstractContiPerfTest {
+	@Test
+	public void test() throws Exception {
+	    cCount.incrementAndGet();
 	}
-	
+    }
+
+    @PerfTest(invocations = 5)
+    public static class ConfiguredClassAndMethodTest extends
+	    AbstractContiPerfTest {
+	@Test
+	@PerfTest(invocations = 7)
+	public void test() throws Exception {
+	    cCount.incrementAndGet();
+	}
+    }
+
 }

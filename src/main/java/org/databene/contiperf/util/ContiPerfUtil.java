@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -39,109 +39,136 @@ import org.databene.contiperf.Required;
 import org.databene.contiperf.clock.SystemClock;
 
 /**
- * Provides I/O utility methods.<br/><br/>
+ * Provides I/O utility methods.<br/>
+ * <br/>
  * Created: 18.10.09 07:43:54
+ * 
  * @since 1.0
  * @author Volker Bergmann
  */
 public class ContiPerfUtil {
 
-	public static void close(Closeable resource) {
-	    if (resource != null) {
-	    	try {
-	    		resource.close();
-	    	} catch (Exception e) {
-	    		e.printStackTrace();
-	    	}
+    public static void close(Closeable resource) {
+	if (resource != null) {
+	    try {
+		resource.close();
+	    } catch (Exception e) {
+		e.printStackTrace();
 	    }
+	}
     }
 
-	public static PerfTestException executionError(Throwable e) {
-		Throwable result = e;
-		if (result instanceof InvocationTargetException)
-			result = result.getCause();
-		if (result instanceof PerfTestException)
-			return (PerfTestException) result;
-		else
-			return new PerfTestExecutionError(result);
+    public static PerfTestException executionError(Throwable e) {
+	Throwable result = e;
+	if (result instanceof InvocationTargetException) {
+	    result = result.getCause();
+	}
+	if (result instanceof PerfTestException) {
+	    return (PerfTestException) result;
+	} else {
+	    return new PerfTestExecutionError(result);
+	}
     }
 
-	public static ExecutionConfig mapPerfTestAnnotation(PerfTest annotation) {
-		if (annotation != null)
-			return new ExecutionConfig(annotation.invocations(), annotation.threads(), 
-					annotation.duration(), clocks(annotation), annotation.rampUp(), annotation.warmUp(), 
-					annotation.cancelOnViolation(), 
-					annotation.timer(), annotation.timerParams() /*, annotation.timeout()*/);
-		else
-			return null;
+    public static ExecutionConfig mapPerfTestAnnotation(PerfTest annotation) {
+	if (annotation != null) {
+	    return new ExecutionConfig(annotation.invocations(),
+		    annotation.threads(), annotation.duration(),
+		    clocks(annotation), annotation.rampUp(),
+		    annotation.warmUp(), annotation.cancelOnViolation(),
+		    annotation.timer(), annotation.timerParams() /*
+								  * ,
+								  * annotation.
+								  * timeout()
+								  */);
+	} else {
+	    return null;
+	}
     }
 
-	private static Clock[] clocks(PerfTest annotation) {
-		Class<? extends Clock>[] clockClasses = annotation.clocks();
-		if (clockClasses.length == 0)
-			return new Clock[] { new SystemClock() };
-		Clock[] clocks = new Clock[clockClasses.length];
-		for (int i = 0; i < clockClasses.length; i++)
-			clocks[i] = clock(clockClasses[i]);
-		return clocks;
+    private static Clock[] clocks(PerfTest annotation) {
+	Class<? extends Clock>[] clockClasses = annotation.clocks();
+	if (clockClasses.length == 0) {
+	    return new Clock[] { new SystemClock() };
+	}
+	Clock[] clocks = new Clock[clockClasses.length];
+	for (int i = 0; i < clockClasses.length; i++) {
+	    clocks[i] = clock(clockClasses[i]);
+	}
+	return clocks;
+    }
+
+    private static Clock clock(Class<? extends Clock> clockClass) {
+	try {
+	    return clockClass.newInstance();
+	} catch (Exception e) {
+	    throw new RuntimeException("Error creating clock "
+		    + clockClass.getName(), e);
+	}
+    }
+
+    public static PerformanceRequirement mapRequired(Required annotation) {
+	if (annotation == null) {
+	    return null;
+	}
+	int throughput = annotation.throughput();
+
+	int average = annotation.average();
+	int max = annotation.max();
+	int totalTime = annotation.totalTime();
+
+	List<PercentileRequirement> percTmp = new ArrayList<PercentileRequirement>();
+	int median = annotation.median();
+	if (median > 0) {
+	    percTmp.add(new PercentileRequirement(50, median));
+	}
+	int percentile90 = annotation.percentile90();
+	if (percentile90 > 0) {
+	    percTmp.add(new PercentileRequirement(90, percentile90));
+	}
+	int percentile95 = annotation.percentile95();
+	if (percentile95 > 0) {
+	    percTmp.add(new PercentileRequirement(95, percentile95));
+	}
+	int percentile99 = annotation.percentile99();
+	if (percentile99 > 0) {
+	    percTmp.add(new PercentileRequirement(99, percentile99));
 	}
 
-	private static Clock clock(Class<? extends Clock> clockClass) {
-		try {
-			return clockClass.newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException("Error creating clock " + clockClass.getName(), e);
-		}
+	PercentileRequirement[] customPercs = parsePercentiles(annotation
+		.percentiles());
+	for (PercentileRequirement percentile : customPercs) {
+	    percTmp.add(percentile);
 	}
-
-	public static PerformanceRequirement mapRequired(Required annotation) {
-	    if (annotation == null)
-	    	return null;
-	    int throughput = annotation.throughput();
-
-		int average = annotation.average();
-		int max = annotation.max();
-		int totalTime = annotation.totalTime();
-		
-		List<PercentileRequirement> percTmp = new ArrayList<PercentileRequirement>();
-		int median = annotation.median();
-		if (median > 0)
-			percTmp.add(new PercentileRequirement(50, median));
-		int percentile90 = annotation.percentile90();
-		if (percentile90 > 0)
-			percTmp.add(new PercentileRequirement(90, percentile90));
-		int percentile95 = annotation.percentile95();
-		if (percentile95 > 0)
-			percTmp.add(new PercentileRequirement(95, percentile95));
-		int percentile99 = annotation.percentile99();
-		if (percentile99 > 0)
-			percTmp.add(new PercentileRequirement(99, percentile99));
-
-		PercentileRequirement[] customPercs = parsePercentiles(annotation.percentiles());
-		for (PercentileRequirement percentile : customPercs)
-			percTmp.add(percentile);
-		PercentileRequirement[] percs = new PercentileRequirement[percTmp.size()];
-		percTmp.toArray(percs);
-		return new PerformanceRequirement(average, max, totalTime, percs, throughput);
+	PercentileRequirement[] percs = new PercentileRequirement[percTmp
+		.size()];
+	percTmp.toArray(percs);
+	return new PerformanceRequirement(average, max, totalTime, percs,
+		throughput);
     }
 
-	public static PercentileRequirement[] parsePercentiles(String percentilesSpec) {
-		if (percentilesSpec == null || percentilesSpec.length() == 0)
-			return new PercentileRequirement[0];
-		String[] assignments = percentilesSpec.split(",");
-		PercentileRequirement[] reqs = new PercentileRequirement[assignments.length];
-		for (int i = 0; i < assignments.length; i++)
-			reqs[i] = parsePercentile(assignments[i]);
-	    return reqs;
+    public static PercentileRequirement[] parsePercentiles(
+	    String percentilesSpec) {
+	if (percentilesSpec == null || percentilesSpec.length() == 0) {
+	    return new PercentileRequirement[0];
+	}
+	String[] assignments = percentilesSpec.split(",");
+	PercentileRequirement[] reqs = new PercentileRequirement[assignments.length];
+	for (int i = 0; i < assignments.length; i++) {
+	    reqs[i] = parsePercentile(assignments[i]);
+	}
+	return reqs;
     }
 
-	private static PercentileRequirement parsePercentile(String assignment) {
-	    String[] parts = assignment.split(":");
-	    if (parts.length != 2)
-	    	throw new PerfTestConfigurationError("Ilegal percentile syntax: " + assignment);
-	    int base  = Integer.parseInt(parts[0].trim());
-	    int limit = Integer.parseInt(parts[1].trim());
-		return new PercentileRequirement(base, limit);
+    private static PercentileRequirement parsePercentile(String assignment) {
+	String[] parts = assignment.split(":");
+	if (parts.length != 2) {
+	    throw new PerfTestConfigurationError("Ilegal percentile syntax: "
+		    + assignment);
+	}
+	int base = Integer.parseInt(parts[0].trim());
+	int limit = Integer.parseInt(parts[1].trim());
+	return new PercentileRequirement(base, limit);
     }
-	
+
 }

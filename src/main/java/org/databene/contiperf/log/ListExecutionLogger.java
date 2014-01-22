@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -31,30 +31,34 @@ import org.databene.contiperf.report.InvocationSummary;
 import org.databene.contiperf.report.ListReportModule;
 
 /**
- * {@link ExecutionLogger} implementation that stores all reported invocation logs and 
- * summaries in lists.<br/><br/>
+ * {@link ExecutionLogger} implementation that stores all reported invocation
+ * logs and summaries in lists.<br/>
+ * <br/>
  * Created: 29.03.2010 12:37:33
+ * 
  * @since 1.0
  * @author Volker Bergmann
  * @deprecated replaced with {@link ListReportModule}
  */
 @Deprecated
 public class ListExecutionLogger implements ExecutionLogger {
-	
-	private List<InvocationLog> invocations;
-	private List<InvocationSummary> summaries;
-	
-	public ListExecutionLogger() {
-		this.invocations = new ArrayList<InvocationLog>();
-		this.summaries = new ArrayList<InvocationSummary>();
+
+    private List<InvocationLog> invocations;
+    private List<InvocationSummary> summaries;
+
+    public ListExecutionLogger() {
+	this.invocations = new ArrayList<InvocationLog>();
+	this.summaries = new ArrayList<InvocationSummary>();
     }
 
-	public void logInvocation(String id, int latency, long startTime) {
-	    invocations.add(new InvocationLog(id, latency, startTime));
+    public void logInvocation(String id, int latency, long startTime) {
+	invocations.add(new InvocationLog(id, latency, startTime));
     }
 
-	public void logSummary(String id, long elapsedTime, long invocationCount, long startTime) {
-	    summaries.add(new InvocationSummary(id, elapsedTime, invocationCount, startTime));
+    public void logSummary(String id, long elapsedTime, long invocationCount,
+	    long startTime) {
+	summaries.add(new InvocationSummary(id, elapsedTime, invocationCount,
+		startTime));
     }
 
 }

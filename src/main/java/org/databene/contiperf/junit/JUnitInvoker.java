@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -27,32 +27,34 @@ import org.databene.contiperf.util.ContiPerfUtil;
 import org.junit.runners.model.Statement;
 
 /**
- * {@link Invoker} implementation for JUnit 4.7+.<br/><br/>
+ * {@link Invoker} implementation for JUnit 4.7+.<br/>
+ * <br/>
  * Created: 22.10.2009 16:55:12
+ * 
  * @since 1.0
  * @author Volker Bergmann
  */
 public class JUnitInvoker implements Invoker {
-	
-	private String id;
-	private Statement base;
 
-	public JUnitInvoker(String id, Statement base) {
-	    this.id = id;
-	    this.base = base;
+    private String id;
+    private Statement base;
+
+    public JUnitInvoker(String id, Statement base) {
+	this.id = id;
+	this.base = base;
     }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+	return id;
+    }
 
-	public Object invoke(Object[] args) throws Exception {
-		try {
-	        base.evaluate();
-	        return null;
-        } catch (Throwable e) {
-        	throw ContiPerfUtil.executionError(e);
-        }
+    public Object invoke(Object[] args) throws Exception {
+	try {
+	    base.evaluate();
+	    return null;
+	} catch (Throwable e) {
+	    throw ContiPerfUtil.executionError(e);
 	}
+    }
 
 }

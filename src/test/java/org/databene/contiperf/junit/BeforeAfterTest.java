@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -22,7 +22,7 @@
 
 package org.databene.contiperf.junit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.databene.contiperf.PerfTest;
 import org.junit.After;
@@ -31,36 +31,40 @@ import org.junit.Rule;
 import org.junit.Test;
 
 /**
- * Verifies that before and after methods are executed only once for each test method.<br/><br/>
+ * Verifies that before and after methods are executed only once for each test
+ * method.<br/>
+ * <br/>
  * Created: 10.09.2011 14:43:43
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 public class BeforeAfterTest {
 
-	private int beforeCount = 0;
-	private int afterCount = 0;
-	
-	@Rule public ContiPerfRule rule = new ContiPerfRule();
-	
-	@Before
-	public void before() {
-		System.out.println("before()");
-		beforeCount++;
-	}
-	
-	@After
-	public void after() {
-		System.out.println("after()");
-		afterCount++;
-	}
-	
-	@Test
-	@PerfTest(invocations = 1000)
-	public void test() {
-		assertTrue("method before() may only be called once, but was called " + beforeCount + " times", 
-				beforeCount == 1);
-		assertTrue(afterCount == 0);
-	}
-	
+    private int beforeCount = 0;
+    private int afterCount = 0;
+
+    @Rule
+    public ContiPerfRule rule = new ContiPerfRule();
+
+    @Before
+    public void before() {
+	System.out.println("before()");
+	beforeCount++;
+    }
+
+    @After
+    public void after() {
+	System.out.println("after()");
+	afterCount++;
+    }
+
+    @Test
+    @PerfTest(invocations = 1000)
+    public void test() {
+	assertTrue("method before() may only be called once, but was called "
+		+ beforeCount + " times", beforeCount == 1);
+	assertTrue(afterCount == 0);
+    }
+
 }

@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,23 +25,26 @@ package org.databene.contiperf.timer;
 import org.databene.contiperf.WaitTimer;
 
 /**
- * {@link WaitTimer} implementation which provides a constant wait time.<br/><br/>
+ * {@link WaitTimer} implementation which provides a constant wait time.<br/>
+ * <br/>
  * Created: 06.04.2012 17:09:47
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public class ConstantTimer extends AbstractTimer {
-	
-	private int wait = 1000; 
 
-	public void init(double[] params) {
-		checkParamCount(1, params);
-		if (params.length > 0)
-			wait = (int) params[0];
-	}
+    private int wait = 1000;
 
-	public int getWaitTime() {
-		return wait;
+    public void init(double[] params) {
+	checkParamCount(1, params);
+	if (params.length > 0) {
+	    wait = (int) params[0];
 	}
+    }
+
+    public int getWaitTime() {
+	return wait;
+    }
 
 }

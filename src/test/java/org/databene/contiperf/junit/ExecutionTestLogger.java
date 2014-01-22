@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,28 +25,32 @@ package org.databene.contiperf.junit;
 import org.databene.contiperf.ExecutionLogger;
 
 /**
- * Helper class for testing ExecutionLogger handling.<br/><br/>
+ * Helper class for testing ExecutionLogger handling.<br/>
+ * <br/>
  * Created: 22.05.2010 19:01:22
+ * 
  * @since 1.05
  * @author Volker Bergmann
  */
 @SuppressWarnings("deprecation")
 public class ExecutionTestLogger implements ExecutionLogger {
-	
-	final int id;
-	int invocations;
-	static ExecutionTestLogger latestInstance;
-	
-	public ExecutionTestLogger(int id) {
-	    this.id = id;
-	    latestInstance = this;
+
+    final int id;
+    int invocations;
+    static ExecutionTestLogger latestInstance;
+
+    public ExecutionTestLogger(int id) {
+	this.id = id;
+	latestInstance = this;
     }
 
-	public synchronized void logInvocation(String id, int latency, long startTime) {
-		invocations++;
+    public synchronized void logInvocation(String id, int latency,
+	    long startTime) {
+	invocations++;
     }
 
-	public void logSummary(String id, long elapsedTime, long invocationCount, long startTime) {
+    public void logSummary(String id, long elapsedTime, long invocationCount,
+	    long startTime) {
     }
 
 }

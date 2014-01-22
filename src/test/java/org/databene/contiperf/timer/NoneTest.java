@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -28,19 +28,22 @@ import org.databene.contiperf.WaitTimer;
 import org.junit.Test;
 
 /**
- * Tests the '{@link None}' wait timer.<br/><br/>
+ * Tests the '{@link None}' wait timer.<br/>
+ * <br/>
  * Created: 06.04.2012 18:18:34
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public class NoneTest {
 
-	@Test
-	public void testEmptyInitialization() throws Exception {
-		WaitTimer timer = None.class.newInstance();
-		timer.init(new double[0]);
-		for (int i = 0; i < 1000; i++)
-			assertEquals(0, timer.getWaitTime());
+    @Test
+    public void testEmptyInitialization() throws Exception {
+	WaitTimer timer = None.class.newInstance();
+	timer.init(new double[0]);
+	for (int i = 0; i < 1000; i++) {
+	    assertEquals(0, timer.getWaitTime());
 	}
-	
+    }
+
 }

@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -32,57 +32,65 @@ import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
 /**
- * {@link ReportModule} that creates a CSV file with one line per invocation, 
- * which reports the measured latency in the first column and the start time in the 
- * second one.<br/><br/>
+ * {@link ReportModule} that creates a CSV file with one line per invocation,
+ * which reports the measured latency in the first column and the start time in
+ * the second one.<br/>
+ * <br/>
  * Created: 16.01.2011 17:05:11
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 public class CSVInvocationReportModule extends AbstractReportModule {
-	
-	private static final String FILE_SUFFIX = ".inv.csv";
-	
-	private PrintWriter out;
-	
-	public String getReportReferenceLabel(String serviceId) {
-		return "Invocations as CSV";
-	}
-	
-	public String getReportReference(String serviceId) {
-		return (serviceId != null ? filename(serviceId) : null);
-	}
 
-	@Override
-	public void starting(String serviceId) {
-		createFile(serviceId);
-	}
-	
-	@Override
-	public synchronized void invoked(String serviceId, int latency, long startTime) {
-		out.print(latency);
-		out.print(',');
-		out.println(startTime);
-	}
+    private static final String FILE_SUFFIX = ".inv.csv";
 
-	@Override
-	public void completed(String serviceId, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement) {
-		if (out != null)
-			out.close();
-	}
-	
-	private void createFile(String serviceId) {
-		try {
-			String filename = filename(serviceId);
-			out = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
-			out.println("latency,startTimeNanos");
-		} catch (Exception e) {
-			throw new RuntimeException();
-		}
-	}
+    private PrintWriter out;
 
-	private String filename(String serviceId) {
-		return context.getReportFolder() + File.separator + serviceId + FILE_SUFFIX;
+    @Override
+    public String getReportReferenceLabel(String serviceId) {
+	return "Invocations as CSV";
+    }
+
+    @Override
+    public String getReportReference(String serviceId) {
+	return (serviceId != null ? filename(serviceId) : null);
+    }
+
+    @Override
+    public void starting(String serviceId) {
+	createFile(serviceId);
+    }
+
+    @Override
+    public synchronized void invoked(String serviceId, int latency,
+	    long startTime) {
+	out.print(latency);
+	out.print(',');
+	out.println(startTime);
+    }
+
+    @Override
+    public void completed(String serviceId, LatencyCounter[] counters,
+	    ExecutionConfig executionConfig, PerformanceRequirement requirement) {
+	if (out != null) {
+	    out.close();
 	}
+    }
+
+    private void createFile(String serviceId) {
+	try {
+	    String filename = filename(serviceId);
+	    out = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+	    out.println("latency,startTimeNanos");
+	} catch (Exception e) {
+	    throw new RuntimeException();
+	}
+    }
+
+    private String filename(String serviceId) {
+	return context.getReportFolder() + File.separator + serviceId
+		+ FILE_SUFFIX;
+    }
 
 }

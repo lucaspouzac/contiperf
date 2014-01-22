@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,12 +23,15 @@
 package org.databene.contiperf;
 
 /**
- * Common interface for components that provide a wait time.<br/><br/>
+ * Common interface for components that provide a wait time.<br/>
+ * <br/>
  * Created: 06.04.2012 17:04:42
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public interface WaitTimer {
-	void init(double[] params);
-	int getWaitTime();
+    void init(double[] params);
+
+    int getWaitTime();
 }

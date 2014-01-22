@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -32,21 +32,24 @@ import org.junit.Rule;
 import org.junit.Test;
 
 /**
- * Tests the usage of multiple {@link Clock}s.<br/><br/>
+ * Tests the usage of multiple {@link Clock}s.<br/>
+ * <br/>
  * Created: 24.05.2012 09:30:45
+ * 
  * @since 2.2.0
  * @author Volker Bergmann
  */
 public class MultiClockTest {
-	
-	@Rule public ContiPerfRule rule = new ContiPerfRule();
-	
-	@Test
-	@PerfTest(invocations = 10, clocks = { SystemClock.class, UserClock.class, CpuClock.class })
-	@Required(throughput = 2, totalTime = 10000, max = 1000, 
-			average = 300, median = 301, percentiles = "55:302,77:303", percentile90 = 304)
-	public void testMultipleClocks() throws Exception {
-		Thread.sleep(200);
-	}
-	
+
+    @Rule
+    public ContiPerfRule rule = new ContiPerfRule();
+
+    @Test
+    @PerfTest(invocations = 10, clocks = { SystemClock.class, UserClock.class,
+	    CpuClock.class })
+    @Required(throughput = 2, totalTime = 10000, max = 1000, average = 300, median = 301, percentiles = "55:302,77:303", percentile90 = 304)
+    public void testMultipleClocks() throws Exception {
+	Thread.sleep(200);
+    }
+
 }

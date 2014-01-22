@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,29 +23,31 @@
 package org.databene.contiperf;
 
 /**
- * Indicates that an error occurred in performance test execution.<br/><br/>
+ * Indicates that an error occurred in performance test execution.<br/>
+ * <br/>
  * Created: 16.04.2010 11:50:32
+ * 
  * @since 1.03
  * @author Volker Bergmann
  */
 public class PerfTestExecutionError extends PerfTestException {
 
-	private static final long serialVersionUID = -8918904442269990674L;
+    private static final long serialVersionUID = -8918904442269990674L;
 
-	public PerfTestExecutionError() {
-	    super();
+    public PerfTestExecutionError() {
+	super();
     }
 
-	public PerfTestExecutionError(String message, Throwable cause) {
-	    super(message, cause);
+    public PerfTestExecutionError(String message, Throwable cause) {
+	super(message, cause);
     }
 
-	public PerfTestExecutionError(String message) {
-	    super(message);
+    public PerfTestExecutionError(String message) {
+	super(message);
     }
 
-	public PerfTestExecutionError(Throwable cause) {
-	    super(cause);
+    public PerfTestExecutionError(Throwable cause) {
+	super(cause);
     }
 
 }

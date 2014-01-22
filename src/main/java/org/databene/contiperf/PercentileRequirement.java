@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,39 +23,41 @@
 package org.databene.contiperf;
 
 /**
- * Defines percentile performance requests on a test.<br/><br/>
+ * Defines percentile performance requests on a test.<br/>
+ * <br/>
  * Created: 18.10.2009 06:25:42
+ * 
  * @since 1.0
  * @author Volker Bergmann
  */
 public class PercentileRequirement {
-	
-	private int percentage;
-	private int millis;
-	
-	public PercentileRequirement() {
-	    this(-1, -1);
+
+    private int percentage;
+    private int millis;
+
+    public PercentileRequirement() {
+	this(-1, -1);
     }
 
-	public PercentileRequirement(int percentage, int millis) {
-	    this.percentage = percentage;
-	    this.millis = millis;
+    public PercentileRequirement(int percentage, int millis) {
+	this.percentage = percentage;
+	this.millis = millis;
     }
 
-	public int getPercentage() {
-    	return percentage;
+    public int getPercentage() {
+	return percentage;
     }
 
-	public void setPercentage(int percentage) {
-    	this.percentage = percentage;
+    public void setPercentage(int percentage) {
+	this.percentage = percentage;
     }
 
-	public int getMillis() {
-    	return millis;
+    public int getMillis() {
+	return millis;
     }
-	
-	public void setMillis(int millis) {
-    	this.millis = millis;
+
+    public void setMillis(int millis) {
+	this.millis = millis;
     }
 
 }

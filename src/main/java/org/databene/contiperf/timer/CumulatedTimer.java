@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -27,28 +27,35 @@ import java.util.Random;
 import org.databene.contiperf.WaitTimer;
 
 /**
- * {@link WaitTimer} implementation which provides wait times in a range between min and max with lower probabilities
- * for border values and higher probabilities for values close to the average.<br/><br/>
+ * {@link WaitTimer} implementation which provides wait times in a range between
+ * min and max with lower probabilities for border values and higher
+ * probabilities for values close to the average.<br/>
+ * <br/>
  * Created: 06.04.2012 17:20:27
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public class CumulatedTimer extends AbstractTimer {
-	
-	private int min   =  500;
-	private int range = 1000;
-	private Random random = new Random();
-	
-	public void init(double[] params) {
-		checkParamCount(2, params);
-		if (params.length > 0)
-			min = (int) params[0];
-		if (params.length > 1)
-			range = (int) (params[1] - min);
-	}
 
-	public int getWaitTime() {
-		return min + (random.nextInt(range) + random.nextInt(range) + random.nextInt(range)) / 3;
+    private int min = 500;
+    private int range = 1000;
+    private Random random = new Random();
+
+    public void init(double[] params) {
+	checkParamCount(2, params);
+	if (params.length > 0) {
+	    min = (int) params[0];
 	}
+	if (params.length > 1) {
+	    range = (int) (params[1] - min);
+	}
+    }
+
+    public int getWaitTime() {
+	return min
+		+ (random.nextInt(range) + random.nextInt(range) + random
+			.nextInt(range)) / 3;
+    }
 
 }

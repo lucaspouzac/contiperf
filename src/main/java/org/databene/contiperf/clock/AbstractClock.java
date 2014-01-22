@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,23 +25,25 @@ package org.databene.contiperf.clock;
 import org.databene.contiperf.Clock;
 
 /**
- * Abstract implementation of the {@link Clock} interface. 
- * Inherit custom {@link Clock} implementations from this 
- * class in order to have a better future compatibility.<br/><br/>
+ * Abstract implementation of the {@link Clock} interface. Inherit custom
+ * {@link Clock} implementations from this class in order to have a better
+ * future compatibility.<br/>
+ * <br/>
  * Created: 24.05.2012 08:06:01
+ * 
  * @since 2.2.0
  * @author Volker Bergmann
  */
 public abstract class AbstractClock implements Clock {
 
-	private String name;
+    private String name;
 
-	public AbstractClock(String name) {
-		this.name = name;
-	}
-	
-	public String getName() {
-		return name;
-	}
+    public AbstractClock(String name) {
+	this.name = name;
+    }
+
+    public String getName() {
+	return name;
+    }
 
 }

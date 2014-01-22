@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -22,42 +22,46 @@
 
 package org.databene.profile;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Tests the profiling feature.<br/><br/>
+ * Tests the profiling feature.<br/>
+ * <br/>
  * Created: 21.07.2011 08:30:37
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 public class ProfilingTest {
-	
-	private static String originalSetting;
 
-	@BeforeClass
-	public static void saveOriginalSetting() {
-		originalSetting = System.getProperty("profile");
-	}
+    private static String originalSetting;
 
-	@AfterClass
-	public static void restoreOriginalSetting() {
-		System.setProperty("profile", (originalSetting != null ? originalSetting : "false"));
-	}
+    @BeforeClass
+    public static void saveOriginalSetting() {
+	originalSetting = System.getProperty("profile");
+    }
 
-	@Test
-	public void testFalse() {
-		System.setProperty("profile", "false");
-		assertFalse(Profiling.isEnabled());
-	}
-	
-	@Test
-	public void testEmpty() {
-		System.setProperty("profile", "");
-		assertTrue(Profiling.isEnabled());
-	}
-	
+    @AfterClass
+    public static void restoreOriginalSetting() {
+	System.setProperty("profile",
+		(originalSetting != null ? originalSetting : "false"));
+    }
+
+    @Test
+    public void testFalse() {
+	System.setProperty("profile", "false");
+	assertFalse(Profiling.isEnabled());
+    }
+
+    @Test
+    public void testEmpty() {
+	System.setProperty("profile", "");
+	assertTrue(Profiling.isEnabled());
+    }
+
 }

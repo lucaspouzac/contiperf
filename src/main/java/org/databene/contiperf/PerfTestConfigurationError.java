@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,29 +23,31 @@
 package org.databene.contiperf;
 
 /**
- * Indicates invalid configuration settings in a performance test.<br/><br/>
+ * Indicates invalid configuration settings in a performance test.<br/>
+ * <br/>
  * Created: 16.04.2010 11:51:02
+ * 
  * @since 1.03
  * @author Volker Bergmann
  */
 public class PerfTestConfigurationError extends PerfTestException {
 
-	private static final long serialVersionUID = 45383049032535979L;
+    private static final long serialVersionUID = 45383049032535979L;
 
-	public PerfTestConfigurationError() {
-	    super();
+    public PerfTestConfigurationError() {
+	super();
     }
 
-	public PerfTestConfigurationError(String message, Throwable cause) {
-	    super(message, cause);
+    public PerfTestConfigurationError(String message, Throwable cause) {
+	super(message, cause);
     }
 
-	public PerfTestConfigurationError(String message) {
-	    super(message);
+    public PerfTestConfigurationError(String message) {
+	super(message);
     }
 
-	public PerfTestConfigurationError(Throwable cause) {
-	    super(cause);
+    public PerfTestConfigurationError(Throwable cause) {
+	super(cause);
     }
 
 }

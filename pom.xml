@@ -21,7 +21,7 @@
     <licenses>
         <license>
             <name>GNU Lesser General Public License</name>
-            <url>http://www.fsf.org/licensing/licenses/lgpl.txt</url>
+            <url>http://www.gnu.org/licenses/lgpl.txt</url>
             <distribution>manual</distribution>
             <comments>
             </comments>
@@ -71,14 +71,36 @@
                 <role>Developer</role>
             </roles>
         </developer>
+        <developer>
+            <name>Lucas Pouzac</name>
+            <id>lpouzac</id>
+            <email>lucas.pouzac.pro@gmail.com</email>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
     </developers>
+
+    <properties>
+        <version.junit>4.11</version.junit>
+        <version.wagon-ftp>1.0-alpha-6</version.wagon-ftp>
+        <version.maven-resources-plugin>2.6</version.maven-resources-plugin>
+        <version.maven-site-plugin>3.3</version.maven-site-plugin>
+        <version.maven-javadoc-plugin>2.9.1</version.maven-javadoc-plugin>
+        <version.maven-eclipse-plugin>2.9</version.maven-eclipse-plugin>
+        <version.jdepend-maven-plugin>2.0-beta-1</version.jdepend-maven-plugin>
+
+        <encoding>UTF-8</encoding>
+        <java.version>1.5</java.version>
+    </properties>
 
     <dependencies>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>${version.junit}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -90,7 +112,7 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ftp</artifactId>
-                <version>1.0-alpha-6</version>
+                <version>${version.wagon-ftp}</version>
             </extension>
         </extensions>
 
@@ -136,12 +158,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <encoding>UTF-8</encoding>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <encoding>${encoding}</encoding>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <descriptors>
@@ -163,24 +186,40 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.5</version>
+                <version>${version.maven-resources-plugin}</version>
                 <configuration>
-                    <encoding>UTF-8</encoding>
+                    <encoding>${encoding}</encoding>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>2.1.1</version>
+                <version>${version.maven-site-plugin}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.6.1</version>
+                <version>${version.maven-javadoc-plugin}</version>
                 <configuration>
-                    <encoding>UTF-8</encoding>
+                    <encoding>${encoding}</encoding>
                 </configuration>
-                <!-- <executions> <execution> <goals> <goal>jar</goal> <goal>javadoc</goal> </goals> </execution> </executions> -->
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>${version.maven-eclipse-plugin}</version>
+                <configuration>
+                    <additionalConfig>
+                        <file>
+                            <name>.settings/org.eclipse.jdt.core.prefs</name>
+                            <location>eclipse/org.eclipse.jdt.core.prefs</location>
+                        </file>
+                        <file>
+                            <name>.settings/org.eclipse.jdt.ui.prefs</name>
+                            <location>eclipse/org.eclipse.jdt.ui.prefs</location>
+                        </file>
+                    </additionalConfig>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -191,7 +230,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
-                <version>2.0-beta-1</version>
+                <version>${version.jdepend-maven-plugin}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -213,9 +252,9 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
                     <linkXref>true</linkXref>
-                    <sourceEncoding>UTF-8</sourceEncoding>
+                    <sourceEncoding>${encoding}</sourceEncoding>
                     <minimumTokens>100</minimumTokens>
-                    <targetJdk>1.5</targetJdk>
+                    <targetJdk>${java.version}</targetJdk>
                 </configuration>
             </plugin>
             <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId> </plugin> <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>jxr-maven-plugin</artifactId> </plugin> -->

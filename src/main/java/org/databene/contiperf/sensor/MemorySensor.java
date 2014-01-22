@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -26,95 +26,100 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
 
 /**
- * Tracks the consumed heap size.<br/><br/>
+ * Tracks the consumed heap size.<br/>
+ * <br/>
  * Created: 13.12.2012 13:31:56
+ * 
  * @since 2.3.1
  * @author Volker Bergmann
  */
 public class MemorySensor {
-	
-	private static final int DEFAULT_INTERVAL = 60000;
-	
-	private static final MemorySensor INSTANCE = new MemorySensor();
-	
-	public static MemorySensor getInstance() {
-		return INSTANCE;
+
+    private static final int DEFAULT_INTERVAL = 60000;
+
+    private static final MemorySensor INSTANCE = new MemorySensor();
+
+    public static MemorySensor getInstance() {
+	return INSTANCE;
+    }
+
+    private MeasurementThread thread;
+    private long maxUsedHeapSize;
+    private long maxCommittedHeapSize;
+
+    public MemorySensor() {
+	startThread(DEFAULT_INTERVAL);
+	reset();
+    }
+
+    public int getInterval() {
+	return thread.getInterval();
+    }
+
+    public void setInterval(int interval) {
+	if (interval != getInterval()) {
+	    thread.cancel();
+	    startThread(interval);
 	}
-	
-	private MeasurementThread thread;
-	private long maxUsedHeapSize;
-	private long maxCommittedHeapSize;
-	
-	public MemorySensor() {
-		startThread(DEFAULT_INTERVAL);
-		reset();
+    }
+
+    public long getMaxUsedHeapSize() {
+	return maxUsedHeapSize;
+    }
+
+    public long getMaxCommittedHeapSize() {
+	return maxCommittedHeapSize;
+    }
+
+    public void reset() {
+	maxUsedHeapSize = 0;
+	maxCommittedHeapSize = 0;
+	measure();
+    }
+
+    public void measure() {
+	MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean()
+		.getHeapMemoryUsage();
+	this.maxUsedHeapSize = Math.max(maxUsedHeapSize,
+		heapMemoryUsage.getUsed());
+	this.maxCommittedHeapSize = Math.max(maxCommittedHeapSize,
+		heapMemoryUsage.getCommitted());
+    }
+
+    private void startThread(int interval) {
+	this.thread = new MeasurementThread(interval);
+	thread.start();
+    }
+
+    class MeasurementThread extends Thread {
+
+	private int interval;
+
+	public MeasurementThread(int interval) {
+	    this.interval = interval;
+	    setDaemon(true);
 	}
 
 	public int getInterval() {
-		return thread.getInterval();
+	    return interval;
 	}
-	
-	public void setInterval(int interval) {
-		if (interval != getInterval()) {
-			thread.cancel();
-			startThread(interval);
-		}
-	}
-	
-	public long getMaxUsedHeapSize() {
-		return maxUsedHeapSize;
-	}
-	
-	public long getMaxCommittedHeapSize() {
-		return maxCommittedHeapSize;
-	}
-	
-	public void reset() {
-		maxUsedHeapSize = 0;
-		maxCommittedHeapSize = 0;
-		measure();
-	}
-	
-	public void measure() {
-		MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
-		this.maxUsedHeapSize = Math.max(maxUsedHeapSize, heapMemoryUsage.getUsed());
-		this.maxCommittedHeapSize = Math.max(maxCommittedHeapSize, heapMemoryUsage.getCommitted());
-	}
-	
-	private void startThread(int interval) {
-		this.thread = new MeasurementThread(interval);
-		thread.start();
-	}
-	
-	class MeasurementThread extends Thread {
-		
-		private int interval;
-		
-		public MeasurementThread(int interval) {
-			this.interval = interval;
-			setDaemon(true);
-		}
 
-		public int getInterval() {
-			return interval;
+	@Override
+	public void run() {
+	    try {
+		while (!Thread.currentThread().isInterrupted()) {
+		    measure();
+		    Thread.sleep(interval);
 		}
-
-		@Override
-		public void run() {
-			try {
-				while (!Thread.currentThread().isInterrupted()) {
-					measure();
-					Thread.sleep(interval);
-				}
-			} catch (InterruptedException e) {
-				// makes the thread leave the loop and finish
-			}
-		}
-		
-		public void cancel() {
-			interrupt();
-		}
-		
+	    } catch (InterruptedException e) {
+		// makes the thread leave the loop and finish
+	    }
 	}
-	
+
+	public void cancel() {
+	    interrupt();
+	}
+
+    }
+
 }

@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,29 +23,31 @@
 package org.databene.contiperf;
 
 /**
- * Parent class for all exceptions defined in ContiPerf.<br/><br/>
+ * Parent class for all exceptions defined in ContiPerf.<br/>
+ * <br/>
  * Created: 16.04.2010 08:29:11
+ * 
  * @since 1.03
  * @author Volker Bergmann
  */
 public abstract class PerfTestException extends RuntimeException {
 
-	private static final long serialVersionUID = 5743020236626353041L;
+    private static final long serialVersionUID = 5743020236626353041L;
 
-	public PerfTestException() {
-	    super();
+    public PerfTestException() {
+	super();
     }
 
-	public PerfTestException(String message, Throwable cause) {
-	    super(message, cause);
+    public PerfTestException(String message, Throwable cause) {
+	super(message, cause);
     }
 
-	public PerfTestException(String message) {
-	    super(message);
+    public PerfTestException(String message) {
+	super(message);
     }
 
-	public PerfTestException(Throwable cause) {
-	    super(cause);
+    public PerfTestException(Throwable cause) {
+	super(cause);
     }
 
 }

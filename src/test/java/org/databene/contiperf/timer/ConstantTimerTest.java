@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -22,41 +22,46 @@
 
 package org.databene.contiperf.timer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.databene.contiperf.WaitTimer;
 import org.junit.Test;
 
 /**
- * Tests the {@link ConstantTimer}.<br/><br/>
+ * Tests the {@link ConstantTimer}.<br/>
+ * <br/>
  * Created: 06.04.2012 18:10:41
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public class ConstantTimerTest {
 
-	@Test
-	public void testEmptyInitialization() throws Exception {
-		WaitTimer timer = ConstantTimer.class.newInstance();
-		timer.init(new double[0]);
-		for (int i = 0; i < 1000; i++)
-			assertEquals(1000, timer.getWaitTime());
+    @Test
+    public void testEmptyInitialization() throws Exception {
+	WaitTimer timer = ConstantTimer.class.newInstance();
+	timer.init(new double[0]);
+	for (int i = 0; i < 1000; i++) {
+	    assertEquals(1000, timer.getWaitTime());
 	}
-	
-	@Test
-	public void testNormalInitialization() throws Exception {
-		WaitTimer timer = ConstantTimer.class.newInstance();
-		timer.init(new double[] { 123 });
-		for (int i = 0; i < 1000; i++)
-			assertEquals(123, timer.getWaitTime());
+    }
+
+    @Test
+    public void testNormalInitialization() throws Exception {
+	WaitTimer timer = ConstantTimer.class.newInstance();
+	timer.init(new double[] { 123 });
+	for (int i = 0; i < 1000; i++) {
+	    assertEquals(123, timer.getWaitTime());
 	}
-	
-	@Test
-	public void testTooManyParams() throws Exception {
-		WaitTimer timer = ConstantTimer.class.newInstance();
-		timer.init(new double[] { 234, 456 });
-		for (int i = 0; i < 1000; i++)
-			assertEquals(234, timer.getWaitTime());
+    }
+
+    @Test
+    public void testTooManyParams() throws Exception {
+	WaitTimer timer = ConstantTimer.class.newInstance();
+	timer.init(new double[] { 234, 456 });
+	for (int i = 0; i < 1000; i++) {
+	    assertEquals(234, timer.getWaitTime());
 	}
-	
+    }
+
 }

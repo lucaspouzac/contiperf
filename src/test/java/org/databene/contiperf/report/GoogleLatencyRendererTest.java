@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -24,54 +24,57 @@ package org.databene.contiperf.report;
 
 import java.util.Random;
 
-import org.databene.contiperf.report.GoogleLatencyRenderer;
-import org.databene.contiperf.report.LatencyDataSet;
 import org.databene.stat.LatencyCounter;
 import org.junit.Test;
 
 /**
- * Tests the {@link GoogleLatencyRenderer}.<br/><br/>
+ * Tests the {@link GoogleLatencyRenderer}.<br/>
+ * <br/>
  * Created: 14.01.2011 12:57:27
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 public class GoogleLatencyRendererTest {
 
-	@Test
-	public void testDataset() {
-		LatencyDataSet dataset = new LatencyDataSet(15);
-		dataset.addPoint(4, 0);
-		dataset.addPoint(5, 1);
-		dataset.addPoint(6, 10);
-		dataset.addPoint(7, 134);
-		dataset.addPoint(8, 156);
-		dataset.addPoint(9, 142);
-		dataset.addPoint(10, 126);
-		dataset.addPoint(11, 60);
-		dataset.addPoint(12, 40);
-		dataset.addPoint(13, 30);
-		dataset.addPoint(14, 10);
-		dataset.addPoint(15, 1);
-		dataset.addPoint(16, 0);
-		dataset.addLabel("med", 10);
-		dataset.addLabel("avg", 11);
-		dataset.addLabel("90%", 13);
-		String url = new GoogleLatencyRenderer().renderDataset(dataset, getClass().getSimpleName(), 400, 300);
-		System.out.println(url);
-	}
-	
-	Random random = new Random();
+    @Test
+    public void testDataset() {
+	LatencyDataSet dataset = new LatencyDataSet(15);
+	dataset.addPoint(4, 0);
+	dataset.addPoint(5, 1);
+	dataset.addPoint(6, 10);
+	dataset.addPoint(7, 134);
+	dataset.addPoint(8, 156);
+	dataset.addPoint(9, 142);
+	dataset.addPoint(10, 126);
+	dataset.addPoint(11, 60);
+	dataset.addPoint(12, 40);
+	dataset.addPoint(13, 30);
+	dataset.addPoint(14, 10);
+	dataset.addPoint(15, 1);
+	dataset.addPoint(16, 0);
+	dataset.addLabel("med", 10);
+	dataset.addLabel("avg", 11);
+	dataset.addLabel("90%", 13);
+	String url = new GoogleLatencyRenderer().renderDataset(dataset,
+		getClass().getSimpleName(), 400, 300);
+	System.out.println(url);
+    }
 
-	@Test
-	public void testCounter() {
-		LatencyCounter counter = new LatencyCounter("test");
-		for (int i = 0; i < 50000; i ++)
-			counter.addSample(rand() + rand() + rand() + rand());
-		System.out.println(new GoogleLatencyRenderer().render(counter, getClass().getSimpleName(), 400, 300));
-	}
+    Random random = new Random();
 
-	private int rand() {
-		return random.nextInt(20) * random.nextInt(20);
+    @Test
+    public void testCounter() {
+	LatencyCounter counter = new LatencyCounter("test");
+	for (int i = 0; i < 50000; i++) {
+	    counter.addSample(rand() + rand() + rand() + rand());
 	}
-	
+	System.out.println(new GoogleLatencyRenderer().render(counter,
+		getClass().getSimpleName(), 400, 300));
+    }
+
+    private int rand() {
+	return random.nextInt(20) * random.nextInt(20);
+    }
+
 }

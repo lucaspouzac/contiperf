@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,12 +23,16 @@
 package org.databene.contiperf;
 
 /**
- * Extension interface for different providers of time, e.g. system, CPU or user time.<br/><br/>
+ * Extension interface for different providers of time, e.g. system, CPU or user
+ * time.<br/>
+ * <br/>
  * Created: 23.05.2012 07:51:45
+ * 
  * @since 2.2.0
  * @author Volker Bergmann
  */
 public interface Clock {
-	String getName();
-	long getTime();
+    String getName();
+
+    long getTime();
 }

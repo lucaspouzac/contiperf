@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,74 +25,76 @@ package org.databene.contiperf;
 import org.databene.contiperf.util.ContiPerfUtil;
 
 /**
- * Defines performance requirements on a test.<br/><br/>
+ * Defines performance requirements on a test.<br/>
+ * <br/>
  * Created: 18.10.2009 06:21:57
+ * 
  * @since 1.0
  * @author Volker Bergmann
  */
 public class PerformanceRequirement {
 
-	private int average;
-	private int max;
-	private int totalTime;
-	private int throughput;
+    private int average;
+    private int max;
+    private int totalTime;
+    private int throughput;
 
-	private PercentileRequirement[] percentiles;
+    private PercentileRequirement[] percentiles;
 
-	public PerformanceRequirement() {
-	    this(-1, -1, -1, new PercentileRequirement[0], -1);
+    public PerformanceRequirement() {
+	this(-1, -1, -1, new PercentileRequirement[0], -1);
     }
 
-	public PerformanceRequirement(int average, int max, int totalTime, PercentileRequirement[] percentiles,
-            int throughput) {
-	    this.average = average;
-	    this.max = max;
-	    this.totalTime = totalTime;
-	    this.percentiles = percentiles;
-	    this.throughput = throughput;
+    public PerformanceRequirement(int average, int max, int totalTime,
+	    PercentileRequirement[] percentiles, int throughput) {
+	this.average = average;
+	this.max = max;
+	this.totalTime = totalTime;
+	this.percentiles = percentiles;
+	this.throughput = throughput;
     }
 
     public int getAverage() {
-    	return average;
+	return average;
     }
 
     public int getMax() {
-    	return max;
+	return max;
     }
 
-	public void setMax(int max) {
-	    this.max = max;
+    public void setMax(int max) {
+	this.max = max;
     }
-	
+
     public int getTotalTime() {
-    	return totalTime;
+	return totalTime;
     }
 
     public PercentileRequirement[] getPercentileRequirements() {
-    	return percentiles;
+	return percentiles;
     }
-    
-	public void setPercentileValues(PercentileRequirement[] percentiles) {
-	    this.percentiles = percentiles;
+
+    public void setPercentileValues(PercentileRequirement[] percentiles) {
+	this.percentiles = percentiles;
     }
 
     public int getThroughput() {
-    	return throughput;
-    }
-    
-	public void setPercentiles(String percentilesSpec) {
-	    setPercentileValues(ContiPerfUtil.parsePercentiles(percentilesSpec));
+	return throughput;
     }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("average=").append(average);
-		builder.append(", max=").append(max);
-		builder.append(", totalTime=").append(totalTime);
-		builder.append(", throughput=").append(throughput);
-		builder.append(", percentiles=").append(percentiles);
-		return builder.toString();
-	}
+    public void setPercentiles(String percentilesSpec) {
+	setPercentileValues(ContiPerfUtil.parsePercentiles(percentilesSpec));
+    }
+
+    @Override
+    public String toString() {
+	StringBuilder builder = new StringBuilder();
+	builder.append("average=").append(average);
+	builder.append(", max=").append(max);
+	builder.append(", totalTime=").append(totalTime);
+	builder.append(", throughput=").append(throughput);
+	builder.append(", percentiles=").append(percentiles);
+	return builder.toString();
+    }
 
 }

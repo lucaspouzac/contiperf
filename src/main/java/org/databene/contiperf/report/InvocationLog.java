@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,21 +23,23 @@
 package org.databene.contiperf.report;
 
 /**
- * Holds the data of an invocation log entry.<br/><br/>
+ * Holds the data of an invocation log entry.<br/>
+ * <br/>
  * Created: 29.03.2010 12:38:26
+ * 
  * @since 1.0
  * @author Volker Bergmann
  */
 public class InvocationLog {
 
-	public final String id;
-	public final int latency;
-	public final long startTime;
-	
-	public InvocationLog(String id, int latency, long startTime) {
-	    this.id = id;
-	    this.latency = latency;
-	    this.startTime = startTime;
+    public final String id;
+    public final int latency;
+    public final long startTime;
+
+    public InvocationLog(String id, int latency, long startTime) {
+	this.id = id;
+	this.latency = latency;
+	this.startTime = startTime;
     }
-	
+
 }

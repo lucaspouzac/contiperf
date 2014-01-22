@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -27,21 +27,26 @@ import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
 /**
- * {@link ReportModule} implementation that prints all information to the console.<br/><br/>
+ * {@link ReportModule} implementation that prints all information to the
+ * console.<br/>
+ * <br/>
  * Created: 16.01.2011 14:27:05
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 public class ConsoleReportModule extends AbstractReportModule {
 
-	@Override
-	public void invoked(String serviceId, int latency, long startTime) {
-	    System.out.println(serviceId + ',' + latency + ',' + startTime);
+    @Override
+    public void invoked(String serviceId, int latency, long startTime) {
+	System.out.println(serviceId + ',' + latency + ',' + startTime);
     }
 
-	@Override
-    public void completed(String serviceId, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement) {
-	    System.out.println(serviceId + ',' + counters[0].duration() + ',' + counters[0].sampleCount() + ',' + counters[0].getStartTime());
+    @Override
+    public void completed(String serviceId, LatencyCounter[] counters,
+	    ExecutionConfig executionConfig, PerformanceRequirement requirement) {
+	System.out.println(serviceId + ',' + counters[0].duration() + ','
+		+ counters[0].sampleCount() + ',' + counters[0].getStartTime());
     }
 
 }

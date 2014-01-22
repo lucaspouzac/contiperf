@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,12 +23,14 @@
 package org.databene.contiperf;
 
 /**
- * Abstraction of classes that provide arguments for {@link Invoker} 
- * calls in a performance test run.<br/><br/>
+ * Abstraction of classes that provide arguments for {@link Invoker} calls in a
+ * performance test run.<br/>
+ * <br/>
  * Created: 22.10.2009 06:40:33
+ * 
  * @since 1.0
  * @author Volker Bergmann
  */
 public interface ArgumentsProvider {
-	Object[] next();
+    Object[] next();
 }

@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,11 +23,13 @@
 package org.databene.contiperf.report;
 
 /**
- * Enumeration of ContiPerf test verdicts.<br/><br/>
+ * Enumeration of ContiPerf test verdicts.<br/>
+ * <br/>
  * Created: 25.01.2011 19:29:45
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 public enum Verdict {
-	FAILURE, SUCCESS, IGNORED
+    FAILURE, SUCCESS, IGNORED
 }

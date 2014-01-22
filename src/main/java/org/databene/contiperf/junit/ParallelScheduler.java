@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -34,46 +34,51 @@ import java.util.concurrent.Future;
 import org.junit.runners.model.RunnerScheduler;
 
 /**
- * {@link RunnerScheduler} which executes all tests in parallel.<br/><br/>
+ * {@link RunnerScheduler} which executes all tests in parallel.<br/>
+ * <br/>
  * Created: 08.04.2012 07:11:38
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public class ParallelScheduler implements RunnerScheduler {
-	
-	private Queue<Future<String>> tasks = new LinkedList<Future<String>>();
-	private ExecutorService executorService = Executors.newCachedThreadPool();
-	private CompletionService<String> completionService = new ExecutorCompletionService<String>(executorService);
 
-	public void schedule(final Runnable childStatement) {
-		Future<String> future = completionService.submit(new Callable<String>() {
-			public String call() {
-				childStatement.run();
-				return toString();
-			}
-			
-			@Override
-			public String toString() {
-				return childStatement.toString();
-			}
+    private Queue<Future<String>> tasks = new LinkedList<Future<String>>();
+    private ExecutorService executorService = Executors.newCachedThreadPool();
+    private CompletionService<String> completionService = new ExecutorCompletionService<String>(
+	    executorService);
+
+    public void schedule(final Runnable childStatement) {
+	Future<String> future = completionService
+		.submit(new Callable<String>() {
+		    public String call() {
+			childStatement.run();
+			return toString();
+		    }
+
+		    @Override
+		    public String toString() {
+			return childStatement.toString();
+		    }
 		});
-		tasks.add(future);
-	}
+	tasks.add(future);
+    }
 
-	public void finished() {
-		try {
-			while (!tasks.isEmpty()) {
-				Future<String> task = completionService.take();
-				//System.out.println("Completed " + task.get());
-				tasks.remove(task);
-			}
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		} finally {
-			while (!tasks.isEmpty())
-				tasks.poll().cancel(true);
-			executorService.shutdownNow();
-		}
+    public void finished() {
+	try {
+	    while (!tasks.isEmpty()) {
+		Future<String> task = completionService.take();
+		// System.out.println("Completed " + task.get());
+		tasks.remove(task);
+	    }
+	} catch (InterruptedException e) {
+	    Thread.currentThread().interrupt();
+	} finally {
+	    while (!tasks.isEmpty()) {
+		tasks.poll().cancel(true);
+	    }
+	    executorService.shutdownNow();
 	}
-	
+    }
+
 }

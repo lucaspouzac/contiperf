@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -22,7 +22,8 @@
 
 package org.databene.contiperf.junit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.Required;
@@ -31,50 +32,55 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * Tests the combination of a {@link Required} annotation in a plain test class 
- * and a {@link PerfTest} in a suite that contains the former test.<br/><br/>
+ * Tests the combination of a {@link Required} annotation in a plain test class
+ * and a {@link PerfTest} in a suite that contains the former test.<br/>
+ * <br/>
  * Created: 24.05.2010 06:42:31
+ * 
  * @since 1.05
  * @author Volker Bergmann
  */
 public class AnnotationCombinationTest extends AbstractContiPerfTest {
 
-	// testing suite that matches the requirements ---------------------------------------------------------------------
-	
+    // testing suite that matches the requirements
+    // ---------------------------------------------------------------------
+
+    @Test
+    public void testSuccessfulSuiteWithExecutionConfig() throws Exception {
+	runTest(SucessfulSuiteWithExecutionConfig.class);
+	assertFalse(failed);
+    }
+
+    @RunWith(ContiPerfSuiteRunner.class)
+    @SuiteClasses(TestWithRequirements.class)
+    @PerfTest(invocations = 2)
+    public static class SucessfulSuiteWithExecutionConfig {
+    }
+
+    // testing suite that misses the requirements
+    // ----------------------------------------------------------------------
+
+    @Test
+    public void testFailingSuiteWithExecutionConfig() throws Exception {
+	runTest(FailingSuiteWithExecutionConfig.class);
+	assertTrue(failed);
+    }
+
+    @RunWith(ContiPerfSuiteRunner.class)
+    @SuiteClasses(TestWithRequirements.class)
+    @PerfTest(invocations = 5)
+    public static class FailingSuiteWithExecutionConfig {
+    }
+
+    // simple test class with performance requirements annotation
+    // ------------------------------------------------------
+
+    public static class TestWithRequirements {
 	@Test
-	public void testSuccessfulSuiteWithExecutionConfig() throws Exception {
-        runTest(SucessfulSuiteWithExecutionConfig.class);
-        assertFalse(failed);
+	@Required(totalTime = 300)
+	public void test() throws Exception {
+	    Thread.sleep(80);
 	}
-	
-	@RunWith(ContiPerfSuiteRunner.class)
-	@SuiteClasses(TestWithRequirements.class)
-	@PerfTest(invocations = 2)
-	public static class SucessfulSuiteWithExecutionConfig {
-	}
-	
-	// testing suite that misses the requirements ----------------------------------------------------------------------
-	
-	@Test
-	public void testFailingSuiteWithExecutionConfig() throws Exception {
-        runTest(FailingSuiteWithExecutionConfig.class);
-        assertTrue(failed);
-	}
-	
-	@RunWith(ContiPerfSuiteRunner.class)
-	@SuiteClasses(TestWithRequirements.class)
-	@PerfTest(invocations = 5)
-	public static class FailingSuiteWithExecutionConfig {
-	}
-	
-	// simple test class with performance requirements annotation ------------------------------------------------------
-	
-	public static class TestWithRequirements {
-		@Test
-		@Required(totalTime = 300)
-		public void test() throws Exception {
-			Thread.sleep(80);
-		}
-	}
-	
+    }
+
 }

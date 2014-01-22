@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -36,98 +36,110 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * Integration test for ContiPerf's {@link ReportModule} support.<br/><br/>
+ * Integration test for ContiPerf's {@link ReportModule} support.<br/>
+ * <br/>
  * Created: 16.01.2011 14:06:10
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 public class ReportModuleConfigTest extends AbstractContiPerfTest {
-	
-	static ReportContext usedContext;
 
-	@Override
+    static ReportContext usedContext;
+
+    @Override
     @Before
-	public void setUp() {
-		super.setUp();
-		usedContext = null;
-	}
+    public void setUp() {
+	super.setUp();
+	usedContext = null;
+    }
 
-	// testing default execution logger --------------------------------------------------------------------------------
+    // testing default execution logger
+    // --------------------------------------------------------------------------------
 
-	@Test
-	public void testUnconfiguredTest() throws Exception {
-		runTest(UnconfiguredTest.class);
-		assertNotNull(usedContext.getReportModule(HtmlReportModule.class));
-	}
+    @Test
+    public void testUnconfiguredTest() throws Exception {
+	runTest(UnconfiguredTest.class);
+	assertNotNull(usedContext.getReportModule(HtmlReportModule.class));
+    }
 
-	public static class UnconfiguredTest {
-		
-		@Rule public ContiPerfRule rule = new ContiPerfRule();
-		
-		@Test
-		@PerfTest(invocations = 3)
-		public void test() {
-			usedContext = rule.context;
-		}
-	}
+    public static class UnconfiguredTest {
 
-	// testing explicit simple test case execution logger --------------------------------------------------------------
+	@Rule
+	public ContiPerfRule rule = new ContiPerfRule();
 
 	@Test
-	public void testParamConfigured() throws Exception {
-		runTest(ParamConfiguredTest.class);
-		ExecutionTestModule logger = usedContext.getReportModule(ExecutionTestModule.class);
-		assertEquals(1, logger.id);
-		assertEquals(4, logger.invocations);
+	@PerfTest(invocations = 3)
+	public void test() {
+	    usedContext = rule.context;
 	}
+    }
 
-	public static class ParamConfiguredTest {
-		
-		@Rule public ContiPerfRule rule = new ContiPerfRule(new ExecutionTestModule(1));
+    // testing explicit simple test case execution logger
+    // --------------------------------------------------------------
 
-		@Test
-		@PerfTest(invocations = 4)
-		public void test() {
-			usedContext = rule.context;
-		}
-	}
+    @Test
+    public void testParamConfigured() throws Exception {
+	runTest(ParamConfiguredTest.class);
+	ExecutionTestModule logger = usedContext
+		.getReportModule(ExecutionTestModule.class);
+	assertEquals(1, logger.id);
+	assertEquals(4, logger.invocations);
+    }
+
+    public static class ParamConfiguredTest {
+
+	@Rule
+	public ContiPerfRule rule = new ContiPerfRule(
+		new ExecutionTestModule(1));
 
 	@Test
-	public void testAttributeConfigured() throws Exception {
-		runTest(AttributeConfiguredTest.class);
-		ExecutionTestModule logger = usedContext.getReportModule(ExecutionTestModule.class);
-		assertEquals(2, logger.id);
-		assertEquals(5, logger.invocations);
+	@PerfTest(invocations = 4)
+	public void test() {
+	    usedContext = rule.context;
 	}
+    }
 
-	public static class AttributeConfiguredTest {
-		
-		public ReportModule module = new ExecutionTestModule(2);
-		@Rule public ContiPerfRule rule = new ContiPerfRule();
+    @Test
+    public void testAttributeConfigured() throws Exception {
+	runTest(AttributeConfiguredTest.class);
+	ExecutionTestModule logger = usedContext
+		.getReportModule(ExecutionTestModule.class);
+	assertEquals(2, logger.id);
+	assertEquals(5, logger.invocations);
+    }
 
-		@Test
-		@PerfTest(invocations = 5)
-		public void test() {
-			usedContext = rule.context;
-		}
-	}
+    public static class AttributeConfiguredTest {
 
-	
-	
-	// testing explicit suite execution logger -------------------------------------------------------------------------
-	
+	public ReportModule module = new ExecutionTestModule(2);
+	@Rule
+	public ContiPerfRule rule = new ContiPerfRule();
+
 	@Test
-	public void testConfiguredSuite() throws Exception {
-		runTest(ConfiguredSuite.class);
-		assertNotNull("ExecutionTestModule was not used", ExecutionTestModule.latestInstance);
-		assertEquals("ExecutionTestModule was not properly initialized:", 4, ExecutionTestModule.latestInstance.id);
-		assertEquals("ExecutionTestModule was not called properly:", 3, ExecutionTestModule.latestInstance.invocations);
+	@PerfTest(invocations = 5)
+	public void test() {
+	    usedContext = rule.context;
 	}
+    }
 
-	@RunWith(ContiPerfSuiteRunner.class)
-	@SuiteClasses(UnconfiguredTest.class)
-	public static class ConfiguredSuite {
-		public ReportModule el = new ExecutionTestModule(4);
-	}
+    // testing explicit suite execution logger
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void testConfiguredSuite() throws Exception {
+	runTest(ConfiguredSuite.class);
+	assertNotNull("ExecutionTestModule was not used",
+		ExecutionTestModule.latestInstance);
+	assertEquals("ExecutionTestModule was not properly initialized:", 4,
+		ExecutionTestModule.latestInstance.id);
+	assertEquals("ExecutionTestModule was not called properly:", 3,
+		ExecutionTestModule.latestInstance.invocations);
+    }
+
+    @RunWith(ContiPerfSuiteRunner.class)
+    @SuiteClasses(UnconfiguredTest.class)
+    public static class ConfiguredSuite {
+	public ReportModule el = new ExecutionTestModule(4);
+    }
 
 }

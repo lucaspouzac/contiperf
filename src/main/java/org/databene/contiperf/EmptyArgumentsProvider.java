@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,17 +23,19 @@
 package org.databene.contiperf;
 
 /**
- * {@link ArgumentsProvider} implementation for no-arg invocations.<br/><br/>
+ * {@link ArgumentsProvider} implementation for no-arg invocations.<br/>
+ * <br/>
  * Created: 22.10.2009 06:44:19
+ * 
  * @since 1.0
  * @author Volker Bergmann
  */
 public class EmptyArgumentsProvider implements ArgumentsProvider {
 
-	private static final Object[] EMPTY_ARRAY = new Object[0];
+    private static final Object[] EMPTY_ARRAY = new Object[0];
 
-	public Object[] next() {
-	    return EMPTY_ARRAY;
+    public Object[] next() {
+	return EMPTY_ARRAY;
     }
 
 }

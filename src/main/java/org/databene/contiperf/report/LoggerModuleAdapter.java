@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -28,53 +28,67 @@ import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
 /**
- * Adapter class which makes implementors of the old {@link ExecutionLogger} interface 
- * available in ContiPerf 2.<br/><br/> 
- * If you are migrating to ContiPerf, usages of the predefined 
- * ContiPerf {@link ExecutionLogger}s should be replaced with their {@link ReportModule}
+ * Adapter class which makes implementors of the old {@link ExecutionLogger}
+ * interface available in ContiPerf 2.<br/>
+ * <br/>
+ * If you are migrating to ContiPerf, usages of the predefined ContiPerf
+ * {@link ExecutionLogger}s should be replaced with their {@link ReportModule}
  * counterpart. For example, if the old version was
+ * 
  * <pre>
  *     @Rule public ContiPerfRule = new ContiPerfRule(new ConsoleExecutionLogger());
  * </pre>
+ * 
  * the new version would be
+ * 
  * <pre>
  *     @Rule public ContiPerfRule = new ContiPerfRule(new ConsoleReportModule());
  * </pre>
+ * 
  * <br/>
- * Custom ExecutionLogger implementations still can be used by wrapping them with a {@link LoggerModuleAdapter}.
- * If the old version was
+ * Custom ExecutionLogger implementations still can be used by wrapping them
+ * with a {@link LoggerModuleAdapter}. If the old version was
+ * 
  * <pre>
  *     @Rule public ContiPerfRule = new ContiPerfRule(new MyCustomLogger());
  * </pre>
+ * 
  * the new version would be
+ * 
  * <pre>
  *     @Rule public ContiPerfRule = new ContiPerfRule(new LoggerModuleAdapter(new MyCustomLogger()));
  * </pre>
- * <br/><br/>
+ * 
+ * <br/>
+ * <br/>
  * Created: 16.01.2011 08:06:47
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 @SuppressWarnings("deprecation")
 public class LoggerModuleAdapter extends AbstractReportModule {
-	
-	protected ExecutionLogger logger;
-	
-	public LoggerModuleAdapter(ExecutionLogger logger) {
-		this.logger = logger;
-	}
 
-	public void invoked(String serviceId, int latency, long startTime) {
-		logger.logInvocation(serviceId, latency, startTime);
-	}
+    protected ExecutionLogger logger;
 
-	@Override
-	public void completed(String serviceId, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement) {
-		logger.logSummary(serviceId, counters[0].duration(), counters[0].sampleCount(), counters[0].getStartTime());
-	}
+    public LoggerModuleAdapter(ExecutionLogger logger) {
+	this.logger = logger;
+    }
 
-	public ExecutionLogger getLogger() {
-		return logger;
-	}
-	
+    @Override
+    public void invoked(String serviceId, int latency, long startTime) {
+	logger.logInvocation(serviceId, latency, startTime);
+    }
+
+    @Override
+    public void completed(String serviceId, LatencyCounter[] counters,
+	    ExecutionConfig executionConfig, PerformanceRequirement requirement) {
+	logger.logSummary(serviceId, counters[0].duration(),
+		counters[0].sampleCount(), counters[0].getStartTime());
+    }
+
+    public ExecutionLogger getLogger() {
+	return logger;
+    }
+
 }

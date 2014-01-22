@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,28 +23,31 @@
 package org.databene.contiperf;
 
 /**
- * Abstract helper class which provides common functionality for {@link InvocationRunner}s.<br/><br/>
+ * Abstract helper class which provides common functionality for
+ * {@link InvocationRunner}s.<br/>
+ * <br/>
  * Created: 06.04.2012 17:38:28
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public abstract class AbstractInvocationRunner implements InvocationRunner {
-	
-	private WaitTimer wait;
 
-	protected AbstractInvocationRunner(WaitTimer wait) {
-		this.wait = wait;
+    private WaitTimer wait;
+
+    protected AbstractInvocationRunner(WaitTimer wait) {
+	this.wait = wait;
+    }
+
+    protected void sleep() {
+	int waitTime = wait.getWaitTime();
+	if (waitTime > 0) {
+	    try {
+		Thread.sleep(waitTime);
+	    } catch (InterruptedException e) {
+		throw new RuntimeException(e);
+	    }
 	}
-	
-	protected void sleep() {
-		int waitTime = wait.getWaitTime();
-		if (waitTime > 0) {
-			try {
-				Thread.sleep(waitTime);
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-	
+    }
+
 }

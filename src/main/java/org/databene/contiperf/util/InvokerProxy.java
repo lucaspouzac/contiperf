@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,25 +25,27 @@ package org.databene.contiperf.util;
 import org.databene.contiperf.Invoker;
 
 /**
- * {@link Invoker} implementation which acts as a proxy to another Invoker.<br/><br/>
+ * {@link Invoker} implementation which acts as a proxy to another Invoker.<br/>
+ * <br/>
  * Created: 29.03.2010 11:41:54
+ * 
  * @since 1.0
  * @author Volker Bergmann
  */
 public class InvokerProxy implements Invoker {
 
-	protected final Invoker target;
+    protected final Invoker target;
 
-	public InvokerProxy(Invoker target) {
-	    this.target = target;
+    public InvokerProxy(Invoker target) {
+	this.target = target;
     }
 
-	public String getId() {
-	    return target.getId();
+    public String getId() {
+	return target.getId();
     }
 
-	public Object invoke(Object[] args) throws Exception {
-	    return target.invoke(args);
+    public Object invoke(Object[] args) throws Exception {
+	return target.invoke(args);
     }
-	
+
 }

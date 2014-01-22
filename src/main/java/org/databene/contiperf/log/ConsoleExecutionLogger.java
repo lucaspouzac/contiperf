@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -26,8 +26,11 @@ import org.databene.contiperf.ExecutionLogger;
 import org.databene.contiperf.report.ConsoleReportModule;
 
 /**
- * {@link ExecutionLogger} implementation which writes the execution log to the console.<br/><br/>
+ * {@link ExecutionLogger} implementation which writes the execution log to the
+ * console.<br/>
+ * <br/>
  * Created: 12.10.09 08:13:06
+ * 
  * @since 1.0
  * @author Volker Bergmann
  * @deprecated replaced with {@link ConsoleReportModule}
@@ -35,12 +38,14 @@ import org.databene.contiperf.report.ConsoleReportModule;
 @Deprecated
 public class ConsoleExecutionLogger implements ExecutionLogger {
 
-    public void logSummary(String id, long elapsedTime, long invocationCount, long startTime) {
-	    System.out.println(id + ',' + elapsedTime + ',' + invocationCount + ',' + 1000000);
+    public void logSummary(String id, long elapsedTime, long invocationCount,
+	    long startTime) {
+	System.out.println(id + ',' + elapsedTime + ',' + invocationCount + ','
+		+ 1000000);
     }
 
-	public void logInvocation(String id, int latency, long startTime) {
-	    System.out.println(id + ',' + latency + ',' + 1000000);
+    public void logInvocation(String id, int latency, long startTime) {
+	System.out.println(id + ',' + latency + ',' + 1000000);
     }
 
 }

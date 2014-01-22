@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,22 +25,24 @@ package org.databene.contiperf.clock;
 import org.databene.contiperf.Clock;
 
 /**
- * {@link Clock} implementation which provides the system time 
- * using <code>{@link System#nanoTime()} / 1000000</code><br/><br/>.
- * Created: 23.05.2012 07:52:53
+ * {@link Clock} implementation which provides the system time using
+ * <code>{@link System#nanoTime()} / 1000000</code><br/>
+ * <br/>
+ * . Created: 23.05.2012 07:52:53
+ * 
  * @since 2.2.0
  * @author Volker Bergmann
  */
 public class SystemClock extends AbstractClock {
 
-	public static final String NAME = "system";
+    public static final String NAME = "system";
 
-	public SystemClock() {
-		super(NAME);
-	}
+    public SystemClock() {
+	super(NAME);
+    }
 
-	public long getTime() {
-		return System.nanoTime() / 1000000;
-	}
+    public long getTime() {
+	return System.nanoTime() / 1000000;
+    }
 
 }

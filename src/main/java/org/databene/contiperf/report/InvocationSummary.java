@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,23 +23,26 @@
 package org.databene.contiperf.report;
 
 /**
- * Holds the data of an invocation summary.<br/><br/>
+ * Holds the data of an invocation summary.<br/>
+ * <br/>
  * Created: 29.03.2010 12:38:57
+ * 
  * @since 1.0
  * @author Volker Bergmann
  */
 public class InvocationSummary {
-	
-	public final String id;
-	public final long elapsedTime;
-	public final long invocationCount;
-	public final long startTime;
-	
-	public InvocationSummary(String id, long elapsedTime, long invocationCount, long startTime) {
-	    this.id = id;
-	    this.elapsedTime = elapsedTime;
-	    this.invocationCount = invocationCount;
-	    this.startTime = startTime;
+
+    public final String id;
+    public final long elapsedTime;
+    public final long invocationCount;
+    public final long startTime;
+
+    public InvocationSummary(String id, long elapsedTime, long invocationCount,
+	    long startTime) {
+	this.id = id;
+	this.elapsedTime = elapsedTime;
+	this.invocationCount = invocationCount;
+	this.startTime = startTime;
     }
-	
+
 }

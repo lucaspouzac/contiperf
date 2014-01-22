@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,81 +25,92 @@ package org.databene.contiperf;
 import org.databene.contiperf.util.ContiPerfUtil;
 
 /**
- * Runs several {@link Runnable}s concurrently. 
- * If a {@link Throwable} is encountered, execution of all threads is canceled.<br/><br/>
+ * Runs several {@link Runnable}s concurrently. If a {@link Throwable} is
+ * encountered, execution of all threads is canceled.<br/>
+ * <br/>
  * Created: 15.04.2010 23:42:30
+ * 
  * @since 1.03
  * @author Volker Bergmann
  */
 public class ConcurrentRunner implements InvocationRunner {
 
-	private String name;
-	private InvocationRunner[] runners;
-	private int rampUp;
-	
-	public ConcurrentRunner(String name, InvocationRunner[] runners, int rampUp) {
-	    this.name = name;
-	    this.runners = runners;
-	    this.rampUp = rampUp;
+    private String name;
+    private InvocationRunner[] runners;
+    private int rampUp;
+
+    public ConcurrentRunner(String name, InvocationRunner[] runners, int rampUp) {
+	this.name = name;
+	this.runners = runners;
+	this.rampUp = rampUp;
     }
 
     public void run() {
-		CPThreadGroup threadGroup = new CPThreadGroup(name);
-	    Thread[] threads = new Thread[runners.length];
-	    for (int i = 0; i < runners.length; i++)
-	        threads[i] = new Thread(threadGroup, runners[i]);
-	    for (int i = 0; i < runners.length; i++) {
-	    	Thread thread = threads[i];
-	    	thread.start();
-	    	if (rampUp > 0 && i < runners.length - 1)
-	    		sleepForRampUpTime();
-	    }
-	    try {
-	        for (Thread thread : threads)
-	        	thread.join();
-        } catch (InterruptedException e) {
-        	// if the thread group has an exception, that one is more interesting
-        	if (threadGroup.throwable == null)
-        		throw new PerfTestExecutionError(e); // interruption without throwable cause
-        }
-        // The thread group encountered a Throwable, report it to the caller
-    	if (threadGroup.throwable != null)
-    		throw ContiPerfUtil.executionError(threadGroup.throwable);
-    }
-    
-    private void sleepForRampUpTime() {
-		try {
-			Thread.sleep(rampUp);
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+	CPThreadGroup threadGroup = new CPThreadGroup(name);
+	Thread[] threads = new Thread[runners.length];
+	for (int i = 0; i < runners.length; i++) {
+	    threads[i] = new Thread(threadGroup, runners[i]);
 	}
+	for (int i = 0; i < runners.length; i++) {
+	    Thread thread = threads[i];
+	    thread.start();
+	    if (rampUp > 0 && i < runners.length - 1) {
+		sleepForRampUpTime();
+	    }
+	}
+	try {
+	    for (Thread thread : threads) {
+		thread.join();
+	    }
+	} catch (InterruptedException e) {
+	    // if the thread group has an exception, that one is more
+	    // interesting
+	    if (threadGroup.throwable == null) {
+		throw new PerfTestExecutionError(e); // interruption without
+						     // throwable cause
+	    }
+	}
+	// The thread group encountered a Throwable, report it to the caller
+	if (threadGroup.throwable != null) {
+	    throw ContiPerfUtil.executionError(threadGroup.throwable);
+	}
+    }
 
-	/** 
-     * Implements the {@link ThreadGroup#uncaughtException(Thread, Throwable)} method
-     * interrupting the execution of all threads in case of a {@link Throwable} and
-     * memorizing the {@link Throwable}.
+    private void sleepForRampUpTime() {
+	try {
+	    Thread.sleep(rampUp);
+	} catch (InterruptedException e) {
+	    throw new RuntimeException(e);
+	}
+    }
+
+    /**
+     * Implements the {@link ThreadGroup#uncaughtException(Thread, Throwable)}
+     * method interrupting the execution of all threads in case of a
+     * {@link Throwable} and memorizing the {@link Throwable}.
      */
     class CPThreadGroup extends ThreadGroup {
-    	
-    	Throwable throwable;
 
-		public CPThreadGroup(String name) {
-	        super(name);
-        }
-    	
-		@Override
-		public void uncaughtException(Thread thread, Throwable throwable) {
-		    if (this.throwable == null)
-		    	this.throwable = throwable;
-		    interrupt();
-		}
+	Throwable throwable;
+
+	public CPThreadGroup(String name) {
+	    super(name);
+	}
+
+	@Override
+	public void uncaughtException(Thread thread, Throwable throwable) {
+	    if (this.throwable == null) {
+		this.throwable = throwable;
+	    }
+	    interrupt();
+	}
     }
 
-	public void close() {
-		for (InvocationRunner runner : runners)
-			runner.close();
-	    runners = null;
+    public void close() {
+	for (InvocationRunner runner : runners) {
+	    runner.close();
+	}
+	runners = null;
     }
-    
+
 }

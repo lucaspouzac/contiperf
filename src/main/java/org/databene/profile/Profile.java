@@ -29,89 +29,94 @@ import java.util.Map;
 import org.databene.stat.LatencyCounter;
 
 /**
- * Uses a {@link LatencyCounter} to collect profile information and manages sub profiles.<br/><br/>
+ * Uses a {@link LatencyCounter} to collect profile information and manages sub
+ * profiles.<br/>
+ * <br/>
  * Created: 19.05.2011 09:08:27
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 public class Profile {
-	
-	private String name;
-	private Profile parent;
-	private Map<String, Profile> subProfiles;
-	private LatencyCounter counter;
-	private DecimalFormat nf = new DecimalFormat("0");
-	private DecimalFormat df = new DecimalFormat("0.0");
 
-	public Profile(String name, Profile parent) {
-		this.parent = parent;
-		this.name = name;
-		this.counter = new LatencyCounter(name);
-		this.subProfiles = new HashMap<String, Profile>();
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public Profile getParent() {
-		return parent;
-	}
-	
-	public Collection<Profile> getSubProfiles() {
-		return subProfiles.values();
-	}
+    private String name;
+    private Profile parent;
+    private Map<String, Profile> subProfiles;
+    private LatencyCounter counter;
+    private DecimalFormat nf = new DecimalFormat("0");
+    private DecimalFormat df = new DecimalFormat("0.0");
 
-	public Profile getOrCreateSubProfile(String name) {
-		Profile result = subProfiles.get(name);
-		if (result == null)
-			result = createSubProfile(name);
-		return result;
-	}
+    public Profile(String name, Profile parent) {
+	this.parent = parent;
+	this.name = name;
+	this.counter = new LatencyCounter(name);
+	this.subProfiles = new HashMap<String, Profile>();
+    }
 
-	private Profile createSubProfile(String name) {
-		Profile result = new Profile(name, this);
-		subProfiles.put(name, result);
-		return result;
-	}
+    public String getName() {
+	return name;
+    }
 
-	public void addSample(int duration) {
-		counter.addSample(duration);
-	}
+    public Profile getParent() {
+	return parent;
+    }
 
-	public long getInvocationCount() {
-		return counter.sampleCount();
-	}
-	
-	public long getTotalLatency() {
-		return counter.totalLatency();
-	}
+    public Collection<Profile> getSubProfiles() {
+	return subProfiles.values();
+    }
 
-	public double getAverageLatency() {
-		return counter.averageLatency();
+    public Profile getOrCreateSubProfile(String name) {
+	Profile result = subProfiles.get(name);
+	if (result == null) {
+	    result = createSubProfile(name);
 	}
+	return result;
+    }
 
-	@Override
-	public String toString() {
-		return "[" + nf.format(getInvocationCount()) + " inv., " +
-				"avg: " + df.format(getAverageLatency()) + ", " +
-				"total: " + nf.format(getTotalLatency()) + "]: " + 
-				name;
-	}
+    private Profile createSubProfile(String name) {
+	Profile result = new Profile(name, this);
+	subProfiles.put(name, result);
+	return result;
+    }
 
-	@Override
-	public int hashCode() {
-		return name.hashCode();
-	}
+    public void addSample(int duration) {
+	counter.addSample(duration);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null || getClass() != obj.getClass())
-			return false;
-		Profile that = (Profile) obj;
-		return this.name.equals(that.name);
+    public long getInvocationCount() {
+	return counter.sampleCount();
+    }
+
+    public long getTotalLatency() {
+	return counter.totalLatency();
+    }
+
+    public double getAverageLatency() {
+	return counter.averageLatency();
+    }
+
+    @Override
+    public String toString() {
+	return "[" + nf.format(getInvocationCount()) + " inv., " + "avg: "
+		+ df.format(getAverageLatency()) + ", " + "total: "
+		+ nf.format(getTotalLatency()) + "]: " + name;
+    }
+
+    @Override
+    public int hashCode() {
+	return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj) {
+	    return true;
 	}
-	
+	if (obj == null || getClass() != obj.getClass()) {
+	    return false;
+	}
+	Profile that = (Profile) obj;
+	return this.name.equals(that.name);
+    }
+
 }

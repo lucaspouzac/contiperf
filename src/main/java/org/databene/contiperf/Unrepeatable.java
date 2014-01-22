@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -30,10 +30,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Marks a test as unrepeatable. 
- * Unrepeatable tests will be executed only once, 
- * possibly overriding other conflicting settings.<br/><br/>
+ * Marks a test as unrepeatable. Unrepeatable tests will be executed only once,
+ * possibly overriding other conflicting settings.<br/>
+ * <br/>
  * Created: 16.10.2009 10:31:04
+ * 
  * @since 1.0
  * @author Volker Bergmann
  */

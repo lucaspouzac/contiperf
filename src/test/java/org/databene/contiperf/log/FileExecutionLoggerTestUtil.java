@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,16 +23,18 @@
 package org.databene.contiperf.log;
 
 /**
- * Helper class for testing.<br/><br/>
+ * Helper class for testing.<br/>
+ * <br/>
  * Created: 23.05.2010 06:17:33
+ * 
  * @since 1.05
  * @author Volker Bergmann
  */
 public class FileExecutionLoggerTestUtil {
 
-	@SuppressWarnings("deprecation")
-	public static void resetInvocationCount() {
-		FileExecutionLogger.invocationCount.set(0L);
-	}
-	
+    @SuppressWarnings("deprecation")
+    public static void resetInvocationCount() {
+	FileExecutionLogger.invocationCount.set(0L);
+    }
+
 }

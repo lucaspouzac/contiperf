@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -22,7 +22,7 @@
 
 package org.databene.contiperf.junit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.timer.ConstantTimer;
@@ -31,42 +31,48 @@ import org.junit.Rule;
 import org.junit.Test;
 
 /**
- * Tests initialization and application of timers.<br/><br/>
+ * Tests initialization and application of timers.<br/>
+ * <br/>
  * Created: 06.04.2012 17:57:32
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public class TimerTest {
 
-	@Rule public ContiPerfRule rule = new ContiPerfRule();
-	
-	private long recentMillis = -1;
+    @Rule
+    public ContiPerfRule rule = new ContiPerfRule();
 
-	@Test
-	@PerfTest(invocations = 6, timer = ConstantTimer.class, timerParams = { 200 })
-	public void testConstant() {
-		long currentMillis = System.currentTimeMillis();
-		System.out.println("testConstant()");
-		if (recentMillis != -1) {
-			long elapsedMillis = currentMillis - recentMillis;
-			assertTrue("expected a delay of at least 180 ms, but measured " + elapsedMillis + " ms", elapsedMillis > 180);
-			assertTrue("expected a delay of at most 220 ms, but measured " + elapsedMillis + " ms", elapsedMillis < 220);
-		}
-		recentMillis = currentMillis;
-	}
-	
-	
-	
-	private long randomStartMillis = -1;
+    private long recentMillis = -1;
 
-	@Test
-	@PerfTest(invocations = 20, threads = 3, rampUp = 1000, timer = RandomTimer.class, timerParams = { 200, 400 })
-	public void testRandom() {
-		long currentMillis = System.currentTimeMillis();
-		if (randomStartMillis == -1)
-			randomStartMillis = currentMillis;
-		long offset = currentMillis - randomStartMillis;
-		System.out.println("testRandom(" + Thread.currentThread().getName() + ", " + offset + ")");
+    @Test
+    @PerfTest(invocations = 6, timer = ConstantTimer.class, timerParams = { 200 })
+    public void testConstant() {
+	long currentMillis = System.currentTimeMillis();
+	System.out.println("testConstant()");
+	if (recentMillis != -1) {
+	    long elapsedMillis = currentMillis - recentMillis;
+	    assertTrue("expected a delay of at least 180 ms, but measured "
+		    + elapsedMillis + " ms", elapsedMillis > 180);
+	    assertTrue("expected a delay of at most 220 ms, but measured "
+		    + elapsedMillis + " ms", elapsedMillis < 220);
 	}
-	
+	recentMillis = currentMillis;
+    }
+
+    private long randomStartMillis = -1;
+
+    @Test
+    @PerfTest(invocations = 20, threads = 3, rampUp = 1000, timer = RandomTimer.class, timerParams = {
+	    200, 400 })
+    public void testRandom() {
+	long currentMillis = System.currentTimeMillis();
+	if (randomStartMillis == -1) {
+	    randomStartMillis = currentMillis;
+	}
+	long offset = currentMillis - randomStartMillis;
+	System.out.println("testRandom(" + Thread.currentThread().getName()
+		+ ", " + offset + ")");
+    }
+
 }

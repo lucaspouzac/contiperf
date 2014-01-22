@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,21 +25,24 @@ package org.databene.contiperf.report;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * {@link ReportModule} implementation that counts the number of invocations.<br/><br/>
+ * {@link ReportModule} implementation that counts the number of invocations.<br/>
+ * <br/>
  * Created: 16.01.2011 16:03:10
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 public class InvocationCountingReportModule extends AbstractReportModule {
 
-	AtomicLong invocationCount = new AtomicLong();
-	
-	public void invoked(String serviceId, int latency, long startTime) {
-		invocationCount.incrementAndGet();
-	}
+    AtomicLong invocationCount = new AtomicLong();
 
-	public long getInvocationCount() {
-		return invocationCount.get();
-	}
+    @Override
+    public void invoked(String serviceId, int latency, long startTime) {
+	invocationCount.incrementAndGet();
+    }
+
+    public long getInvocationCount() {
+	return invocationCount.get();
+    }
 
 }

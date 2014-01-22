@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -26,8 +26,10 @@ import org.databene.contiperf.ExecutionLogger;
 import org.databene.contiperf.report.EmptyReportModule;
 
 /**
- * Empty implementation of the {@link ExecutionLogger} interface.<br/><br/>
+ * Empty implementation of the {@link ExecutionLogger} interface.<br/>
+ * <br/>
  * Created: 01.04.2010 12:05:53
+ * 
  * @since 1.01
  * @author Volker Bergmann
  * @deprecated Replaced with {@link EmptyReportModule}
@@ -35,12 +37,13 @@ import org.databene.contiperf.report.EmptyReportModule;
 @Deprecated
 public class EmptyExecutionLogger implements ExecutionLogger {
 
-	public void logInvocation(String id, int latency, long startTime) {
-		// Do nothing
-	}
+    public void logInvocation(String id, int latency, long startTime) {
+	// Do nothing
+    }
 
-	public void logSummary(String id, long elapsedTime, long invocationCount, long startTime) {
-		// Do nothing
-	}
+    public void logSummary(String id, long elapsedTime, long invocationCount,
+	    long startTime) {
+	// Do nothing
+    }
 
 }

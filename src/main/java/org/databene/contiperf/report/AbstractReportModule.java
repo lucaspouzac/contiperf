@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -27,50 +27,56 @@ import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
 /**
- * Abstract parent class for {@link ReportModule}s, which provides 
- * {@link ReportContext} handling and empty implementations of the 
- * other {@link ReportModule} methods.<br/>
+ * Abstract parent class for {@link ReportModule}s, which provides
+ * {@link ReportContext} handling and empty implementations of the other
+ * {@link ReportModule} methods.<br/>
  * <br/>
  * Created: 16.01.2011 08:07:21
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 public abstract class AbstractReportModule implements ReportModule {
 
-	protected ReportContext context;
-	
-	public void setContext(ReportContext context) {
-		this.context = context;
-	}
+    protected ReportContext context;
 
-	public String getReportReferenceLabel(String serviceId) {
-		return null;
-	}
-	
-	public String getReportReference(String serviceId) {
-		return null;
-	}
+    public void setContext(ReportContext context) {
+	this.context = context;
+    }
 
-	public void starting(String serviceId) {
-		// ignored
-	}
-	
-	public void invoked(String serviceId, int latency, long startTime) {
-		// ignored
-	}
-	
-	/** implements backwards-compatibility of inheritors of older versions of this class */
-	public void completed(String serviceId, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement) {
-		completed(serviceId, counters, requirement);
-	}
+    public String getReportReferenceLabel(String serviceId) {
+	return null;
+    }
 
-	/** 
-	 * Implements a method which has been removed from the interface but implemented by children 
-	 * of this class, probably using the Override annotation, which would cause compiler errors if 
-	 * the method were removed.
-	 */
-	public void completed(String serviceId, LatencyCounter[] counters, PerformanceRequirement requirement) {
-		// ignored
-	}
-	
+    public String getReportReference(String serviceId) {
+	return null;
+    }
+
+    public void starting(String serviceId) {
+	// ignored
+    }
+
+    public void invoked(String serviceId, int latency, long startTime) {
+	// ignored
+    }
+
+    /**
+     * implements backwards-compatibility of inheritors of older versions of
+     * this class
+     */
+    public void completed(String serviceId, LatencyCounter[] counters,
+	    ExecutionConfig executionConfig, PerformanceRequirement requirement) {
+	completed(serviceId, counters, requirement);
+    }
+
+    /**
+     * Implements a method which has been removed from the interface but
+     * implemented by children of this class, probably using the Override
+     * annotation, which would cause compiler errors if the method were removed.
+     */
+    public void completed(String serviceId, LatencyCounter[] counters,
+	    PerformanceRequirement requirement) {
+	// ignored
+    }
+
 }

@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,14 +23,17 @@
 package org.databene.contiperf;
 
 /**
- * Abstraction of anything that can be invoked.
- * This is used in order to target specific details of the code to be invoked 
- * (e.g. JUnit) from the ContiPerf framework.<br/><br/>
+ * Abstraction of anything that can be invoked. This is used in order to target
+ * specific details of the code to be invoked (e.g. JUnit) from the ContiPerf
+ * framework.<br/>
+ * <br/>
  * Created: 22.10.2009 16:25:29
+ * 
  * @since 1.0
  * @author Volker Bergmann
  */
 public interface Invoker {
-	String getId();
-	Object invoke(Object[] args) throws Exception;
+    String getId();
+
+    Object invoke(Object[] args) throws Exception;
 }

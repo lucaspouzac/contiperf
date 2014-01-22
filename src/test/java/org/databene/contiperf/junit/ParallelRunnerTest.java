@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -22,7 +22,7 @@
 
 package org.databene.contiperf.junit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.timer.ConstantTimer;
@@ -32,52 +32,57 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Tests the {@link ParallelRunner}.<br/><br/>
+ * Tests the {@link ParallelRunner}.<br/>
+ * <br/>
  * Created: 07.04.2012 17:36:35
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 @RunWith(ParallelRunner.class)
 public class ParallelRunnerTest {
-	
-	@Rule public ContiPerfRule rule = new ContiPerfRule();
-	
-	private static volatile long test1First = -1;
-	private static volatile long test1Last = -1;
-	
-	private static volatile long test2First = -1;
-	private static volatile long test2Last = -1;
-	
-	@Test
-	@PerfTest(duration = 2000, threads = 3, timer = ConstantTimer.class, timerParams = { 1200 })
-	public void test1() throws Exception {
-		long currentTime = System.currentTimeMillis();
-		if (test1First == -1)
-			test1First = currentTime;
-		test1Last = currentTime;
-		System.out.println("test1 - " + Thread.currentThread() + " - " + (currentTime - Math.min(test1First, test2First)));
+
+    @Rule
+    public ContiPerfRule rule = new ContiPerfRule();
+
+    private static volatile long test1First = -1;
+    private static volatile long test1Last = -1;
+
+    private static volatile long test2First = -1;
+    private static volatile long test2Last = -1;
+
+    @Test
+    @PerfTest(duration = 2000, threads = 3, timer = ConstantTimer.class, timerParams = { 1200 })
+    public void test1() throws Exception {
+	long currentTime = System.currentTimeMillis();
+	if (test1First == -1) {
+	    test1First = currentTime;
 	}
-	
-	@Test
-	@PerfTest(duration = 3000, threads = 2, timer = ConstantTimer.class, timerParams = { 700 })
-	public void test2() throws Exception {
-		long currentTime = System.currentTimeMillis();
-		if (test2First == -1)
-			test2First = currentTime;
-		test2Last = currentTime;
-		System.out.println("test2 - " + Thread.currentThread() + " - " + (currentTime - Math.min(test1First, test2First)));
+	test1Last = currentTime;
+	System.out.println("test1 - " + Thread.currentThread() + " - "
+		+ (currentTime - Math.min(test1First, test2First)));
+    }
+
+    @Test
+    @PerfTest(duration = 3000, threads = 2, timer = ConstantTimer.class, timerParams = { 700 })
+    public void test2() throws Exception {
+	long currentTime = System.currentTimeMillis();
+	if (test2First == -1) {
+	    test2First = currentTime;
 	}
-	
-	@Test
-	public void test3() throws Exception {
-	}
-	
-	@AfterClass
-	public static void verifyParallelExecution() {
-		assertTrue(
-			(test1First <= test2First && test2First <= test1Last) ||
-			(test2First <= test1First && test1First <= test2Last)
-		);
-	}
-	
+	test2Last = currentTime;
+	System.out.println("test2 - " + Thread.currentThread() + " - "
+		+ (currentTime - Math.min(test1First, test2First)));
+    }
+
+    @Test
+    public void test3() throws Exception {
+    }
+
+    @AfterClass
+    public static void verifyParallelExecution() {
+	assertTrue((test1First <= test2First && test2First <= test1Last)
+		|| (test2First <= test1First && test1First <= test2Last));
+    }
+
 }

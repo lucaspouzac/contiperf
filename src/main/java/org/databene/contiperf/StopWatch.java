@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -26,26 +26,31 @@ import org.databene.stat.CounterRepository;
 import org.databene.stat.LatencyCounter;
 
 /**
- * Stopwatch-style access to ContiPerf's {@link LatencyCounter} features.
- * A StopWach is created with a name and immediately starts measuring time.
- * When calling stop(), the elapsed time is registered at a central latency 
- * counter identified by the stopwatch's name.
+ * Stopwatch-style access to ContiPerf's {@link LatencyCounter} features. A
+ * StopWach is created with a name and immediately starts measuring time. When
+ * calling stop(), the elapsed time is registered at a central latency counter
+ * identified by the stopwatch's name.
+ * 
  * <pre>
- *     StopWatch watch = new StopWatch("mytest");
- *     Thread.sleep(delay);
- *     watch.stop();
+ * StopWatch watch = new StopWatch(&quot;mytest&quot;);
+ * Thread.sleep(delay);
+ * watch.stop();
  * </pre>
- * You can use a stop watch only a single time, so you have to create a new 
- * instance for each measurement you are performing.
- * After the desired number of invocations, you can query the associated 
- * {@link LatencyCounter} from the CounterRepository and query its features, 
- * e.g.
+ * 
+ * You can use a stop watch only a single time, so you have to create a new
+ * instance for each measurement you are performing. After the desired number of
+ * invocations, you can query the associated {@link LatencyCounter} from the
+ * CounterRepository and query its features, e.g.
+ * 
  * <pre>
  *     LatencyCounter counter = CounterRepository.getInstance("mytest");
  *     System.out.println("avg:" + counter.averageLatency + ", max:" + counter.maxLatency())
  * </pre>
- * <br/><br/>
+ * 
+ * <br/>
+ * <br/>
  * Created: 14.01.2011 11:17:30
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  * @see CounterRepository
@@ -53,21 +58,23 @@ import org.databene.stat.LatencyCounter;
  */
 public class StopWatch {
 
-	private String name;
-	private long startTime;
-	
-	public StopWatch(String name) {
-		this.name = name;
-		this.startTime = System.nanoTime();
+    private String name;
+    private long startTime;
+
+    public StopWatch(String name) {
+	this.name = name;
+	this.startTime = System.nanoTime();
+    }
+
+    public long stop() {
+	if (startTime == -1) {
+	    throw new RuntimeException("Called stop() on StopWatch '" + name
+		    + "' which has already been stopped");
 	}
-	
-	public long stop() {
-		if (startTime == -1)
-			throw new RuntimeException("Called stop() on StopWatch '" + name + "' which has already been stopped");
-		int latency = (int) ((System.nanoTime() - startTime) / 1000000L);
-		startTime = -1;
-		CounterRepository.getInstance().addSample(name, latency);
-		return latency;
-	}
-	
+	int latency = (int) ((System.nanoTime() - startTime) / 1000000L);
+	startTime = -1;
+	CounterRepository.getInstance().addSample(name, latency);
+	return latency;
+    }
+
 }

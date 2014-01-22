@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -34,76 +34,85 @@ import org.databene.contiperf.report.CSVSummaryReportModule;
 import org.databene.contiperf.util.ContiPerfUtil;
 
 /**
- * {@link ExecutionLogger} implementation which writes the execution log to a file.<br/><br/>
+ * {@link ExecutionLogger} implementation which writes the execution log to a
+ * file.<br/>
+ * <br/>
  * Created: 12.10.09 10:12:39
+ * 
  * @since 1.0
  * @author Volker Bergmann
  * @deprecated Replaced with {@link CSVSummaryReportModule}
  */
 @Deprecated
 public class FileExecutionLogger implements ExecutionLogger {
-	
-	private static final String DEFAULT_FILENAME = "target/contiperf/contiperf.log";
-	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-	
-	private static boolean firstCall = true;
-	static AtomicLong invocationCount = new AtomicLong();
 
-	public FileExecutionLogger() {
-		this(DEFAULT_FILENAME);
+    private static final String DEFAULT_FILENAME = "target/contiperf/contiperf.log";
+    private static final String LINE_SEPARATOR = System
+	    .getProperty("line.separator");
+
+    private static boolean firstCall = true;
+    static AtomicLong invocationCount = new AtomicLong();
+
+    public FileExecutionLogger() {
+	this(DEFAULT_FILENAME);
     }
 
-	public FileExecutionLogger(String fileName) {
-		if (firstCall) {
-			createSummaryFile(fileName);
-			firstCall = false;
-		}
-    }
-
-	public void logInvocation(String id, int latency, long startTime) {
-		invocationCount.incrementAndGet();
-	    System.out.println(id + ',' + latency + ',' + startTime);
-    }
-
-	public void logSummary(String id, long elapsedTime, long invocationCount, long startTime) {
-		OutputStream out = null;
-        String message = id + "," + elapsedTime + ',' 
-        	+ invocationCount + ',' + startTime + LINE_SEPARATOR;
-		try {
-	        out = new FileOutputStream(DEFAULT_FILENAME, true);
-	        out.write(message.getBytes());
-        } catch (IOException e) {
-	        e.printStackTrace();
-        } finally {
-	        ContiPerfUtil.close(out);
-        }
-    }
-	
-	public long invocationCount() {
-		return invocationCount.get();
+    public FileExecutionLogger(String fileName) {
+	if (firstCall) {
+	    createSummaryFile(fileName);
+	    firstCall = false;
 	}
-	
-	// private helpers -------------------------------------------------------------------------------------------------
-
-	private void createSummaryFile(String fileName) {
-	    File file = new File(".", fileName);
-	    try {
-		    ensureDirectoryExists(file.getParentFile());	
-		    if (file.exists())
-		    	file.delete();
-	    } catch (FileNotFoundException e) {
-	    	System.out.println("Unable to create directory: " + file.getAbsolutePath());
-	    }
     }
 
-	private void ensureDirectoryExists(File dir) throws FileNotFoundException {
-	    File parent = dir.getParentFile();
-	    if (!dir.exists()) {
-	    	if (parent == null)
-	    		throw new FileNotFoundException();
-	    	ensureDirectoryExists(parent);
-	    	dir.mkdir();
+    public void logInvocation(String id, int latency, long startTime) {
+	invocationCount.incrementAndGet();
+	System.out.println(id + ',' + latency + ',' + startTime);
+    }
+
+    public void logSummary(String id, long elapsedTime, long invocationCount,
+	    long startTime) {
+	OutputStream out = null;
+	String message = id + "," + elapsedTime + ',' + invocationCount + ','
+		+ startTime + LINE_SEPARATOR;
+	try {
+	    out = new FileOutputStream(DEFAULT_FILENAME, true);
+	    out.write(message.getBytes());
+	} catch (IOException e) {
+	    e.printStackTrace();
+	} finally {
+	    ContiPerfUtil.close(out);
+	}
+    }
+
+    public long invocationCount() {
+	return invocationCount.get();
+    }
+
+    // private helpers
+    // -------------------------------------------------------------------------------------------------
+
+    private void createSummaryFile(String fileName) {
+	File file = new File(".", fileName);
+	try {
+	    ensureDirectoryExists(file.getParentFile());
+	    if (file.exists()) {
+		file.delete();
 	    }
+	} catch (FileNotFoundException e) {
+	    System.out.println("Unable to create directory: "
+		    + file.getAbsolutePath());
+	}
+    }
+
+    private void ensureDirectoryExists(File dir) throws FileNotFoundException {
+	File parent = dir.getParentFile();
+	if (!dir.exists()) {
+	    if (parent == null) {
+		throw new FileNotFoundException();
+	    }
+	    ensureDirectoryExists(parent);
+	    dir.mkdir();
+	}
     }
 
 }

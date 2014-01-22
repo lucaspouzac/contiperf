@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,21 +25,23 @@ package org.databene.contiperf.junit;
 import junit.framework.AssertionFailedError;
 
 /**
- * Reports a performance test failure to the JUnit test framework.<br/><br/>
+ * Reports a performance test failure to the JUnit test framework.<br/>
+ * <br/>
  * Created: 16.01.2011 15:01:16
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 public class JUnitPerfTestFailure extends AssertionFailedError {
 
-	private static final long serialVersionUID = -6164364500484072786L;
+    private static final long serialVersionUID = -6164364500484072786L;
 
-	public JUnitPerfTestFailure() {
-		super();
-	}
+    public JUnitPerfTestFailure() {
+	super();
+    }
 
-	public JUnitPerfTestFailure(String message) {
-		super(message);
-	}
+    public JUnitPerfTestFailure(String message) {
+	super(message);
+    }
 
 }

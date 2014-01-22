@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -27,8 +27,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.databene.contiperf.util.ContiPerfUtil;
 
 /**
- * Calls the invoker a fixed number of times.<br/><br/>
+ * Calls the invoker a fixed number of times.<br/>
+ * <br/>
  * Created: 22.10.2009 06:30:28
+ * 
  * @since 1.0
  * @author Volker Bergmann
  */
@@ -38,27 +40,27 @@ public class CountRunner extends AbstractInvocationRunner {
     private Invoker invoker;
     private AtomicLong invocationsLeft;
 
-    public CountRunner(Invoker invoker, ArgumentsProvider argsProvider, 
-    		WaitTimer waitTimer, AtomicLong invocationsLeft) {
-    	super(waitTimer);
-	    this.invoker = invoker;
-	    this.argsProvider = argsProvider;
-	    this.invocationsLeft = invocationsLeft;
+    public CountRunner(Invoker invoker, ArgumentsProvider argsProvider,
+	    WaitTimer waitTimer, AtomicLong invocationsLeft) {
+	super(waitTimer);
+	this.invoker = invoker;
+	this.argsProvider = argsProvider;
+	this.invocationsLeft = invocationsLeft;
     }
 
     public void run() {
-    	try {
-    		while (invocationsLeft.getAndDecrement() > 0) {
-	    	    invoker.invoke(argsProvider.next());
-	    	    sleep();
-			}
-    	} catch (Exception e) {
-    		throw ContiPerfUtil.executionError(e);
-    	}
+	try {
+	    while (invocationsLeft.getAndDecrement() > 0) {
+		invoker.invoke(argsProvider.next());
+		sleep();
+	    }
+	} catch (Exception e) {
+	    throw ContiPerfUtil.executionError(e);
+	}
     }
 
-	public void close() {
-	    invoker = null;
+    public void close() {
+	invoker = null;
     }
-    
+
 }

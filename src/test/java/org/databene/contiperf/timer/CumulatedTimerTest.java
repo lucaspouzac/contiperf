@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -28,47 +28,53 @@ import org.databene.contiperf.WaitTimer;
 import org.junit.Test;
 
 /**
- * Tests the {@link CumulatedTimer}.<br/><br/>
+ * Tests the {@link CumulatedTimer}.<br/>
+ * <br/>
  * Created: 06.04.2012 18:19:40
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public class CumulatedTimerTest {
 
-	@Test
-	public void testEmptyInitialization() throws Exception {
-		WaitTimer timer = CumulatedTimer.class.newInstance();
-		timer.init(new double[0]);
-		for (int i = 0; i < 1000; i++)
-			assertRange(500, 1500, timer.getWaitTime());
+    @Test
+    public void testEmptyInitialization() throws Exception {
+	WaitTimer timer = CumulatedTimer.class.newInstance();
+	timer.init(new double[0]);
+	for (int i = 0; i < 1000; i++) {
+	    assertRange(500, 1500, timer.getWaitTime());
 	}
+    }
 
-	@Test
-	public void testUnderInitialization() throws Exception {
-		WaitTimer timer = CumulatedTimer.class.newInstance();
-		timer.init(new double[] { 2000 });
-		for (int i = 0; i < 1000; i++)
-			assertRange(2000, 3000, timer.getWaitTime());
+    @Test
+    public void testUnderInitialization() throws Exception {
+	WaitTimer timer = CumulatedTimer.class.newInstance();
+	timer.init(new double[] { 2000 });
+	for (int i = 0; i < 1000; i++) {
+	    assertRange(2000, 3000, timer.getWaitTime());
 	}
+    }
 
-	@Test
-	public void testNormalInitialization() throws Exception {
-		WaitTimer timer = CumulatedTimer.class.newInstance();
-		timer.init(new double[] { 2000, 2500 });
-		for (int i = 0; i < 1000; i++)
-			assertRange(2000, 2500, timer.getWaitTime());
+    @Test
+    public void testNormalInitialization() throws Exception {
+	WaitTimer timer = CumulatedTimer.class.newInstance();
+	timer.init(new double[] { 2000, 2500 });
+	for (int i = 0; i < 1000; i++) {
+	    assertRange(2000, 2500, timer.getWaitTime());
 	}
+    }
 
-	@Test
-	public void testOverInitialization() throws Exception {
-		WaitTimer timer = CumulatedTimer.class.newInstance();
-		timer.init(new double[] { 2000, 2500, 3000 });
-		for (int i = 0; i < 1000; i++)
-			assertRange(2000, 2500, timer.getWaitTime());
+    @Test
+    public void testOverInitialization() throws Exception {
+	WaitTimer timer = CumulatedTimer.class.newInstance();
+	timer.init(new double[] { 2000, 2500, 3000 });
+	for (int i = 0; i < 1000; i++) {
+	    assertRange(2000, 2500, timer.getWaitTime());
 	}
+    }
 
-	private void assertRange(int minExpected, int maxExpected, int waitTime) {
-		assertTrue(minExpected <= waitTime && waitTime <= maxExpected);
-	}
-	
+    private void assertRange(int minExpected, int maxExpected, int waitTime) {
+	assertTrue(minExpected <= waitTime && waitTime <= maxExpected);
+    }
+
 }

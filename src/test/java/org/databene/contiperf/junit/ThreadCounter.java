@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,23 +25,25 @@ package org.databene.contiperf.junit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Helper class for measuring concurrency.<br/><br/>
+ * Helper class for measuring concurrency.<br/>
+ * <br/>
  * Created: 16.04.2010 00:01:25
+ * 
  * @since 1.03
  * @author Volker Bergmann
  */
 public class ThreadCounter extends ThreadLocal<ThreadCounter> {
-	
-	private AtomicInteger count = new AtomicInteger();
-	
-	@Override
-	protected ThreadCounter initialValue() {
-		count.incrementAndGet();
-	    return this;
-	}
 
-	public int getThreadCount() {
-		return count.get();
-	}
-	
+    private AtomicInteger count = new AtomicInteger();
+
+    @Override
+    protected ThreadCounter initialValue() {
+	count.incrementAndGet();
+	return this;
+    }
+
+    public int getThreadCount() {
+	return count.get();
+    }
+
 }

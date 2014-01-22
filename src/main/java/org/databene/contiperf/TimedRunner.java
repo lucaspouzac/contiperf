@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,8 +25,10 @@ package org.databene.contiperf;
 import org.databene.contiperf.util.ContiPerfUtil;
 
 /**
- * Calls the invoker for a certain amount of time.<br/><br/>
+ * Calls the invoker for a certain amount of time.<br/>
+ * <br/>
  * Created: 15.04.2010 23:13:52
+ * 
  * @since 1.03
  * @author Volker Bergmann
  */
@@ -36,34 +38,34 @@ public class TimedRunner extends AbstractInvocationRunner {
     private ArgumentsProvider argsProvider;
     private Invoker invoker;
 
-    public TimedRunner(Invoker invoker, ArgumentsProvider argsProvider, 
-    		WaitTimer waitTimer, long duration) {
-    	super(waitTimer);
-	    this.invoker = invoker;
-	    this.argsProvider = argsProvider;
-	    this.duration = duration;
+    public TimedRunner(Invoker invoker, ArgumentsProvider argsProvider,
+	    WaitTimer waitTimer, long duration) {
+	super(waitTimer);
+	this.invoker = invoker;
+	this.argsProvider = argsProvider;
+	this.duration = duration;
     }
 
-	public void run() {
-		try {
-		    long start = System.currentTimeMillis();
-		    long endTime = start + duration;
-		    do {
-	    	    invoker.invoke(argsProvider.next());
-	    	    sleep();
-		    } while (System.currentTimeMillis() < endTime);
-		} catch (Exception e) {
-			throw ContiPerfUtil.executionError(e);
-		}
-    }
-
-	public void close() {
-	    invoker = null;
-    }
-	
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + "(" + duration + " ms)";
+    public void run() {
+	try {
+	    long start = System.currentTimeMillis();
+	    long endTime = start + duration;
+	    do {
+		invoker.invoke(argsProvider.next());
+		sleep();
+	    } while (System.currentTimeMillis() < endTime);
+	} catch (Exception e) {
+	    throw ContiPerfUtil.executionError(e);
 	}
+    }
+
+    public void close() {
+	invoker = null;
+    }
+
+    @Override
+    public String toString() {
+	return getClass().getSimpleName() + "(" + duration + " ms)";
+    }
 
 }

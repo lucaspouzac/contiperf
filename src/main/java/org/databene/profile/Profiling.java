@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,16 +23,18 @@
 package org.databene.profile;
 
 /**
- * Encapsulates access to Profiling configuration.<br/><br/>
+ * Encapsulates access to Profiling configuration.<br/>
+ * <br/>
  * Created: 21.07.2011 08:28:43
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 public class Profiling {
 
-	public static boolean isEnabled() {
-		String config = System.getProperty("profile");
-		return (config != null && !"false".equals(config));
-	}
-	
+    public static boolean isEnabled() {
+	String config = System.getProperty("profile");
+	return (config != null && !"false".equals(config));
+    }
+
 }

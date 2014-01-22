@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -30,37 +30,41 @@ import org.databene.contiperf.PerformanceRequirement;
 import org.databene.stat.LatencyCounter;
 
 /**
- * {@link ReportModule} that stores all invocation information in {@link List}s.<br/><br/>
+ * {@link ReportModule} that stores all invocation information in {@link List}s.<br/>
+ * <br/>
  * Created: 16.01.2011 14:36:48
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */
 public class ListReportModule extends AbstractReportModule {
-	
-	private List<InvocationLog> invocations;
-	private List<InvocationSummary> summaries;
-	
-	public ListReportModule() {
-		this.invocations = new ArrayList<InvocationLog>();
-		this.summaries = new ArrayList<InvocationSummary>();
+
+    private List<InvocationLog> invocations;
+    private List<InvocationSummary> summaries;
+
+    public ListReportModule() {
+	this.invocations = new ArrayList<InvocationLog>();
+	this.summaries = new ArrayList<InvocationSummary>();
     }
 
-	@Override
-	public void invoked(String id, int latency, long startTime) {
-	    invocations.add(new InvocationLog(id, latency, startTime));
+    @Override
+    public void invoked(String id, int latency, long startTime) {
+	invocations.add(new InvocationLog(id, latency, startTime));
     }
 
-	@Override
-	public void completed(String id, LatencyCounter[] counters, ExecutionConfig executionConfig, PerformanceRequirement requirement) {
-	    summaries.add(new InvocationSummary(id, counters[0].duration(), counters[0].sampleCount(), counters[0].getStartTime()));
+    @Override
+    public void completed(String id, LatencyCounter[] counters,
+	    ExecutionConfig executionConfig, PerformanceRequirement requirement) {
+	summaries.add(new InvocationSummary(id, counters[0].duration(),
+		counters[0].sampleCount(), counters[0].getStartTime()));
     }
 
-	public List<InvocationLog> getInvocations() {
-		return invocations;
-	}
-	
-	public List<InvocationSummary> getSummaries() {
-		return summaries;
-	}
-	
+    public List<InvocationLog> getInvocations() {
+	return invocations;
+    }
+
+    public List<InvocationSummary> getSummaries() {
+	return summaries;
+    }
+
 }

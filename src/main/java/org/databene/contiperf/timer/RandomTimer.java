@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,27 +25,32 @@ package org.databene.contiperf.timer;
 import org.databene.contiperf.WaitTimer;
 
 /**
- * {@link WaitTimer} implementation that provides a wait time uniformly distributed between a min and a max value.<br/><br/>
+ * {@link WaitTimer} implementation that provides a wait time uniformly
+ * distributed between a min and a max value.<br/>
+ * <br/>
  * Created: 06.04.2012 17:13:42
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public class RandomTimer extends AbstractTimer {
-	
-	private int min =  500;
-	private int range = 1001;
-	private java.util.Random random = new java.util.Random();
-	
-	public void init(double[] params) {
-		checkParamCount(2, params);
-		if (params.length > 0)
-			min = (int) params[0];
-		if (params.length > 1)
-			range = (int) params[1] - min + 1;
-	}
 
-	public int getWaitTime() {
-		return min + random.nextInt(range);
+    private int min = 500;
+    private int range = 1001;
+    private java.util.Random random = new java.util.Random();
+
+    public void init(double[] params) {
+	checkParamCount(2, params);
+	if (params.length > 0) {
+	    min = (int) params[0];
 	}
+	if (params.length > 1) {
+	    range = (int) params[1] - min + 1;
+	}
+    }
+
+    public int getWaitTime() {
+	return min + random.nextInt(range);
+    }
 
 }

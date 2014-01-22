@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,25 +23,28 @@
 package org.databene.contiperf;
 
 /**
- * Indicates that a performance requirement has been missed in a performance test.<br/><br/>
+ * Indicates that a performance requirement has been missed in a performance
+ * test.<br/>
+ * <br/>
  * Created: 16.04.2010 11:50:09
+ * 
  * @since 1.03
  * @author Volker Bergmann
  */
 public class PerfTestFailure extends AssertionError {
 
-	private static final long serialVersionUID = 8265877929635405862L;
+    private static final long serialVersionUID = 8265877929635405862L;
 
-	public PerfTestFailure() {
-	    super();
+    public PerfTestFailure() {
+	super();
     }
 
-	public PerfTestFailure(String message) {
-	    super(message);
+    public PerfTestFailure(String message) {
+	super(message);
     }
 
-	public PerfTestFailure(Throwable cause) {
-	    super(cause);
+    public PerfTestFailure(Throwable cause) {
+	super(cause);
     }
 
 }

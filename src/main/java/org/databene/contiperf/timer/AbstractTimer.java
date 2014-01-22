@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,17 +25,21 @@ package org.databene.contiperf.timer;
 import org.databene.contiperf.WaitTimer;
 
 /**
- * Helper class to inherit custom {@link WaitTimer}s from.<br/><br/>
+ * Helper class to inherit custom {@link WaitTimer}s from.<br/>
+ * <br/>
  * Created: 06.04.2012 18:43:28
+ * 
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public abstract class AbstractTimer implements WaitTimer {
 
-	protected void checkParamCount(int expectedParamCount, double[] actualParams) {
-		if (actualParams.length != expectedParamCount)
-			System.out.println("WARN: " + getClass().getSimpleName() + " expects 2 parameters, " +
-					"but was called with " + actualParams.length);
+    protected void checkParamCount(int expectedParamCount, double[] actualParams) {
+	if (actualParams.length != expectedParamCount) {
+	    System.out.println("WARN: " + getClass().getSimpleName()
+		    + " expects 2 parameters, " + "but was called with "
+		    + actualParams.length);
 	}
-	
+    }
+
 }

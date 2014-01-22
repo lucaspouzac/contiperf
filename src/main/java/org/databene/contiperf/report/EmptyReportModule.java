@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -23,8 +23,10 @@
 package org.databene.contiperf.report;
 
 /**
- * Empty implementation of the {@link ReportModule} interface.<br/><br/>
+ * Empty implementation of the {@link ReportModule} interface.<br/>
+ * <br/>
  * Created: 16.01.2011 14:29:06
+ * 
  * @since 2.0.0
  * @author Volker Bergmann
  */

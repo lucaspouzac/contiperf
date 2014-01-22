@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, is permitted under the terms of the
- * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL) 
+ * GNU Lesser General Public License (LGPL), Eclipse Public License (EPL)
  * and the BSD License.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -25,12 +25,14 @@ package org.databene.contiperf;
 import java.io.Closeable;
 
 /**
- * Parent interface for ContiPerf adapters that perform, if necessary, parameter generation 
- * and the actual invocation of a target service.<br/><br/>
+ * Parent interface for ContiPerf adapters that perform, if necessary, parameter
+ * generation and the actual invocation of a target service.<br/>
+ * <br/>
  * Created: 03.06.2010 19:18:21
+ * 
  * @since 1.07
  * @author Volker Bergmann
  */
 public interface InvocationRunner extends Runnable, Closeable {
-	public void close();
+    public void close();
 }
