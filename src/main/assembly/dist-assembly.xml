@@ -40,21 +40,21 @@
             <directory>src/test/resources</directory>
             <outputDirectory>test</outputDirectory>
         </fileSet>
-	    <fileSet>
-			<directory>target</directory>
-			<outputDirectory>lib</outputDirectory>
-			<includes>
-				<include>*.jar</include>
-			</includes>
-			<excludes>
-				<exclude>*-sources.jar</exclude>
-			</excludes>
-	    </fileSet>
+        <fileSet>
+            <directory>target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-sources.jar</exclude>
+            </excludes>
+        </fileSet>
     </fileSets>
 
     <dependencySets>
         <dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
+            <useProjectArtifact>false</useProjectArtifact>
             <outputDirectory>lib</outputDirectory>
             <unpack>false</unpack>
         </dependencySet>
