@@ -42,6 +42,7 @@ public class ReportUtil {
 	success &= (maxVerdict(counter, requirement) != Verdict.FAILURE);
 	success &= (throughputVerdict(counter, requirement) != Verdict.FAILURE);
 	success &= (totalTimeVerdict(counter, requirement) != Verdict.FAILURE);
+	success &= counter.getAssertionErrors().size() == 0;
 	if (requirement != null) {
 	    PercentileRequirement[] percentileRequirements = requirement
 		    .getPercentileRequirements();
@@ -54,7 +55,8 @@ public class ReportUtil {
 
     public static Verdict totalTimeVerdict(LatencyCounter counter,
 	    PerformanceRequirement requirement) {
-	if (requirement == null || requirement.getTotalTime() < 0) {
+	if (requirement == null || requirement.getTotalTime() < 0
+		|| counter.getAssertionErrors().size() > 0) {
 	    return Verdict.IGNORED;
 	}
 	return (counter.duration() <= requirement.getTotalTime() ? Verdict.SUCCESS
@@ -63,7 +65,8 @@ public class ReportUtil {
 
     public static Verdict maxVerdict(LatencyCounter counter,
 	    PerformanceRequirement requirement) {
-	if (requirement == null || requirement.getMax() < 0) {
+	if (requirement == null || requirement.getMax() < 0
+		|| counter.getAssertionErrors().size() > 0) {
 	    return Verdict.IGNORED;
 	}
 	return (counter.maxLatency() <= requirement.getMax() ? Verdict.SUCCESS
@@ -72,7 +75,8 @@ public class ReportUtil {
 
     public static Verdict throughputVerdict(LatencyCounter counter,
 	    PerformanceRequirement requirement) {
-	if (requirement == null || requirement.getThroughput() < 0) {
+	if (requirement == null || requirement.getThroughput() < 0
+		|| counter.getAssertionErrors().size() > 0) {
 	    return Verdict.IGNORED;
 	}
 	return (counter.throughput() >= requirement.getThroughput() ? Verdict.SUCCESS
@@ -81,7 +85,8 @@ public class ReportUtil {
 
     public static Verdict averageVerdict(LatencyCounter counter,
 	    PerformanceRequirement requirement) {
-	if (requirement == null || requirement.getAverage() < 0) {
+	if (requirement == null || requirement.getAverage() < 0
+		|| counter.getAssertionErrors().size() > 0) {
 	    return Verdict.IGNORED;
 	}
 	return (counter.averageLatency() <= requirement.getAverage() ? Verdict.SUCCESS
@@ -90,7 +95,8 @@ public class ReportUtil {
 
     public static Verdict percentileVerdict(LatencyCounter counter,
 	    PercentileRequirement requirement) {
-	if (requirement == null || requirement.getMillis() < 0) {
+	if (requirement == null || requirement.getMillis() < 0
+		|| counter.getAssertionErrors().size() > 0) {
 	    return Verdict.IGNORED;
 	}
 	return percentileVerdict(counter, requirement.getPercentage(),
@@ -99,10 +105,17 @@ public class ReportUtil {
 
     public static Verdict percentileVerdict(LatencyCounter counter,
 	    int percentage, Long requiredMillis) {
-	if (requiredMillis == null || requiredMillis < 0) {
+	if (requiredMillis == null || requiredMillis < 0
+		|| counter.getAssertionErrors().size() > 0) {
 	    return Verdict.IGNORED;
 	}
 	return (counter.percentileLatency(percentage) <= requiredMillis ? Verdict.SUCCESS
+		: Verdict.FAILURE);
+    }
+
+    public static Verdict functionalTestVerdict(final LatencyCounter counter,
+	    final PerformanceRequirement requirement) {
+	return (counter.getAssertionErrors().size() == 0 ? Verdict.SUCCESS
 		: Verdict.FAILURE);
     }
 

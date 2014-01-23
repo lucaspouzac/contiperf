@@ -228,7 +228,25 @@ public class HtmlReportModule extends AbstractReportModule {
 	out.println("<a name='" + serviceId + "'><h2 style='color:#EE6600'>"
 		+ serviceId + "</h2></a>");
 	// render stats table...
-	out.println("<table>");
+	out.println("<table width='800'>");
+
+	Verdict functionalTestVerdic = ReportUtil.functionalTestVerdict(
+		counters[0], requirement);
+	out.print("   <tr><th align='center' valign='top'>"
+		+ format("Functional Test:", functionalTestVerdic)
+		+ "</th><td align='center'>");
+	switch (functionalTestVerdic) {
+	case FAILURE:
+	    out.print(format(counters[0].getAssertionErrors().get(0)
+		    .getMessage(), functionalTestVerdic));
+	    break;
+	case IGNORED:
+	case SUCCESS:
+	    out.print(format("SUCCESS", functionalTestVerdic));
+	    break;
+	}
+	out.println("<br /><br /></td></tr>");
+
 	out.println("	<tr>");
 	out.println("		<td>");
 	// ...with chart on the left...
