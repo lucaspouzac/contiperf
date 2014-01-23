@@ -22,67 +22,53 @@
 
 package org.databene.contiperf.junit;
 
-import java.lang.reflect.Method;
+import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.Executors.newFixedThreadPool;
 
-import org.junit.runner.notification.RunNotifier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.junit.runners.model.RunnerScheduler;
-import org.junit.runners.model.Statement;
 
 /**
- * Executes all tests of one test class concurrently. Warning: This is an
- * experimental implementation, so its behaviour may change in future versions.<br/>
+ * Executes all tests of one test class concurrently. It's possible to specify
+ * thread number with {@link Parallel} annotation.<br/>
  * <br/>
  * Created: 07.04.2012 17:18:54
  * 
+ * @See {@link Parallel}
  * @since 2.1.0
  * @author Volker Bergmann
  */
 public class ParallelRunner extends BlockJUnit4ClassRunner {
 
-    public ParallelRunner(Class<?> klass) throws InitializationError {
-	super(klass);
+    public ParallelRunner(Class<?> type) throws InitializationError {
+	super(type);
+	setScheduler(new ParallelScheduler(createExecutor(type)));
     }
 
-    @Override
-    protected Statement childrenInvoker(final RunNotifier notifier) {
-	return new Statement() {
-	    @Override
-	    public void evaluate() {
-		runChildren(notifier);
-	    }
-	};
+    private static ExecutorService createExecutor(Class<?> type) {
+	Parallel parallel = null;
+	while (parallel == null && type.getSuperclass() != null) {
+	    parallel = type.getAnnotation(Parallel.class);
+	    type = type.getSuperclass();
+	}
+	if (parallel != null) {
+	    return newFixedThreadPool(parallel.count(),
+		    new ConcurrentTestRunnerThreadFactory());
+	}
+	return newCachedThreadPool(new ConcurrentTestRunnerThreadFactory());
     }
 
-    private void runChildren(final RunNotifier notifier) {
-	RunnerScheduler scheduler = new ParallelScheduler();
-	for (FrameworkMethod method : getChildren()) {
-	    scheduler.schedule(new ChildRunnable(method, notifier));
-	}
-	scheduler.finished();
-    }
+    private static class ConcurrentTestRunnerThreadFactory implements
+	    ThreadFactory {
+	private AtomicLong count = new AtomicLong();
 
-    public class ChildRunnable implements Runnable {
-
-	FrameworkMethod method;
-	RunNotifier notifier;
-
-	public ChildRunnable(FrameworkMethod method, RunNotifier notifier) {
-	    this.method = method;
-	    this.notifier = notifier;
-	}
-
-	public void run() {
-	    ParallelRunner.this.runChild(method, notifier);
-	}
-
-	@Override
-	public String toString() {
-	    Method realMethod = method.getMethod();
-	    return realMethod.getDeclaringClass().getSimpleName() + '.'
-		    + realMethod.getName() + "()";
+	public Thread newThread(Runnable runnable) {
+	    return new Thread(runnable, ParallelRunner.class.getSimpleName()
+		    + "-Thread-" + count.getAndIncrement());
 	}
     }
 

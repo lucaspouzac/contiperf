@@ -28,7 +28,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.junit.runners.model.RunnerScheduler;
@@ -43,10 +42,16 @@ import org.junit.runners.model.RunnerScheduler;
  */
 public class ParallelScheduler implements RunnerScheduler {
 
+    private final ExecutorService executor;
+
+    private final CompletionService<String> completionService;
+
     private Queue<Future<String>> tasks = new LinkedList<Future<String>>();
-    private ExecutorService executorService = Executors.newCachedThreadPool();
-    private CompletionService<String> completionService = new ExecutorCompletionService<String>(
-	    executorService);
+
+    public ParallelScheduler(ExecutorService executor) {
+	this.executor = executor;
+	this.completionService = new ExecutorCompletionService<String>(executor);
+    }
 
     public void schedule(final Runnable childStatement) {
 	Future<String> future = completionService
@@ -77,7 +82,7 @@ public class ParallelScheduler implements RunnerScheduler {
 	    while (!tasks.isEmpty()) {
 		tasks.poll().cancel(true);
 	    }
-	    executorService.shutdownNow();
+	    executor.shutdownNow();
 	}
     }
 

@@ -22,32 +22,27 @@
 
 package org.databene.contiperf.junit;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import org.junit.AfterClass;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Tests the {@link ParallelRunner}.<br/>
+ * Annotation to mark a method as being potentially run concurrently.<br/>
  * <br/>
- * Created: 07.04.2012 17:36:35
+ * Created: 23.01.2014 11:27:30
  * 
- * @since 2.1.0
- * @author Volker Bergmann
+ * @see org.databene.contiperf.junit.ParallelRunner
+ * @see com.google.code.tempusfugit.concurrency.ConcurrentRule
+ * @since 2.4.0
+ * @author Lucas Pouzac
  */
-public class ParallelRunnerTest extends AbstractParallelRunnerTest {
-
-    @AfterClass
-    public static void assertTestThreadsSpawned() {
-	assertThat(threads.size(), is(CONCURRENT_COUNT));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected int getConcurrentCount() {
-	return CONCURRENT_COUNT;
-    }
-
+@Documented
+@Target({ METHOD, TYPE })
+@Retention(RUNTIME)
+public @interface Parallel {
+    int count() default 5;
 }

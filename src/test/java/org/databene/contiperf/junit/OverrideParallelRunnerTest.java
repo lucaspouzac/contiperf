@@ -30,16 +30,19 @@ import org.junit.AfterClass;
 /**
  * Tests the {@link ParallelRunner}.<br/>
  * <br/>
- * Created: 07.04.2012 17:36:35
+ * Created: 23.01.2014 12:20:35
  * 
- * @since 2.1.0
- * @author Volker Bergmann
+ * @since 2.4.0
+ * @author Lucas Pouzac
  */
-public class ParallelRunnerTest extends AbstractParallelRunnerTest {
+@Parallel(count = OverrideParallelRunnerTest.OVERRIDE_CONCURRENT_COUNT)
+public class OverrideParallelRunnerTest extends AbstractParallelRunnerTest {
+
+    protected final static int OVERRIDE_CONCURRENT_COUNT = 5;
 
     @AfterClass
     public static void assertTestThreadsSpawned() {
-	assertThat(threads.size(), is(CONCURRENT_COUNT));
+	assertThat(threads.size(), is(OVERRIDE_CONCURRENT_COUNT));
     }
 
     /**
@@ -47,7 +50,7 @@ public class ParallelRunnerTest extends AbstractParallelRunnerTest {
      */
     @Override
     protected int getConcurrentCount() {
-	return CONCURRENT_COUNT;
+	return OVERRIDE_CONCURRENT_COUNT;
     }
 
 }
