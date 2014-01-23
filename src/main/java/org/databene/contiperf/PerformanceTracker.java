@@ -99,14 +99,23 @@ public class PerformanceTracker extends InvokerProxy {
 	    warmUpFinishedTime = realStartMillis + executionConfig.getWarmUp();
 	}
 	checkState(realStartMillis);
-	Object result = super.invoke(args);
+	PerfTestExecutionError perfTestExecutionError = null;
+	Object result = null;
+	try {
+	    result = super.invoke(args);
+	} catch (PerfTestExecutionError ptee) {
+	    perfTestExecutionError = ptee;
+	}
 	int latency = (int) (clocks[0].getTime() - clock0StartTime);
 	if (isTrackingStarted()) {
 	    for (LatencyCounter counter : counters) {
-		counter.addSample(latency);
+		counter.addSample(latency, perfTestExecutionError);
 	    }
 	}
 	reportInvocation(latency, realStartMillis);
+	if (null != perfTestExecutionError) {
+	    throw perfTestExecutionError;
+	}
 	if (requirement != null && requirement.getMax() >= 0
 		&& latency > requirement.getMax()
 		&& executionConfig.isCancelOnViolation()) {
@@ -171,6 +180,17 @@ public class PerformanceTracker extends InvokerProxy {
     private void checkRequirements(long elapsedMillis) {
 	long requiredMax = requirement.getMax();
 	LatencyCounter mainCounter = counters[0];
+	if (mainCounter.getAssertionErrors().size() > 0) {
+	    Throwable p = mainCounter.getAssertionErrors().get(0);
+	    while (p.getCause() != null && !(p instanceof AssertionError)) {
+		p = p.getCause();
+	    }
+	    if (p instanceof AssertionError) {
+		throw (AssertionError) p;
+	    } else {
+		throw mainCounter.getAssertionErrors().get(0);
+	    }
+	}
 	if (requiredMax >= 0) {
 	    if (mainCounter.maxLatency() > requiredMax) {
 		context.fail("The maximum latency of " + requiredMax

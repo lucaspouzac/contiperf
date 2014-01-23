@@ -64,7 +64,7 @@ public class CounterRepository {
 
     public void addSample(String name, int latency) {
 	LatencyCounter counter = getOrCreateCounter(name);
-	counter.addSample(latency);
+	counter.addSample(latency, null);
     }
 
     public LatencyCounter getCounter(String name) {

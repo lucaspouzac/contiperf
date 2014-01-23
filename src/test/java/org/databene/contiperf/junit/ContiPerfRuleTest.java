@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.Required;
 import org.databene.contiperf.report.ListReportModule;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -131,6 +132,30 @@ public class ContiPerfRuleTest {
     @Test(expected = RuntimeException.class)
     public void testThreads3Failed() throws Throwable {
 	check("threads3Failed");
+    }
+
+    @Test()
+    public void testThreads2Failed() throws Throwable {
+	try {
+	    check("threads2Failed");
+	    Assert.fail("Exception attendue");
+	} catch (AssertionError re) {
+	    assertEquals(
+		    "Assert test : Thread count : 2, Invocation number : 6",
+		    re.getMessage());
+	}
+    }
+
+    @Test()
+    public void testThreads2Error() throws Throwable {
+	try {
+	    check("threads2Error");
+	    Assert.fail("Exception attendue");
+	} catch (RuntimeException re) {
+	    assertEquals(
+		    "java.lang.RuntimeException: Thread count : 2, Invocation number : 4",
+		    re.getMessage());
+	}
     }
 
     @Test(expected = PerformanceRequirementFailedError.class)
@@ -287,6 +312,40 @@ public class ContiPerfRuleTest {
 	@PerfTest(invocations = 10, threads = 3)
 	public void threads3Failed() throws ParseException {
 	    throw new ParseException("", 0);
+	}
+
+	ThreadCounter threads2TCFailed = new ThreadCounter();
+	public AtomicInteger threads2ICFailed = new AtomicInteger();
+
+	@PerfTest(invocations = 20, threads = 2)
+	@Required(max = 10)
+	public void threads2Failed() throws ParseException,
+		InterruptedException {
+	    threads2TCFailed.get();
+	    threads2ICFailed.incrementAndGet();
+	    Thread.sleep(20);
+	    if (threads2ICFailed.get() % 6 == 0) {
+		assertTrue("Assert test : " + "Thread count : "
+			+ threads2TCFailed.getThreadCount()
+			+ ", Invocation number : " + threads2ICFailed.get(),
+			false);
+	    }
+	}
+
+	ThreadCounter threads2TCError = new ThreadCounter();
+	public AtomicInteger threads2ICError = new AtomicInteger();
+
+	@PerfTest(invocations = 10, threads = 2)
+	@Required(max = 10)
+	public void threads2Error() throws ParseException, InterruptedException {
+	    threads2TCError.get();
+	    threads2ICError.incrementAndGet();
+	    Thread.sleep(20);
+	    if (threads2ICError.get() % 4 == 0) {
+		throw new RuntimeException("Thread count : "
+			+ threads2TCError.getThreadCount()
+			+ ", Invocation number : " + threads2ICError.get());
+	    }
 	}
 
 	public AtomicInteger cancelOnViolationDefaultCount = new AtomicInteger();

@@ -56,7 +56,7 @@ public class LatencyCounterTest {
 	LatencyCounter counter = new LatencyCounter("test");
 	counter.start();
 	for (int i = 25; i <= 125; i += 25) {
-	    counter.addSample(i);
+	    counter.addSample(i, null);
 	}
 	counter.stop();
 	assertEquals(100., counter.percentileAboveLatency(0), 0.);

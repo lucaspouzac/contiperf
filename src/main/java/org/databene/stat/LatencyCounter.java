@@ -23,7 +23,10 @@
 package org.databene.stat;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.databene.contiperf.PerfTestExecutionError;
 import org.databene.contiperf.clock.SystemClock;
 
 /**
@@ -48,6 +51,9 @@ public final class LatencyCounter {
     private long endTime;
     private long sampleCount;
     private long totalLatency;
+
+    private List<PerfTestExecutionError> assertionErrors = new ArrayList<PerfTestExecutionError>(
+	    0);
 
     public LatencyCounter(String name) {
 	this(name, SystemClock.NAME, 1000);
@@ -84,18 +90,23 @@ public final class LatencyCounter {
 	this.running = true;
     }
 
-    public synchronized void addSample(int latency) {
-	if (latency >= latencyCounts.length) {
-	    resize(latency);
-	}
-	latencyCounts[latency]++;
-	sampleCount++;
-	totalLatency += latency;
-	if (minLatency == -1 || latency < minLatency) {
-	    minLatency = latency;
-	}
-	if (latency > maxLatency) {
-	    maxLatency = latency;
+    public synchronized void addSample(int latency,
+	    PerfTestExecutionError assertionError) {
+	if (null != assertionError) {
+	    this.assertionErrors.add(assertionError);
+	} else {
+	    if (latency >= latencyCounts.length) {
+		resize(latency);
+	    }
+	    latencyCounts[latency]++;
+	    sampleCount++;
+	    totalLatency += latency;
+	    if (minLatency == -1 || latency < minLatency) {
+		minLatency = latency;
+	    }
+	    if (latency > maxLatency) {
+		maxLatency = latency;
+	    }
 	}
     }
 
@@ -122,6 +133,10 @@ public final class LatencyCounter {
 	} else {
 	    return 0;
 	}
+    }
+
+    public List<PerfTestExecutionError> getAssertionErrors() {
+	return assertionErrors;
     }
 
     public long totalLatency() {

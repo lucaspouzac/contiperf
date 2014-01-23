@@ -80,7 +80,7 @@ public class Profile {
     }
 
     public void addSample(int duration) {
-	counter.addSample(duration);
+	counter.addSample(duration, null);
     }
 
     public long getInvocationCount() {
