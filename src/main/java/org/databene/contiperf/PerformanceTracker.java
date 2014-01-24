@@ -146,8 +146,19 @@ public class PerformanceTracker extends InvokerProxy {
 	LatencyCounter mainCounter = counters[0];
 	mainCounter.printSummary(new PrintWriter(System.out));
 	reportCompletion();
+	if (mainCounter.getAssertionErrors().size() > 0) {
+	    Throwable p = mainCounter.getAssertionErrors().get(0);
+	    while (p.getCause() != null && !(p instanceof AssertionError)) {
+		p = p.getCause();
+	    }
+	    if (p instanceof AssertionError) {
+		throw (AssertionError) p;
+	    } else {
+		throw mainCounter.getAssertionErrors().get(0);
+	    }
+	}
 	if (requirement != null) {
-	    checkRequirements(mainCounter.duration());
+	    checkRequirements(mainCounter);
 	}
 	this.trackingStarted = false;
     }
@@ -177,20 +188,9 @@ public class PerformanceTracker extends InvokerProxy {
 	}
     }
 
-    private void checkRequirements(long elapsedMillis) {
+    private void checkRequirements(LatencyCounter mainCounter) {
+	long elapsedMillis = mainCounter.duration();
 	long requiredMax = requirement.getMax();
-	LatencyCounter mainCounter = counters[0];
-	if (mainCounter.getAssertionErrors().size() > 0) {
-	    Throwable p = mainCounter.getAssertionErrors().get(0);
-	    while (p.getCause() != null && !(p instanceof AssertionError)) {
-		p = p.getCause();
-	    }
-	    if (p instanceof AssertionError) {
-		throw (AssertionError) p;
-	    } else {
-		throw mainCounter.getAssertionErrors().get(0);
-	    }
-	}
 	if (requiredMax >= 0) {
 	    if (mainCounter.maxLatency() > requiredMax) {
 		context.fail("The maximum latency of " + requiredMax
