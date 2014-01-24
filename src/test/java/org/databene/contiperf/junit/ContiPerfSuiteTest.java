@@ -120,6 +120,21 @@ public class ContiPerfSuiteTest {
 	assertEquals(7, cCount.get());
     }
 
+    @Test
+    public void testConfiguredSuiteForExtendsTest() throws InitializationError {
+	runSuite(UnconfiguredSuiteForExtendsTest.class);
+	assertEquals(20, uCount.get());
+	assertEquals(0, cCount.get());
+    }
+
+    @Test
+    public void testConfiguredSuiteForOverrideExtendsTest()
+	    throws InitializationError {
+	runSuite(UnconfiguredSuiteForOverrideExtendsTest.class);
+	assertEquals(10, uCount.get());
+	assertEquals(0, cCount.get());
+    }
+
     /*
      * @Test public void testConfiguredSuiteForParameterizedTest() throws
      * InitializationError { runSuite(ConfiguredSuiteForParametrizedTest.class);
@@ -182,6 +197,16 @@ public class ContiPerfSuiteTest {
     public static class ConfiguredSuiteForConfiguredClassAndMethodTest {
     }
 
+    @RunWith(ContiPerfSuiteRunner.class)
+    @SuiteClasses(ExtendsTest.class)
+    public static class UnconfiguredSuiteForExtendsTest {
+    }
+
+    @RunWith(ContiPerfSuiteRunner.class)
+    @SuiteClasses(OverrideExtendsTest.class)
+    public static class UnconfiguredSuiteForOverrideExtendsTest {
+    }
+
     /*
      * @RunWith(ContiPerfSuite.class)
      * 
@@ -225,6 +250,25 @@ public class ContiPerfSuiteTest {
 	@PerfTest(invocations = 7)
 	public void test() throws Exception {
 	    cCount.incrementAndGet();
+	}
+    }
+
+    @PerfTest(invocations = 20)
+    public static abstract class AbstractTest {
+    }
+
+    public static class ExtendsTest extends AbstractTest {
+	@Test
+	public void test() throws Exception {
+	    uCount.incrementAndGet();
+	}
+    }
+
+    @PerfTest(invocations = 10)
+    public static class OverrideExtendsTest extends AbstractTest {
+	@Test
+	public void test() throws Exception {
+	    uCount.incrementAndGet();
 	}
     }
 

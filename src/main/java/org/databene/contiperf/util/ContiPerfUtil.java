@@ -23,6 +23,7 @@
 package org.databene.contiperf.util;
 
 import java.io.Closeable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.databene.contiperf.PerfTestExecutionError;
 import org.databene.contiperf.PerformanceRequirement;
 import org.databene.contiperf.Required;
 import org.databene.contiperf.clock.SystemClock;
+import org.junit.runners.model.FrameworkMethod;
 
 /**
  * Provides I/O utility methods.<br/>
@@ -158,6 +160,29 @@ public class ContiPerfUtil {
 	    reqs[i] = parsePercentile(assignments[i]);
 	}
 	return reqs;
+    }
+
+    public static <T extends Annotation> T annotationOfMethodOrClass(
+	    FrameworkMethod method, Class<T> annotationClass) {
+	if (null != method) {
+	    T methodAnnotation = method.getAnnotation(annotationClass);
+	    if (methodAnnotation != null) {
+		return methodAnnotation;
+	    }
+	}
+
+	return annotationOfClass(method.getMethod().getDeclaringClass(),
+		annotationClass);
+    }
+
+    public static <T extends Annotation> T annotationOfClass(Class<?> type,
+	    Class<T> annotationClass) {
+	T classAnnotation = null;
+	while (classAnnotation == null && type.getSuperclass() != null) {
+	    classAnnotation = type.getAnnotation(annotationClass);
+	    type = type.getSuperclass();
+	}
+	return classAnnotation;
     }
 
     private static PercentileRequirement parsePercentile(String assignment) {

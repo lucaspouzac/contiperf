@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.databene.contiperf.util.ContiPerfUtil;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 
@@ -50,11 +51,8 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
     }
 
     private static ExecutorService createExecutor(Class<?> type) {
-	Parallel parallel = null;
-	while (parallel == null && type.getSuperclass() != null) {
-	    parallel = type.getAnnotation(Parallel.class);
-	    type = type.getSuperclass();
-	}
+	Parallel parallel = ContiPerfUtil.annotationOfClass(type,
+		Parallel.class);
 	if (parallel != null) {
 	    return newFixedThreadPool(parallel.count(),
 		    new ConcurrentTestRunnerThreadFactory());

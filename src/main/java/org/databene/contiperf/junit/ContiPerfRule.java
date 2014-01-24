@@ -22,7 +22,6 @@
 
 package org.databene.contiperf.junit;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import junit.framework.AssertionFailedError;
@@ -154,10 +153,10 @@ public class ContiPerfRule implements MethodRule {
 	if (suite != null) {
 	    Class<? extends Object> suiteClass = suite.getClass();
 	    this.defaultExecutionConfig = configurePerfTest(
-		    suiteClass.getAnnotation(PerfTest.class),
+		    ContiPerfUtil.annotationOfClass(suiteClass, PerfTest.class),
 		    suiteClass.getName());
-	    this.defaultRequirements = ContiPerfUtil.mapRequired(suiteClass
-		    .getAnnotation(Required.class));
+	    this.defaultRequirements = ContiPerfUtil.mapRequired(ContiPerfUtil
+		    .annotationOfClass(suiteClass, Required.class));
 	}
     }
 
@@ -267,7 +266,8 @@ public class ContiPerfRule implements MethodRule {
 
     private ExecutionConfig executionConfig(FrameworkMethod method,
 	    String methodName) {
-	PerfTest annotation = annotationOfMethodOrClass(method, PerfTest.class);
+	PerfTest annotation = ContiPerfUtil.annotationOfMethodOrClass(method,
+		PerfTest.class);
 	if (annotation != null) {
 	    return configurePerfTest(annotation, methodName);
 	}
@@ -279,7 +279,8 @@ public class ContiPerfRule implements MethodRule {
 
     private PerformanceRequirement requirements(FrameworkMethod method,
 	    String testId) {
-	Required annotation = annotationOfMethodOrClass(method, Required.class);
+	Required annotation = ContiPerfUtil.annotationOfMethodOrClass(method,
+		Required.class);
 	if (annotation != null) {
 	    return ContiPerfUtil.mapRequired(annotation);
 	}
@@ -287,17 +288,6 @@ public class ContiPerfRule implements MethodRule {
 	    return defaultRequirements;
 	}
 	return null;
-    }
-
-    private static <T extends Annotation> T annotationOfMethodOrClass(
-	    FrameworkMethod method, Class<T> annotationClass) {
-	T methodAnnotation = method.getAnnotation(annotationClass);
-	if (methodAnnotation != null) {
-	    return methodAnnotation;
-	}
-	T classAnnotation = method.getMethod().getDeclaringClass()
-		.getAnnotation(annotationClass);
-	return classAnnotation;
     }
 
     public static ExecutionConfig configurePerfTest(PerfTest annotation,
