@@ -42,7 +42,7 @@ public class ReportUtil {
 	success &= (maxVerdict(counter, requirement) != Verdict.FAILURE);
 	success &= (throughputVerdict(counter, requirement) != Verdict.FAILURE);
 	success &= (totalTimeVerdict(counter, requirement) != Verdict.FAILURE);
-	if (requirement.isAllowedError()) {
+	if (requirement != null && requirement.isAllowedError()) {
 	    success &= (allowedErrorsVerdict(counter, requirement) != Verdict.FAILURE);
 	} else {
 	    success &= counter.getAssertionErrors().size() == 0;
@@ -122,7 +122,7 @@ public class ReportUtil {
     public static Verdict functionalTestVerdict(final LatencyCounter counter,
 	    final PerformanceRequirement requirement) {
 
-	if (requirement.isAllowedError()) {
+	if (requirement != null && requirement.isAllowedError()) {
 	    return allowedErrorsVerdict(counter, requirement);
 	} else {
 	    return (counter.getAssertionErrors().size() == 0 ? Verdict.SUCCESS

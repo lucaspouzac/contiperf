@@ -114,7 +114,7 @@ public class PerformanceTracker extends InvokerProxy {
 	}
 	reportInvocation(latency, realStartMillis);
 	if (null != perfTestExecutionError) {
-	    if (requirement.isAllowedError()) {
+	    if (isAllowedErrors(requirement)) {
 		reportError();
 	    } else {
 		throw perfTestExecutionError;
@@ -150,7 +150,7 @@ public class PerformanceTracker extends InvokerProxy {
 	LatencyCounter mainCounter = counters[0];
 	mainCounter.printSummary(new PrintWriter(System.out));
 	reportCompletion();
-	if (!requirement.isAllowedError()
+	if (!isAllowedErrors(requirement)
 		&& mainCounter.getAssertionErrors().size() > 0) {
 	    Throwable p = mainCounter.getAssertionErrors().get(0);
 	    while (p.getCause() != null && !(p instanceof AssertionError)) {
@@ -174,6 +174,11 @@ public class PerformanceTracker extends InvokerProxy {
 
     // helper methods
     // --------------------------------------------------------------------------------------------------
+
+    private boolean isAllowedErrors(PerformanceRequirement requirement) {
+
+	return requirement != null && requirement.isAllowedError();
+    }
 
     private void reportStart() {
 	for (ReportModule module : context.getReportModules()) {

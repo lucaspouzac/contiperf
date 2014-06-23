@@ -298,7 +298,7 @@ public class HtmlReportModule extends AbstractReportModule {
 	out.println("	<tr><th>Started at:</th><td colspan='2'>"
 		+ DateFormat.getDateTimeInstance().format(startDate)
 		+ "</td></tr>");
-	if (requirement.isAllowedError()) {
+	if (requirement != null && requirement.isAllowedError()) {
 
 	    printStatLine("Invocations:", counters[0].totalInvocations(), null,
 		    null, null, null, out);
