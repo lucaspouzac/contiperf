@@ -114,7 +114,11 @@ public class PerformanceTracker extends InvokerProxy {
 	}
 	reportInvocation(latency, realStartMillis);
 	if (null != perfTestExecutionError) {
-	    throw perfTestExecutionError;
+	    if (requirement.isAllowedError()) {
+		reportError();
+	    } else {
+		throw perfTestExecutionError;
+	    }
 	}
 	if (requirement != null && requirement.getMax() >= 0
 		&& latency > requirement.getMax()
@@ -146,7 +150,8 @@ public class PerformanceTracker extends InvokerProxy {
 	LatencyCounter mainCounter = counters[0];
 	mainCounter.printSummary(new PrintWriter(System.out));
 	reportCompletion();
-	if (mainCounter.getAssertionErrors().size() > 0) {
+	if (!requirement.isAllowedError()
+		&& mainCounter.getAssertionErrors().size() > 0) {
 	    Throwable p = mainCounter.getAssertionErrors().get(0);
 	    while (p.getCause() != null && !(p instanceof AssertionError)) {
 		p = p.getCause();
@@ -185,6 +190,12 @@ public class PerformanceTracker extends InvokerProxy {
     private void reportCompletion() {
 	for (ReportModule module : context.getReportModules()) {
 	    module.completed(getId(), counters, executionConfig, requirement);
+	}
+    }
+
+    private void reportError() {
+	for (ReportModule module : context.getReportModules()) {
+	    module.error(getId());
 	}
     }
 
@@ -234,6 +245,14 @@ public class PerformanceTracker extends InvokerProxy {
 			+ measuredLatency + " ms");
 	    }
 	}
-    }
 
+	double percentAllowedErrors = requirement.getAllowedErrorsRate();
+	if (percentAllowedErrors > 0
+		&& mainCounter.errorsRate() > percentAllowedErrors) {
+	    context.fail("The maximum percentage of errors "
+		    + (percentAllowedErrors * 100)
+		    + "% was exceeded, Measured: "
+		    + (mainCounter.errorsRate() * 100) + "%");
+	}
+    }
 }

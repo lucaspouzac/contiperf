@@ -146,7 +146,7 @@ public class ContiPerfUtil {
 		.size()];
 	percTmp.toArray(percs);
 	return new PerformanceRequirement(average, max, totalTime, percs,
-		throughput);
+		throughput, annotation.allowedErrorsRate());
     }
 
     public static PercentileRequirement[] parsePercentiles(

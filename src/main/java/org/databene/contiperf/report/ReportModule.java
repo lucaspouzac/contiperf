@@ -48,4 +48,6 @@ public interface ReportModule {
 
     public void completed(String serviceId, LatencyCounter[] counters,
 	    ExecutionConfig executionConfig, PerformanceRequirement requirement);
+
+    void error(String serviceId);
 }
