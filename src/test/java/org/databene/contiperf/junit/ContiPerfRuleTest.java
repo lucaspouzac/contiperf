@@ -194,6 +194,50 @@ public class ContiPerfRuleTest {
 	}
     }
 
+    @Test(expected = RuntimeException.class)
+    public void testCancelOnError() throws Throwable {
+	TestBean test = new TestBean();
+	try {
+	    check(test, "cancelOnError");
+	} catch (RuntimeException e) {
+	    int count = test.cancelOnErrorCount.get();
+	    assertEquals(1, count);
+	    throw e;
+	}
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testCancelOnErrorWithAnnotation0() throws Throwable {
+	TestBean test = new TestBean();
+	try {
+	    check(test, "cancelOnErrorWithAnnotation0");
+	} catch (RuntimeException e) {
+	    int count = test.cancelOnErrorCountWithAnnotation0.get();
+	    assertEquals(1, count);
+	    throw e;
+	}
+    }
+
+    @Test(expected = PerformanceRequirementFailedError.class)
+    public void testCancelOnErrorWithAnnotation01() throws Throwable {
+	TestBean test = new TestBean();
+	try {
+	    check(test, "cancelOnErrorWithAnnotation01");
+	} catch (PerformanceRequirementFailedError e) {
+	    int count = test.cancelOnErrorCountWithAnnotation01.get();
+	    assertEquals(5, count);
+	    throw e;
+	}
+    }
+
+    @Test
+    public void testDontCancelOnErrorWithAnnotation() throws Throwable {
+	TestBean test = new TestBean();
+	check(test, "dontCancelOnErrorWithAnnotation");
+	int count = test.dontCancelOnErrorWithAnnotation.get();
+	assertEquals(100, count);
+    }
+
     // helper methods
     // --------------------------------------------------------------------------------------------------
 
@@ -373,6 +417,44 @@ public class ContiPerfRuleTest {
 	public void dontCancelOnViolation() throws InterruptedException {
 	    int n = dontCancelOnViolationCount.incrementAndGet();
 	    Thread.sleep(n * 150);
+	}
+
+	public AtomicInteger cancelOnErrorCount = new AtomicInteger();
+
+	@PerfTest(invocations = 5)
+	public void cancelOnError() throws InterruptedException {
+	    cancelOnErrorCount.incrementAndGet();
+	    throw new RuntimeException();
+	}
+
+	public AtomicInteger cancelOnErrorCountWithAnnotation0 = new AtomicInteger();
+
+	@Required(allowedErrorsRate = 0.)
+	@PerfTest(invocations = 5)
+	public void cancelOnErrorWithAnnotation0() throws InterruptedException {
+	    cancelOnErrorCountWithAnnotation0.incrementAndGet();
+	    throw new RuntimeException();
+	}
+
+	public AtomicInteger cancelOnErrorCountWithAnnotation01 = new AtomicInteger();
+
+	@Required(allowedErrorsRate = 0.1)
+	@PerfTest(invocations = 5)
+	public void cancelOnErrorWithAnnotation01() throws InterruptedException {
+	    cancelOnErrorCountWithAnnotation01.incrementAndGet();
+	    throw new RuntimeException();
+	}
+
+	public AtomicInteger dontCancelOnErrorWithAnnotation = new AtomicInteger();
+
+	@Required(allowedErrorsRate = 0.11)
+	@PerfTest(invocations = 100)
+	public void dontCancelOnErrorWithAnnotation()
+		throws InterruptedException {
+	    int count = dontCancelOnErrorWithAnnotation.incrementAndGet();
+	    if (count % 10 == 0) { // 1 test sur 10 remonte une exception
+		throw new RuntimeException();
+	    }
 	}
 
     }

@@ -103,9 +103,11 @@ public class HtmlReportModule extends AbstractReportModule {
 	initialized = true;
 	try {
 	    PrintWriter out = new PrintWriter(new FileOutputStream(reportFile));
+	    out.println("<!doctype html>");
 	    out.println("<html>");
 	    out.println("<head>");
-	    out.println("<title>ContiPerf Report</title>");
+	    out.println("    <meta charset=\"utf-8\">");
+	    out.println("    <title>ContiPerf Report</title>");
 	    out.println("</head>");
 	    out.println("<body style='font-family:Verdana;'>");
 	    out.println("<center>");
@@ -296,8 +298,19 @@ public class HtmlReportModule extends AbstractReportModule {
 	out.println("	<tr><th>Started at:</th><td colspan='2'>"
 		+ DateFormat.getDateTimeInstance().format(startDate)
 		+ "</td></tr>");
-	printStatLine("Measured invocations:", counters[0].sampleCount(), null,
-		null, null, null, out);
+	if (requirement != null && requirement.isAllowedError()) {
+
+	    printStatLine("Invocations:", counters[0].totalInvocations(), null,
+		    null, null, null, out);
+	    printStatLine("- Success:", counters[0].sampleCount(), null, null,
+		    null, null, out);
+	    printErrorsStats(counters, requirement, out);
+	} else {
+	    printStatLine("Measured invocations:", counters[0].sampleCount(),
+		    null, null, null, null, out);
+	}
+
+	out.println("	<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>");
 	if (executionConfig.getThreads() > 1) {
 	    printStatLine("Thread Count:", executionConfig.getThreads(), null,
 		    null, null, null, out);
@@ -311,6 +324,7 @@ public class HtmlReportModule extends AbstractReportModule {
 		    null, null, out);
 	}
 	out.println("	<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>");
+
 	out.println("	<tr valign='top'>");
 	out.println("		<th>&nbsp;</th>");
 	out.println("		<th>Measured<br/>(" + counters[0].getClockName()
@@ -440,6 +454,24 @@ public class HtmlReportModule extends AbstractReportModule {
 	}
 	printStatMsLine("Max latency:", counters[0].maxLatency(), required,
 		secondaryValues, verdict, out);
+    }
+
+    private static void printErrorsStats(LatencyCounter[] counters,
+	    PerformanceRequirement requirement, PrintWriter out) {
+
+	Verdict verdict = ReportUtil.allowedErrorsVerdict(counters[0],
+		requirement);
+	long errors = counters[0].getAssertionErrors().size();
+	double errorsPercent = counters[0].errorsRate() * 100.;
+
+	out.println("				<tr>");
+	out.println("					<th align='right' valign='top'>"
+		+ format("- Errors:", verdict) + "</th>");
+	out.println("					<td align='right'>" + format(errors, null, verdict)
+		+ "</td>");
+	out.println("					<td align='right'>"
+		+ format(errorsPercent + " %", verdict) + "</td>");
+	out.println("				</tr>");
     }
 
     private static void printStatMsLine(String label, long mainValue,

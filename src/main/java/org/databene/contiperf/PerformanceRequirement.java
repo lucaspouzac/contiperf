@@ -38,20 +38,23 @@ public class PerformanceRequirement {
     private int max;
     private int totalTime;
     private int throughput;
+    private final double allowedErrorsRate;
 
     private PercentileRequirement[] percentiles;
 
     public PerformanceRequirement() {
-	this(-1, -1, -1, new PercentileRequirement[0], -1);
+	this(-1, -1, -1, new PercentileRequirement[0], -1, 0);
     }
 
     public PerformanceRequirement(int average, int max, int totalTime,
-	    PercentileRequirement[] percentiles, int throughput) {
+	    PercentileRequirement[] percentiles, int throughput,
+	    double allowedErrorsRate) {
 	this.average = average;
 	this.max = max;
 	this.totalTime = totalTime;
 	this.percentiles = percentiles;
 	this.throughput = throughput;
+	this.allowedErrorsRate = allowedErrorsRate;
     }
 
     public int getAverage() {
@@ -84,6 +87,15 @@ public class PerformanceRequirement {
 
     public void setPercentiles(String percentilesSpec) {
 	setPercentileValues(ContiPerfUtil.parsePercentiles(percentilesSpec));
+    }
+
+    public double getAllowedErrorsRate() {
+	return allowedErrorsRate;
+    }
+
+    public boolean isAllowedError() {
+
+	return (allowedErrorsRate > 0.0);
     }
 
     @Override

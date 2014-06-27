@@ -97,4 +97,13 @@ public @interface Required {
      */
     String percentiles() default "";
 
+    /**
+     * Defines the rate of allowed errors.
+     * 
+     * <pre>
+     *     2% -> 0.02
+     * </pre>
+     */
+    double allowedErrorsRate() default 0.;
+
 }

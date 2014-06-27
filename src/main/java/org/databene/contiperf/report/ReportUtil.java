@@ -42,7 +42,12 @@ public class ReportUtil {
 	success &= (maxVerdict(counter, requirement) != Verdict.FAILURE);
 	success &= (throughputVerdict(counter, requirement) != Verdict.FAILURE);
 	success &= (totalTimeVerdict(counter, requirement) != Verdict.FAILURE);
-	success &= counter.getAssertionErrors().size() == 0;
+	if (requirement != null && requirement.isAllowedError()) {
+	    success &= (allowedErrorsVerdict(counter, requirement) != Verdict.FAILURE);
+	} else {
+	    success &= counter.getAssertionErrors().size() == 0;
+	}
+
 	if (requirement != null) {
 	    PercentileRequirement[] percentileRequirements = requirement
 		    .getPercentileRequirements();
@@ -50,6 +55,7 @@ public class ReportUtil {
 		success &= (percentileVerdict(counter, percentileRequirement) != Verdict.FAILURE);
 	    }
 	}
+
 	return success;
     }
 
@@ -115,8 +121,19 @@ public class ReportUtil {
 
     public static Verdict functionalTestVerdict(final LatencyCounter counter,
 	    final PerformanceRequirement requirement) {
-	return (counter.getAssertionErrors().size() == 0 ? Verdict.SUCCESS
-		: Verdict.FAILURE);
+
+	if (requirement != null && requirement.isAllowedError()) {
+	    return allowedErrorsVerdict(counter, requirement);
+	} else {
+	    return (counter.getAssertionErrors().size() == 0 ? Verdict.SUCCESS
+		    : Verdict.FAILURE);
+	}
+    }
+
+    public static Verdict allowedErrorsVerdict(final LatencyCounter counter,
+	    final PerformanceRequirement requirement) {
+	return requirement.getAllowedErrorsRate() >= counter.errorsRate() ? Verdict.SUCCESS
+		: Verdict.FAILURE;
     }
 
 }

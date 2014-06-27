@@ -159,6 +159,11 @@ public final class LatencyCounter {
 	return sampleCount;
     }
 
+    public long totalInvocations() {
+
+	return sampleCount + assertionErrors.size();
+    }
+
     public long percentileLatency(int percentile) {
 	long targetCount = percentile * sampleCount / 100;
 	long count = 0;
@@ -191,6 +196,11 @@ public final class LatencyCounter {
 	return endTime - startTime;
     }
 
+    public double errorsRate() {
+
+	return ((double) assertionErrors.size()) / totalInvocations();
+    }
+
     // private helpers
     // -------------------------------------------------------------------------------------------------
 
@@ -211,6 +221,10 @@ public final class LatencyCounter {
 	out.println("median:  " + percentileLatency(50));
 	for (int percentile : percentiles) {
 	    out.println(percentile + "%:     " + percentileLatency(percentile));
+	}
+	if (assertionErrors.size() > 0) {
+	    out.println("errors:  " + assertionErrors.size() + " ("
+		    + (errorsRate() * 100.) + "%)");
 	}
 	out.flush();
     }

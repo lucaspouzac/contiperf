@@ -60,6 +60,10 @@ public abstract class AbstractReportModule implements ReportModule {
 	// ignored
     }
 
+    public void error(String serviceId) {
+	// ignored
+    }
+
     /**
      * implements backwards-compatibility of inheritors of older versions of
      * this class
