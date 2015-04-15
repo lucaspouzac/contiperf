@@ -193,12 +193,12 @@ public class ContiPerfRule implements MethodRule {
 	    try {
 		if (base instanceof RunAfters) {
 		    runAfters = (RunAfters) base;
-		    Field fNext = base.getClass().getDeclaredField("fNext");
+		    Field fNext = getFieldNextWithJunit412Fallback(base);
 		    fNext.setAccessible(true);
 		    base = (Statement) fNext.get(base);
 		} else if (base instanceof RunBefores) {
 		    runBefores = (RunBefores) base;
-		    Field fNext = base.getClass().getDeclaredField("fNext");
+		    Field fNext = getFieldNextWithJunit412Fallback(base);
 		    fNext.setAccessible(true);
 		    base = (Statement) fNext.get(base);
 		}
@@ -221,14 +221,14 @@ public class ContiPerfRule implements MethodRule {
 	try {
 	    // if runBefores has been removed, reapply it
 	    if (runBefores != null) {
-		Field fNext = runBefores.getClass().getDeclaredField("fNext");
+		Field fNext = getFieldNextWithJunit412Fallback(runBefores);
 		fNext.setAccessible(true);
 		fNext.set(runBefores, base);
 		base = runBefores;
 	    }
 	    // if runAfters has been removed, reapply it
 	    if (runAfters != null) {
-		Field fNext = runAfters.getClass().getDeclaredField("fNext");
+		Field fNext = getFieldNextWithJunit412Fallback(runAfters);
 		fNext.setAccessible(true);
 		fNext.set(runAfters, base);
 		base = runAfters;
@@ -237,6 +237,20 @@ public class ContiPerfRule implements MethodRule {
 	    throw new RuntimeException(e);
 	}
 	return base;
+    }
+
+    /**
+     * Helper that uses reflection to get a field, but applies a fallback as field name changed in JUnit 4.12
+     * from legacy named "fNext" to "next".
+     *
+     * @see <a href="https://github.com/junit-team/junit/commit/df00d5eced3a7737b88de0f6f9e3673f0cf88f88">https://github.com/junit-team/junit/commit/df00d5eced3a7737b88de0f6f9e3673f0cf88f88</a>
+     */
+    private Field getFieldNextWithJunit412Fallback(final Statement base) throws NoSuchFieldException{
+      try {
+	  return base.getClass().getDeclaredField("fNext");
+      } catch (NoSuchFieldException e) {
+	  return base.getClass().getDeclaredField("next");
+      }
     }
 
     public ReportContext getContext() {

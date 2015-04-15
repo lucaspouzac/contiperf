@@ -83,7 +83,7 @@
     </developers>
 
     <properties>
-        <version.junit>4.11</version.junit>
+        <version.junit>4.12</version.junit>
         <version.wagon-ftp>1.0-alpha-6</version.wagon-ftp>
         <version.maven-resources-plugin>2.6</version.maven-resources-plugin>
         <version.maven-site-plugin>3.3</version.maven-site-plugin>
