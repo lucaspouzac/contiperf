@@ -58,7 +58,7 @@ public class GoogleLatencyRenderer {
 	dataset.scaleY(80);
 	try {
 	    StringBuilder builder = new StringBuilder(
-		    "http://chart.apis.google.com/chart?cht=lxy"); // xy line
+		    "https://chart.apis.google.com/chart?cht=lxy"); // xy line
 								   // chart
 	    builder.append("&chs=").append(width).append('x').append(height); // image
 									      // size
