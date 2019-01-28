@@ -1,5 +1,7 @@
 ## [ContiPerf](http://databene.org/contiperf/)
 
+[![Maven central](https://maven-badges.herokuapp.com/maven-central/org.databene/contiperf/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.databene/contiperf)
+
 
 ### Continuous Performance Testing (Junit)
 
