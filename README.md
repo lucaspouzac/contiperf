@@ -2,6 +2,8 @@
 
 [![Maven central](https://maven-badges.herokuapp.com/maven-central/org.databene/contiperf/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.databene/contiperf)
 
+**Sorry for the inconveniences, the project development continues [here](https://github.com/javatlacati/contiperf).**
+
 
 ### Continuous Performance Testing (Junit)
 
@@ -23,10 +25,6 @@ ContiPerf is Open Source and you can choose among the following licenses:
 * [Lesser GNU Public License (LGPL) 3.0](lgpl-version3.txt)
 * [Eclipse Public License 1.0](epl-v10.html)
 * [BSD License](bsd-license.txt)
-
-### Getting help / getting involved
-
-If you are stuck, found a bug, have ideas for ContiPerf or want to help, visit the [forum](http://databene.org/forum).
 
 ### More
 
