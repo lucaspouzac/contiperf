@@ -54,7 +54,7 @@ public class CSVInvocationReportModule extends AbstractReportModule {
 
     @Override
     public String getReportReference(String serviceId) {
-	return (serviceId != null ? filename(serviceId) : null);
+	return (serviceId != null ? filename(serviceId) + FILE_SUFFIX : null);
     }
 
     @Override
